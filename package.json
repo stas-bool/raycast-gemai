@@ -1,0 +1,119 @@
+{
+    "$schema"         : "https://www.raycast.com/schemas/extension.json",
+    "name"            : "gemai",
+    "title"           : "GemAI",
+    "description"     : "AI Tools for text editing.",
+    "icon"            : "gemai-icon.png",
+    "author"          : "SmetDenis",
+    "owner"           : "SmetDenis",
+    "categories"      : ["Productivity", "Developer Tools"],
+    "license"         : "MIT",
+    "commands"        : [
+        {
+            "name"        : "translate",
+            "title"       : "Translate",
+            "description" : "Translate selected text",
+            "mode"        : "view",
+            "preferences" : [
+                {
+                    "name"        : "secondaryLanguage",
+                    "title"       : "Secondary Language",
+                    "description" : "The secondary language for AI responses.",
+                    "type"        : "textfield",
+                    "default"     : "English",
+                    "required"    : true
+                },
+                {
+                    "name"        : "promptFile",
+                    "title"       : "Markdown file with system prompt",
+                    "description" : "The system prompt to use for this command.",
+                    "type"        : "textfield",
+                    "required"    : false,
+                    "default"     : "Translate.md"
+                }
+            ]
+        }
+    ],
+
+    "preferences"     : [
+        {
+            "name"        : "geminiApiKey",
+            "title"       : "Gemini API Key",
+            "description" : "Find it in your Google AI Studio.",
+            "type"        : "password",
+            "required"    : true
+        },
+        {
+            "name"        : "primaryLanguage",
+            "title"       : "Primary language",
+            "description" : "The default language for AI responses.",
+            "type"        : "textfield",
+            "default"     : "English",
+            "required"    : true
+        },
+        {
+            "description" : "Which model Gemini for Raycast uses by default (unless overriden by individual commands).",
+            "name"        : "defaultModel",
+            "title"       : "Model",
+            "type"        : "dropdown",
+            "required"    : true,
+            "default"     : "gemini-2.5-flash-preview-04-17",
+            "data"        : [
+                {
+                    "title" : "Gemini 2.0 Flash-Lite",
+                    "value" : "gemini-2.0-flash-lite"
+                },
+                {
+                    "title" : "Gemini 2.0 Flash",
+                    "value" : "gemini-2.0-flash"
+                },
+                {
+                    "title" : "Gemini 2.5 Flash Preview",
+                    "value" : "gemini-2.5-flash-preview-04-17"
+                },
+                {
+                    "title" : "Gemini 2.5 Pro Preview",
+                    "value" : "gemini-2.5-pro-preview-05-06"
+                }
+            ]
+        },
+        {
+            "name"        : "customModel",
+            "title"       : "Custom Model",
+            "description" : "Setup ustom model if you are using a specific model not included in the dropdown menu. This option will override the default model. Leave this field empty if you do not have a custom model.",
+            "type"        : "textfield",
+            "required"    : false
+        },
+        {
+            "name"        : "promptDir",
+            "title"       : "Prompt directory",
+            "description" : "The full path to the directory containing Prompts in markdown format",
+            "type"        : "textfield",
+            "required"    : false,
+            "default"     : "~/Documents/Prompts/Raycast"
+        }
+    ],
+
+    "dependencies"    : {
+        "@google/genai"  : "^0.13.0",
+        "@raycast/api"   : "^1.98.2",
+        "@raycast/utils" : "^1.17.0",
+        "mime-types"     : "^3.0.1"
+    },
+    "devDependencies" : {
+        "@raycast/eslint-config" : "^2.0.4",
+        "@types/node"            : "22.13.10",
+        "@types/react"           : "19.0.10",
+        "eslint"                 : "^9.22.0",
+        "prettier"               : "^3.5.3",
+        "typescript"             : "^5.8.2"
+    },
+    "scripts"         : {
+        "build"    : "ray build -e dist",
+        "dev"      : "ray develop",
+        "fix-lint" : "ray lint --fix",
+        "lint"     : "ray lint",
+        "pull"     : "ray pull-contributions",
+        "publish"  : "ray publish"
+    }
+}
