@@ -14,6 +14,14 @@
             "title"       : "Translate",
             "description" : "Translate selected text",
             "mode"        : "view",
+            "arguments"   : [
+                {
+                    "name"        : "query",
+                    "placeholder" : "Text to translate",
+                    "type"        : "text",
+                    "required"    : false
+                }
+            ],
             "preferences" : [
                 {
                     "name"        : "secondaryLanguage",

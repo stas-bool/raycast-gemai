@@ -1,8 +1,9 @@
 export interface GeminiRequestParams {
+    actionName: string;
+    origProps: object;
     primaryLanguage: string;
     userPrompt: string;
     attachmentFile?: string;
-    selectedText?: string;
 }
 
 export interface GeminiModelParams {
@@ -15,7 +16,10 @@ export interface GeminiModelParams {
     topP: number;
     frequencyPenalty: number;
     presencePenalty: number;
-    thinkingBudget: number;
+    thinkingConfig?: {
+        includeThoughts?: boolean;
+        thinkingBudget?: number;
+    }
 }
 
 export interface RaycastUIParams {
