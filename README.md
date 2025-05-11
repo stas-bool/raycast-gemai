@@ -1,128 +1,114 @@
-# GemAI (WIP)
+# GemAI
 
-GemAI is a Raycast extension designed to supercharge your productivity by integrating Google's Gemini AI models directly into your workflow. Perform a
-wide range of text and image processing tasks, from quick translations and grammar checks to sophisticated image analysis and custom prompt execution,
-all without leaving Raycast. It operates on a "Bring Your Own Key" (BYOK) model, giving you full control over your API usage.
+GemAI is a powerful Raycast extension designed to supercharge your productivity by integrating Google's Gemini AI directly into your workflow. Perform a wide range of text manipulations, get insights from images, translate on the fly, and much more – all without leaving Raycast. GemAI operates on a "Bring Your Own Key" (BYOK) basis and features a unique system for managing prompts via local Markdown files.
 
 ## Key Features
 
-- **Boost Office Productivity:** Streamline common text-based and image-related tasks directly within Raycast, minimizing context switching and saving
-  valuable time.
-- **Leverage Powerful AI with Control:** Utilize Google's cutting-edge Gemini models (including 2.0 and 2.5 versions) with a BYOK approach for your
-  Google Gemini API Key.
-- **Unprecedented Prompt Customization:** A standout feature allows you to store and manage your system prompts as local Markdown (`.md`) files. Edit
-  them in your favorite editor (like Obsidian), version control them with Git, and ensure perfect synchronization across your setup.
-- **Comprehensive Task Toolkit:** Access a wide array of commands for text manipulation (translation, grammar correction, summarization, rephrasing,
-  style adjustments) and image understanding (screenshot to text/Markdown, image explanation).
-- **Seamless Raycast Integration:** Works fluidly with selected text or via intuitive Raycast command interfaces, making AI assistance readily
-  available.
+*   **Versatile Text Tools:** Edit, summarize, explain, rephrase, expand, or shorten text with ease.
+*   **Intelligent Image Analysis:** Capture screenshots and convert them to Markdown or get explanations and answers about their content.
+*   **Quick Translation:** Instantly translate selected text between your primary and secondary languages.
+*   **Customizable AI Behavior:** Define and manage system prompts for each command using local Markdown files, allowing for fine-grained control and easy editing with tools like Obsidian.
+*   **Version Controlled Prompts:** Store your custom Markdown prompts in a Git repository for versioning and synchronization across devices.
+*   **BYOK Model:** Use your own Google Gemini API key for full control over usage and costs.
+*   **Flexible Model Selection:** Choose from various Gemini models (including 2.0 and 2.5 versions) globally or per command.
+*   **Productivity Focused:** Designed to streamline common office tasks and enhance your efficiency.
+
+## Why GemAI?
+
+While there are many AI tools available, GemAI offers a unique combination of power and customization for Raycast users:
+
+*   **Deep Raycast Integration:** Access AI capabilities seamlessly within your existing Raycast workflows.
+*   **Your Prompts, Your Way:** The ability to use local Markdown files for system prompts is a game-changer. Edit them in your favorite Markdown editor (like Obsidian), track changes with Git, and tailor the AI's personality and output to your exact needs.
+*   **Transparent & Controllable:** With the BYOK model, you are in complete control of your API credentials and usage.
 
 ## Commands
 
-GemAI offers a suite of commands to enhance your daily tasks. Most commands can work with currently selected text or allow you to input
-text/instructions directly.
+GemAI offers a comprehensive suite of commands to assist with various tasks:
 
-- **Translator:** Translate selected text between your primary and secondary languages.
-    - *Input:* Selected text or text provided in the command.
-- **Fix grammar & spelling:** Correct grammar, spelling, punctuation, and capitalization for selected text.
-    - *Input:* Selected text.
-- **Summarize it:** Generate a concise summary of the selected text.
-    - *Input:* Selected text.
-- **Explain it:** Get an explanation for the selected text or a term you provide.
-    - *Input:* Selected text or text/term provided in the command.
-- **Friendly text maker:** Rewrite selected text to be warmer and more friendly.
-    - *Input:* Selected text.
-- **Professional text maker:** Make selected text more formal and professional.
-    - *Input:* Selected text.
-- **Prompt Generator:** Create or improve an LLM prompt based on your ideas.
-    - *Input:* Text describing your prompt idea.
-- **Make text shorter:** Significantly shorten and make selected text more concise.
-    - *Input:* Selected text.
-- **Make text longer:** Expand on the selected text, adding relevant details.
-    - *Input:* Selected text.
-- **Rephrase it:** Rewrite the provided text using different phrasing while maintaining the original meaning.
-    - *Input:* Selected text.
-- **Ask GemAI any question:** Ask any question on any topic, optionally attaching an image or file for context.
-    - *Input:* Your question; can optionally attach a file/image.
-- **Screenshot -> Markdown:** Capture a screenshot and convert its textual content into Github Flavored Markdown.
-    - *Input:* Takes a screenshot (allows selection). You can provide additional instructions.
-- **Screenshot -> Explain:** Capture a screenshot, analyze it, and answer your question about it or describe it.
-    - *Input:* Takes a screenshot (allows selection). You can provide additional instructions or questions.
+| Command                     | Description                                                                                                |
+| :-------------------------- | :--------------------------------------------------------------------------------------------------------- |
+| **Translator**              | Translate selected text between your configured primary and secondary languages.                             |
+| **Fix grammar & spelling**  | Correct grammar, spelling, punctuation, and capitalization in the selected text.                           |
+| **Summarize it**            | Generate a concise summary of the selected text.                                                           |
+| **Explain it**              | Get an explanation for the selected word, phrase, or text.                                                 |
+| **Friendly text maker**     | Rewrite selected text to be warmer, friendlier, and more conversational.                                   |
+| **Professional text maker** | Rephrase selected text to adopt a professional and business tone.                                          |
+| **Prompt Generator**        | Create a new LLM prompt or improve an existing one based on your input idea.                               |
+| **Make text shorter**       | Significantly shorten and condense the selected text while preserving its core meaning.                    |
+| **Make text longer**        | Expand the selected text by adding relevant details, examples, or explanations.                            |
+| **Rephrase it**             | Rewrite the selected text using different words and sentence structures while maintaining the original meaning. |
+| **Ask GemAI any question**  | Ask any question on any topic. Can also process file attachments (e.g., images, documents).                |
+| **Screenshot -> Markdown**  | Capture a screenshot, extract text, and convert it to GitHub Flavored Markdown.                            |
+| **Screenshot -> Explain**   | Capture a screenshot and then ask questions about it or get an explanation of its content.                 |
 
-## Core Idea: Customizable Prompts via Markdown
+## Core Concept: Customizable System Prompts
 
-One of GemAI's most powerful features is the ability to define system prompts for each command (or use a fallback) using local Markdown files.
+A standout feature of GemAI is its support for customizable system prompts using local Markdown (`.md`) files. For each command, you can specify a corresponding Markdown file (e.g., `Translator.md`, `Summarize.md`) in a directory of your choice (configurable in preferences).
 
-- **How it works:** In the extension preferences, you can specify a `Prompt Directory` (e.g., `~/Documents/Prompts/Raycast`). For each command, GemAI
-  will look for a corresponding Markdown file (e.g., `Translator.md`, `Grammar.md`) in this directory.
-- **Benefits:**
-    - **Easy Editing:** Use your favorite Markdown editor (like Obsidian, VS Code, etc.) to craft and refine your prompts.
-    - **Version Control:** Store your prompts in a Git repository for version history, collaboration, and easy backup/sync.
-    - **Personalization:** Tailor the AI's behavior precisely to your needs for each specific task.
-    - **Consistency:** Ensure consistent AI responses by using well-defined and versioned prompts.
-- If a specific Markdown file for a command is not found, a sensible fallback prompt embedded in the extension will be used. The UI will indicate if a
-  custom prompt is active (e.g., with a 💭 icon next to the model name).
+**How it works:**
+
+1.  In GemAI's preferences, set your "Prompt Directory" (e.g., `~/Documents/MyGemAIPrompts`).
+2.  For any command you wish to customize, create a Markdown file in that directory with the name specified in the command's preferences (e.g., `Translator.md`).
+3.  Write your desired system prompt within this Markdown file. GemAI will use this prompt to instruct the AI for that specific command.
+    *   If a custom prompt file is not found or not specified, GemAI will use a built-in fallback prompt.
+
+**Benefits:**
+
+*   **Easy Editing:** Use your favorite Markdown editor (like Obsidian, VS Code, etc.) to write and refine prompts.
+*   **Version Control:** Store your prompt directory in a Git repository to track changes, revert to previous versions, and share configurations.
+*   **Personalization:** Tailor the AI's tone, style, and response format to perfectly match your requirements for each task.
+*   **Advanced Prompt Engineering:** Experiment with complex prompt structures and instructions.
 
 ## Tech Stack
 
-- TypeScript
-- Raycast API
-- Google Gemini API (`@google/genai` SDK)
-- Node.js (for file system operations and utility scripts)
+*   TypeScript
+*   Raycast API
+*   Google Gemini API (`@google/genai`)
+*   Node.js (for file system operations and utility scripts)
 
 ## Prerequisites
 
-- Raycast application installed.
-- A Google Gemini API Key. You can obtain one from Google AI Studio.
+*   **Raycast:** GemAI is an extension for Raycast.
+*   **Google Gemini API Key:** You need a valid API key from Google AI Studio. You can obtain one [here](https://aistudio.google.com/app/apikey).
 
-## Installation & Setup
+## Installation
 
-1. Install the GemAI extension from the Raycast Store.
-2. After installation, you will need to configure the extension:
-    - Open Raycast Preferences (⌘,).
-    - Navigate to Extensions > GemAI.
-    - **Gemini API Key:** Enter your Google Gemini API Key. This is required.
-    - **Default Model:** Choose a default Gemini model to use. This can be overridden per command.
-    - **Custom Model (Optional):** If you use a fine-tuned or specific model not in the list, enter its ID here.
-    - **Primary Language:** Set your default language for AI responses.
-    - **Prompt Directory (Recommended):** Specify the full path to a local directory where you will store your custom `.md` prompt files (e.g.,
-      `~/Documents/MyGemAIPrompts`). See "Customizable Prompts via Markdown" for details.
+1.  Ensure you have Raycast installed on your macOS.
+2.  Install GemAI from the Raycast Store.
+3.  After installation, configure the extension preferences.
 
 ## Configuration
 
-GemAI offers several preferences to customize its behavior:
+Access GemAI's preferences within Raycast to set up the following:
 
-### Global Preferences
+*   **Gemini API Key (Required):** Your Google Gemini API key.
+*   **Default Model (Required):** Choose the default Gemini model to be used across commands (e.g., `gemini-2.5-flash-preview-04-17`).
+*   **Custom Model (Optional):** Specify a custom model name if you're using one not in the default list. This overrides the default model.
+*   **Primary Language (Required):** The default language for AI responses and one of the languages for the Translator command (e.g., "English").
+*   **Prompt Directory (Optional):** The full path to the directory where you store your custom Markdown system prompt files (e.g., `~/Documents/Prompts/Raycast`).
 
-- **Gemini API Key:** (Required) Your API key for accessing Google Gemini models.
-- **Default Model:** The Gemini model used by default for all commands (e.g., `gemini-2.5-flash-preview-04-17`).
-- **Custom Model:** (Optional) Specify a custom Gemini model ID if you're using one not listed in the default options. This overrides the "Default
-  Model".
-- **Primary Language:** The main language you expect responses in (e.g., "English"). Some commands use this to tailor their prompts.
-- **Prompt Directory:** The absolute path to the folder where your custom Markdown prompt files are stored.
+Each command also has preferences to:
+*   **Override the Model:** Select a specific Gemini model just for that command.
+*   **Set Secondary Language (for Translator & Grammar):** Specify the other language for translation or proofreading.
+*   **Specify Prompt File:** The name of the Markdown file (within your Prompt Directory) to use as the system prompt for that command (e.g., `Translator.md`).
 
-### Per-Command Preferences
+## Basic Usage
 
-Each command in GemAI also has its own preferences, typically:
+1.  **Invoke a Command:** Open Raycast and type the name of the GemAI command you want to use (e.g., "Summarize it", "Translate").
+2.  **Input Text:**
+    *   Most commands will automatically use any text you have currently selected on your screen.
+    *   If no text is selected, or for commands like "Ask GemAI any question", you can type your query or text directly into the Raycast input field.
+    *   Some commands like "Ask GemAI any question" also support attaching files (images, text files) via the form that appears if no initial text is provided.
+3.  **Screenshot Commands:**
+    *   Commands like "Screenshot -> Markdown" or "Screenshot -> Explain" will first prompt you to select an area of your screen.
+    *   After capturing, the image will be processed, and you might be prompted for additional instructions (e.g., for "Screenshot -> Explain").
 
-- **Model for the command:** Choose a specific Gemini model for this command, or select "Default" to use the globally configured model.
-- **Markdown file with system prompt:** The name of the `.md` file (e.g., `Translator.md`) within your `Prompt Directory` to be used as the system
-  prompt for this command. If left blank or the file doesn't exist, a default internal prompt is used.
-- Some commands (like **Translator** and **Fix grammar & spelling**) may also have a **Secondary Language** preference.
+Remember to configure your API key and other preferences for the extension to function correctly. Explore the custom prompt feature to truly unlock GemAI's potential!
 
-## Usage
+## Contributing
 
-1. **Activate Raycast:** Use your Raycast hotkey.
-2. **Type Command Name:** Start typing the name of a GemAI command (e.g., "Translate", "Summarize it", "Ask GemAI").
-3. **Provide Input:**
-    - **Selected Text:** If a command supports it (most text-based commands do), it will automatically use any text you have selected on your screen.
-    - **Direct Input:** If no text is selected, or if the command requires direct input (like "Ask GemAI" or "Prompt Generator"), an input field will
-      appear. Type your query or text.
-    - **Arguments:** Some commands might take arguments directly in the Raycast input line.
-    - **File Attachments:** The "Ask GemAI" command allows attaching a file through its form interface.
-    - **Screenshots:** "Screenshot -> Markdown" and "Screenshot -> Explain" commands will trigger a screenshot capture (allowing area selection).
-4. **Get Results:** The AI's response will be displayed in the Raycast view. You can usually copy the response or paste it directly.
+Contributions are welcome! If you have ideas for improvements or find bugs, please feel free to open an issue or submit a pull request on the project's repository (once available).
 
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under the MIT License. See the `LICENSE` file for details (typically found in the source code repository).
