@@ -103,7 +103,7 @@ export default function GemAI(gemConfig: GemAIConfig) {
         setLastQuery(query);
         setPage(PageState.Response);
 
-        await showToast({style: Toast.Style.Animated, title: "Waiting for AI..."});
+        await showToast({style: Toast.Style.Animated, title: `Waiting for ${gemConfig.request.actionName} AI...`});
 
         const startTime = Date.now();
         const ai = new GoogleGenAI({apiKey: gemConfig.model.geminiApiKey});
