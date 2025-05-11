@@ -9,7 +9,8 @@ const thinkingModels = [
 
 const actionsWithotPrimaryLanguage = [
     'translate',
-    'friendly'
+    'friendly',
+    'professional'
 ];
 
 function buildRealPrompt(actionName: string, prefs: any, fallbackPrompt?: string): string {

@@ -10,7 +10,7 @@ export default function Friendly(props) {
 
     const gemAiConfig = buildGemAIConfig("Friendly", props, fallbackPrompt);
     gemAiConfig.ui.placeholder = "Enter text to make it warmer";
-    gemAiConfig.model.temperature = 0.9;
+    gemAiConfig.model.temperature = 0.7;
 
     return GemAI(gemAiConfig);
 }
