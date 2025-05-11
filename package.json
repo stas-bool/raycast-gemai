@@ -2,8 +2,9 @@
   "$schema": "https://www.raycast.com/schemas/extension.json",
   "name": "gemai",
   "title": "GemAI",
-  "description": "AI Toolbox for text editing.",
+  "description": "Gemini Toolbox for quick text editing (BYOK!).",
   "icon": "gemai-icon.png",
+  "type": "module",
   "author": "SmetDenis",
   "owner": "SmetDenis",
   "categories": [
@@ -109,6 +110,14 @@
               "value": "gemini-2.5-pro-preview-05-06"
             }
           ]
+        },
+        {
+          "name": "secondaryLanguage",
+          "title": "Secondary Language",
+          "description": "Please specify your second language to better configure the assistant's operation.",
+          "type": "textfield",
+          "default": "English",
+          "required": true
         },
         {
           "name": "promptFile",
@@ -541,6 +550,52 @@
           "default": "AskQuestion.md"
         }
       ]
+    },
+    {
+      "name": "screenshotToMarkdown",
+      "title": "Screenshot -> Markdown",
+      "description": "Convert screenshot to markdown",
+      "mode": "no-view",
+      "preferences": [
+        {
+          "name": "commandModel",
+          "title": "Model for the command",
+          "description": "Specifies the model utilized for this command.",
+          "type": "dropdown",
+          "required": false,
+          "default": "default",
+          "data": [
+            {
+              "title": "Default",
+              "value": "default"
+            },
+            {
+              "title": "Gemini 2.0 Flash-Lite",
+              "value": "gemini-2.0-flash-lite"
+            },
+            {
+              "title": "Gemini 2.0 Flash",
+              "value": "gemini-2.0-flash"
+            },
+            {
+              "title": "Gemini 2.5 Flash Preview",
+              "value": "gemini-2.5-flash-preview-04-17"
+            },
+            {
+              "title": "Gemini 2.5 Pro Preview",
+              "value": "gemini-2.5-pro-preview-05-06"
+            }
+          ]
+        },
+        {
+          "name": "promptFile",
+          "title": "Markdown file with system prompt",
+          "description": "The system prompt to use for this command.",
+          "type": "textfield",
+          "required": false,
+          "default": "Screenshot-Markdown.md"
+        }
+      ]
     }
   ],
   "preferences": [
@@ -549,14 +604,6 @@
       "title": "Gemini API Key",
       "description": "Find it at your Google AI Studio.",
       "type": "password",
-      "required": true
-    },
-    {
-      "name": "primaryLanguage",
-      "title": "Primary language",
-      "description": "The default language for AI responses.",
-      "type": "textfield",
-      "default": "English",
       "required": true
     },
     {
@@ -593,8 +640,16 @@
       "required": false
     },
     {
+      "name": "primaryLanguage",
+      "title": "Primary language",
+      "description": "The default language for AI responses.",
+      "type": "textfield",
+      "default": "English",
+      "required": true
+    },
+    {
       "name": "promptDir",
-      "title": "Prompt directory",
+      "title": "Prompt Directory",
       "description": "The full path to the directory containing Prompts in markdown format.",
       "type": "textfield",
       "required": false,

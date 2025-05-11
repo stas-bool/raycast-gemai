@@ -1,6 +1,6 @@
 import * as fs from "fs";
-import * as path from "path";
 import * as os from "os";
+import * as path from "path";
 
 export function getSystemPrompt(promptPath: string | undefined, defaultPrompt?: string): string {
     let resolvedPath = promptPath ? promptPath.trim() : "";

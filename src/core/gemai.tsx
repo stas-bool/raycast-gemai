@@ -1,19 +1,10 @@
-import {
-    Detail,
-    ActionPanel,
-    Action,
-    Form,
-    Keyboard,
-    getSelectedText,
-    Toast,
-    showToast
-} from "@raycast/api";
+import {createPartFromUri, GoogleGenAI, Part} from '@google/genai';
+import {Action, ActionPanel, Detail, Form, getSelectedText, Keyboard, showToast, Toast} from "@raycast/api";
+import * as fs from "fs";
+import mime from "mime-types";
+import * as path from "path";
 import {useEffect, useState} from "react";
 import {GemAIConfig} from "./types";
-import {GoogleGenAI, createPartFromUri, Part} from '@google/genai';
-import * as fs from "fs";
-import * as path from "path";
-import mime from "mime-types";
 
 export async function prepareAttachment(ai: GoogleGenAI, actualFilePath?: string): Promise<Part> {
     if (!actualFilePath || !fs.existsSync(actualFilePath) || !fs.lstatSync(actualFilePath).isFile()) {
@@ -133,12 +124,12 @@ export default function GemAI(gemConfig: GemAIConfig) {
             const inputTokens = await ai.models.countTokens({model: gemConfig.model.modelName, contents: query});
 
             const timer = `${totalTime} sec.`;
-            const stats = `*${gemConfig.model.modelNameUser}; ` +
-                `Time: ${timer} ` +
-                `Tokens: P:${usageMetadata?.promptTokenCount ?? 0} + ` +
+            const stats = `*${gemConfig.model.modelNameUser}*; ` +
+                `Stats: ${timer}; ` +
+                `*P:${usageMetadata?.promptTokenCount ?? 0} + ` +
                 `I:${inputTokens?.totalTokens ?? 0} + ` +
                 `T:${usageMetadata?.thoughtsTokenCount ?? 0} ~ ` +
-                `${usageMetadata?.totalTokenCount ?? 0}*`;
+                `${usageMetadata?.totalTokenCount ?? 0} tokens*`;
 
             await showToast({style: Toast.Style.Success, title: "OK", message: `Time: ${timer}`});
 

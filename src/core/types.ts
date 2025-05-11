@@ -28,3 +28,18 @@ export interface GemAIConfig {
         useSelected: boolean;
     }
 }
+
+export interface RaycastProps {
+    arguments: {
+        query?: string;
+        [key: string]: unknown;
+    };
+    fallbackText?: string;
+    launchType: string;
+    launchContext?: {
+        props?: RaycastProps;
+        attachmentFile?: string;
+        gemAiConfig?: GemAIConfig
+        [key: string]: unknown;
+    };
+}

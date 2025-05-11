@@ -1,5 +1,5 @@
 import {getPreferenceValues} from "@raycast/api";
-import {GemAIConfig} from "./types";
+import {GemAIConfig, RaycastProps} from "./types";
 import {getSystemPrompt} from "./utils";
 
 const allModels = {
@@ -47,7 +47,7 @@ function getCurrentModel(prefs: any): string {
     return prefs.commandModel === "default" ? globalModelName : prefs.commandModel;
 }
 
-export function buildGemAIConfig(actionName: string, props: any, fallbackPrompt?: string): GemAIConfig {
+export function buildGemAIConfig(actionName: string, props: RaycastProps, fallbackPrompt?: string): GemAIConfig {
     const prefs = getPreferenceValues();
 
     const currentModelName = getCurrentModel(prefs);

@@ -1,7 +1,8 @@
 import {buildGemAIConfig} from "./core/buildGemAIConfig";
 import GemAI from "./core/gemai";
+import {RaycastProps} from "./core/types";
 
-export default function Friend(props: object) {
+export default function Friend(props: RaycastProps) {
     const fallbackPrompt = "Rewrite the following text to be significantly warmer, friendlier, " +
         "and just a bit positive, adopting a conversational tone and approachable " +
         "language while preserving the original core message and key information; " +

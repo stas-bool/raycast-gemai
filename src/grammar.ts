@@ -1,8 +1,9 @@
 import {getPreferenceValues} from "@raycast/api";
 import {buildGemAIConfig} from "./core/buildGemAIConfig";
 import GemAI from "./core/gemai";
+import {RaycastProps} from "./core/types";
 
-export default function Grammar(props: object) {
+export default function Grammar(props: RaycastProps) {
     const prefs = getPreferenceValues();
     const pimaryLang = prefs.primaryLanguage.trim().toUpperCase();
     const secondLang = prefs.secondaryLanguage.trim().toUpperCase();

@@ -36,9 +36,18 @@ const languagePreferences = [
     },
 ];
 
-function makeCommand({name, title, description, promptFile, hasQuery = false, withSecondaryLanguage = false}: {
+function makeCommand({
+                         name,
+                         title,
+                         description,
+                         hasQuery = false,
+                         withSecondaryLanguage = false,
+                         promptFile,
+                         mode = "view",
+                     }: {
     name: string;
     title: string;
+    mode?: string,
     description: string;
     promptFile?: string;
     hasQuery?: boolean;
@@ -48,7 +57,7 @@ function makeCommand({name, title, description, promptFile, hasQuery = false, wi
         name,
         title,
         description,
-        mode: "view",
+        mode: mode ?? "view",
         ...(hasQuery && {
             arguments: [
                 {
@@ -86,6 +95,7 @@ const commands = [
         name: "grammar",
         title: "Fix grammar & spelling",
         description: "Fix correct grammar, spelling, punctuation for selected text.",
+        withSecondaryLanguage: true,
     }),
     makeCommand({
         name: "summator",
@@ -133,7 +143,13 @@ const commands = [
         title: "Ask GemAI any question.",
         description: "Ask AI any question on any topic.",
         promptFile: "AskQuestion.md",
-        hasQuery: false,
+    }),
+    makeCommand({
+        name: "screenshotToMarkdown",
+        title: "Screenshot -> Markdown",
+        description: "Convert screenshot to markdown",
+        mode: "no-view",
+        promptFile: "Screenshot-Markdown.md",
     }),
 ];
 
@@ -143,14 +159,6 @@ const rootPreferences = [
         title: "Gemini API Key",
         description: "Find it at your Google AI Studio.",
         type: "password",
-        required: true,
-    },
-    {
-        name: "primaryLanguage",
-        title: "Primary language",
-        description: "The default language for AI responses.",
-        type: "textfield",
-        default: "English",
         required: true,
     },
     {
@@ -170,8 +178,16 @@ const rootPreferences = [
         required: false,
     },
     {
+        name: "primaryLanguage",
+        title: "Primary language",
+        description: "The default language for AI responses.",
+        type: "textfield",
+        default: "English",
+        required: true,
+    },
+    {
         name: "promptDir",
-        title: "Prompt directory",
+        title: "Prompt Directory",
         description: "The full path to the directory containing Prompts in markdown format.",
         type: "textfield",
         required: false,
@@ -183,8 +199,9 @@ const pkg = {
     $schema: "https://www.raycast.com/schemas/extension.json",
     name: "gemai",
     title: "GemAI",
-    description: "AI Toolbox for text editing.",
+    description: "Gemini Toolbox for quick text editing (BYOK!).",
     icon: "gemai-icon.png",
+    type: "module",
     author: "SmetDenis",
     owner: "SmetDenis",
     categories: ["Productivity", "Developer Tools"],
