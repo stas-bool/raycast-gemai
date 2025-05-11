@@ -112,7 +112,10 @@ export default function GemAI(gemConfig: GemAIConfig) {
             let usageMetadata = undefined;
 
             for await (const chunk of response) {
-                markdown += chunk.text;
+                // Add only if chunk.text is defined
+                if (typeof chunk.text === "string") {
+                    markdown += chunk.text;
+                }
                 setMarkdown(markdown);
                 setRenderedText(markdown);
                 usageMetadata = chunk.usageMetadata;

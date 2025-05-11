@@ -19,6 +19,7 @@ const actionsWithPrimaryLanguage = [
     'explainer',
     'prompter',
     'summator',
+    'screenshottoexplain',
 ];
 
 function buildRealPrompt(actionName: string, prefs: any, fallbackPrompt?: string): [boolean, string] {
