@@ -79,14 +79,6 @@
       "title": "Fix grammar & spelling",
       "description": "Fix correct grammar, spelling, punctuation for selected text.",
       "mode": "view",
-      "arguments": [
-        {
-          "name": "query",
-          "placeholder": "Quick query text",
-          "type": "text",
-          "required": false
-        }
-      ],
       "preferences": [
         {
           "name": "commandModel",
@@ -230,7 +222,7 @@
     },
     {
       "name": "friend",
-      "title": "Friendly text",
+      "title": "Friendly text maker",
       "description": "Make text warmer and friendly",
       "mode": "view",
       "preferences": [
@@ -276,7 +268,7 @@
     },
     {
       "name": "professional",
-      "title": "Professional text",
+      "title": "Professional text maker",
       "description": "Make text formal and professional",
       "mode": "view",
       "preferences": [
@@ -501,6 +493,52 @@
           "type": "textfield",
           "required": false,
           "default": "Rephraser.md"
+        }
+      ]
+    },
+    {
+      "name": "askQuestion",
+      "title": "Ask GemAI any question.",
+      "description": "Ask AI any question on any topic.",
+      "mode": "view",
+      "preferences": [
+        {
+          "name": "commandModel",
+          "title": "Model for the command",
+          "description": "Specifies the model utilized for this command.",
+          "type": "dropdown",
+          "required": false,
+          "default": "default",
+          "data": [
+            {
+              "title": "Default",
+              "value": "default"
+            },
+            {
+              "title": "Gemini 2.0 Flash-Lite",
+              "value": "gemini-2.0-flash-lite"
+            },
+            {
+              "title": "Gemini 2.0 Flash",
+              "value": "gemini-2.0-flash"
+            },
+            {
+              "title": "Gemini 2.5 Flash Preview",
+              "value": "gemini-2.5-flash-preview-04-17"
+            },
+            {
+              "title": "Gemini 2.5 Pro Preview",
+              "value": "gemini-2.5-pro-preview-05-06"
+            }
+          ]
+        },
+        {
+          "name": "promptFile",
+          "title": "Markdown file with system prompt",
+          "description": "The system prompt to use for this command.",
+          "type": "textfield",
+          "required": false,
+          "default": "AskQuestion.md"
         }
       ]
     }

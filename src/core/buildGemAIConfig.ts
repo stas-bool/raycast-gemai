@@ -15,6 +15,7 @@ const thinkingModels = [
 ];
 
 const actionsWithPrimaryLanguage = [
+    'askquestion',
     'explainer',
     'prompter',
     'summator',

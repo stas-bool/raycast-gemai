@@ -36,11 +36,11 @@ const languagePreferences = [
     },
 ];
 
-function makeCommand({name, title, description, promptFile, hasQuery = true, withSecondaryLanguage = true}: {
+function makeCommand({name, title, description, promptFile, hasQuery = false, withSecondaryLanguage = false}: {
     name: string;
     title: string;
     description: string;
-    promptFile: string;
+    promptFile?: string;
     hasQuery?: boolean;
     withSecondaryLanguage?: boolean;
 }) {
@@ -68,7 +68,7 @@ function makeCommand({name, title, description, promptFile, hasQuery = true, wit
                 description: "The system prompt to use for this command.",
                 type: "textfield",
                 required: false,
-                default: `${capitalizeFirstLetter(name)}.md`,
+                default: promptFile ?? `${capitalizeFirstLetter(name)}.md`,
             },
         ],
     };
@@ -79,78 +79,60 @@ const commands = [
         name: "translator",
         title: "Translator",
         description: "Translate selected text.",
-        promptFile: "Translator.md",
         withSecondaryLanguage: true,
+        hasQuery: true,
     }),
     makeCommand({
         name: "grammar",
         title: "Fix grammar & spelling",
         description: "Fix correct grammar, spelling, punctuation for selected text.",
-        promptFile: "Grammar.md",
-        withSecondaryLanguage: false,
     }),
     makeCommand({
         name: "summator",
         title: "Summarize it",
         description: "Summary selected text.",
-        promptFile: "Summator.md",
-        withSecondaryLanguage: false,
-        hasQuery: false,
     }),
     makeCommand({
         name: "explainer",
         title: "Explain it",
         description: "Explain selected text.",
-        promptFile: "Explainer.md",
-        withSecondaryLanguage: false,
         hasQuery: true,
     }),
     makeCommand({
         name: "friend",
-        title: "Friendly text",
+        title: "Friendly text maker",
         description: "Make text warmer and friendly",
-        promptFile: "Friend.md",
-        withSecondaryLanguage: false,
-        hasQuery: false,
     }),
     makeCommand({
         name: "professional",
-        title: "Professional text",
+        title: "Professional text maker",
         description: "Make text formal and professional",
-        promptFile: "Professional.md",
-        withSecondaryLanguage: false,
-        hasQuery: false,
     }),
     makeCommand({
         name: "prompter",
         title: "Prompt Generator",
         description: "Create or improve your prompt",
-        promptFile: "Prompter.md",
-        withSecondaryLanguage: false,
-        hasQuery: false,
     }),
     makeCommand({
         name: "shorter",
         title: "Make text shorter",
         description: "Make selected text significantly shorter and more concise.",
-        promptFile: "Shorter.md",
-        withSecondaryLanguage: false,
-        hasQuery: false,
     }),
     makeCommand({
         name: "longer",
         title: "Make text longer",
         description: "Make selected text significantly longer.",
-        promptFile: "Longer.md",
-        withSecondaryLanguage: false,
-        hasQuery: false,
     }),
     makeCommand({
         name: "rephraser",
         title: "Rephrase it",
         description: "Rewrite the provided text using different phrasing while maintaining the original meaning.",
-        promptFile: "Rephraser.md",
-        withSecondaryLanguage: false,
+    }),
+    makeCommand({
+        name: "askQuestion",
+        title: "Ask GemAI any question.",
+        description: "Ask AI any question on any topic.",
+        promptFile: "AskQuestion.md",
         hasQuery: false,
     }),
 ];
@@ -197,7 +179,6 @@ const rootPreferences = [
     },
 ];
 
-// Финальный объект package.json
 const pkg = {
     $schema: "https://www.raycast.com/schemas/extension.json",
     name: "gemai",
@@ -235,4 +216,4 @@ const pkg = {
 };
 
 fs.writeFileSync("./package.json", JSON.stringify(pkg, null, 2) + "\n", "utf-8");
-console.log("package.json успешно сгенерирован!");
+console.log("package.json updated!");
