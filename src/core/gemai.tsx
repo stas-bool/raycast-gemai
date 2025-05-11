@@ -73,14 +73,14 @@ export async function sendRequestToGemini(
             temperature: gemConfig.model.temperature,
             thinkingConfig: gemConfig.model.thinkingConfig,
             systemInstruction: gemConfig.model.systemPrompt,
-            topK: gemConfig.model.topK,
-            topP: gemConfig.model.topP,
             frequencyPenalty: gemConfig.model.frequencyPenalty,
             presencePenalty: gemConfig.model.presencePenalty,
+            topK: gemConfig.model.topK,
+            topP: gemConfig.model.topP,
         },
     };
 
-    //console.log(requestParams);
+    // console.log(requestParams);
 
     return await ai.models.generateContentStream(requestParams);
 }

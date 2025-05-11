@@ -7,6 +7,10 @@ const thinkingModels = [
     'gemini-2.5-pro-preview-05-06'
 ];
 
+const actionsWithotPrimaryLanguage = [
+    'translate',
+    'friendly'
+];
 
 function buildRealPrompt(actionName: string, prefs: any, fallbackPrompt?: string): string {
     const systemPrompt = getSystemPrompt(prefs.promptDir + "/" + prefs.promptFile, fallbackPrompt);
@@ -24,7 +28,7 @@ Otherwise, adhere to the Default Response Language specified above (${primaryLan
 
 `;
 
-    return actionName.toLocaleLowerCase().trim() === "translate"
+    return actionsWithotPrimaryLanguage.includes(actionName.toLocaleLowerCase().trim())
         ? systemPrompt
         : `${defaultLanguage}\n${systemPrompt}`;
 }
@@ -38,7 +42,7 @@ export function buildGemAIConfig(actionName: string, props: any, fallbackPrompt?
     const currentModelName = prefs.commandModel === "default" ? globalModelName : prefs.commandModel;
 
     // Thinking mode if any
-    const thinkingConfig = {includeThoughts: false, thinkingBudget: 0};
+    const thinkingConfig = {includeThoughts: false, thinkingBudget: 2000};
 
     return {
         model: {
