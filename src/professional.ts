@@ -1,8 +1,7 @@
-import {getPreferenceValues} from "@raycast/api";
 import {buildGemAIConfig} from "./core/buildGemAIConfig";
 import GemAI from "./core/gemai";
 
-export default function Professional(props) {
+export default function Professional(props: object) {
     const fallbackPrompt = "Rephrase the following text in your own words, using a professional and business tone, " +
         "adopting a conversational tone and approachable language while preserving the original core message and key information; " +
         "ALSWAYS return ONLY the modified text and nothing else.";

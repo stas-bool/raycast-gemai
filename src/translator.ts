@@ -3,7 +3,7 @@ import {buildGemAIConfig} from "./core/buildGemAIConfig";
 import GemAI from "./core/gemai";
 import {dump} from "./core/utils";
 
-export default function Translate(props) {
+export default function Translator(props: object) {
     const prefs = getPreferenceValues();
 
     const pimaryLang = prefs.primaryLanguage.trim().toUpperCase();
@@ -15,7 +15,7 @@ Please do not distort or simplify the content.
 If the following text is in ${pimaryLang} then translate it to ${secondLang}, otherwise translate following text to ${pimaryLang}.
 ALSWAYS ONLY return the translated text and nothing else.`;
 
-    const gemAiConfig = buildGemAIConfig("Translate", props, fallbackPrompt);
+    const gemAiConfig = buildGemAIConfig("Translator", props, fallbackPrompt);
     gemAiConfig.ui.placeholder = "Enter text to translate";
 
     return GemAI(gemAiConfig);

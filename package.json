@@ -10,8 +10,8 @@
     "license"         : "MIT",
     "commands"        : [
         {
-            "name"        : "translate",
-            "title"       : "Translate",
+            "name"        : "translator",
+            "title"       : "Translator",
             "description" : "Translate selected text",
             "mode"        : "view",
             "arguments"   : [
@@ -73,7 +73,7 @@
         },
         {
             "name"        : "grammar",
-            "title"       : "Grammar",
+            "title"       : "Fix grammar & spelling",
             "description" : "Fix correct grammar, spelling, punctuation for selected text",
             "mode"        : "view",
             "arguments"   : [
@@ -134,8 +134,8 @@
             ]
         },
         {
-            "name"        : "summary",
-            "title"       : "Summary",
+            "name"        : "summator",
+            "title"       : "Summarize it",
             "description" : "Summary selected text",
             "mode"        : "view",
             "preferences" : [
@@ -180,8 +180,8 @@
             ]
         },
         {
-            "name"        : "explain",
-            "title"       : "Explain",
+            "name"        : "explainer",
+            "title"       : "Explain it",
             "description" : "Explain selected text",
             "mode"        : "view",
             "preferences" : [
@@ -226,8 +226,8 @@
             ]
         },
         {
-            "name"        : "friendly",
-            "title"       : "Friendly",
+            "name"        : "friend",
+            "title"       : "Make it friendly",
             "description" : "Make text friendlier",
             "mode"        : "view",
             "preferences" : [
@@ -273,7 +273,7 @@
         },
         {
             "name"        : "professional",
-            "title"       : "Professional",
+            "title"       : "Make it professional",
             "description" : "Make text formal and professional",
             "mode"        : "view",
             "preferences" : [
@@ -314,6 +314,144 @@
                     "type"        : "textfield",
                     "required"    : false,
                     "default"     : "Professional.md"
+                }
+            ]
+        },
+        {
+            "name"        : "prompter",
+            "title"       : "Prompt Generator",
+            "description" : "Create or improve your prompt",
+            "mode"        : "view",
+            "preferences" : [
+                {
+                    "name"        : "commandModel",
+                    "title"       : "Specific Model",
+                    "description" : "Which model this command uses.",
+                    "type"        : "dropdown",
+                    "required"    : false,
+                    "default"     : "default",
+                    "data"        : [
+                        {
+                            "title" : "Default",
+                            "value" : "default"
+                        },
+                        {
+                            "title" : "Gemini 2.0 Flash-Lite",
+                            "value" : "gemini-2.0-flash-lite"
+                        },
+                        {
+                            "title" : "Gemini 2.0 Flash",
+                            "value" : "gemini-2.0-flash"
+                        },
+                        {
+                            "title" : "Gemini 2.5 Flash Preview",
+                            "value" : "gemini-2.5-flash-preview-04-17"
+                        },
+                        {
+                            "title" : "Gemini 2.5 Pro Preview",
+                            "value" : "gemini-2.5-pro-preview-05-06"
+                        }
+                    ]
+                },
+                {
+                    "name"        : "promptFile",
+                    "title"       : "Markdown file with system prompt",
+                    "description" : "The system prompt to use for this command.",
+                    "type"        : "textfield",
+                    "required"    : false,
+                    "default"     : "Prompter.md"
+                }
+            ]
+        },
+        {
+            "name"        : "shorter",
+            "title"       : "Make text shorter",
+            "description" : "Make selected text significantly shorter and more concise",
+            "mode"        : "view",
+            "preferences" : [
+                {
+                    "name"        : "commandModel",
+                    "title"       : "Specific Model",
+                    "description" : "Which model this command uses.",
+                    "type"        : "dropdown",
+                    "required"    : false,
+                    "default"     : "default",
+                    "data"        : [
+                        {
+                            "title" : "Default",
+                            "value" : "default"
+                        },
+                        {
+                            "title" : "Gemini 2.0 Flash-Lite",
+                            "value" : "gemini-2.0-flash-lite"
+                        },
+                        {
+                            "title" : "Gemini 2.0 Flash",
+                            "value" : "gemini-2.0-flash"
+                        },
+                        {
+                            "title" : "Gemini 2.5 Flash Preview",
+                            "value" : "gemini-2.5-flash-preview-04-17"
+                        },
+                        {
+                            "title" : "Gemini 2.5 Pro Preview",
+                            "value" : "gemini-2.5-pro-preview-05-06"
+                        }
+                    ]
+                },
+                {
+                    "name"        : "promptFile",
+                    "title"       : "Markdown file with system prompt",
+                    "description" : "The system prompt to use for this command.",
+                    "type"        : "textfield",
+                    "required"    : false,
+                    "default"     : "Shorter.md"
+                }
+            ]
+        },
+        {
+            "name"        : "longer",
+            "title"       : "Make text longer",
+            "description" : "Make selected text significantly longer",
+            "mode"        : "view",
+            "preferences" : [
+                {
+                    "name"        : "commandModel",
+                    "title"       : "Specific Model",
+                    "description" : "Which model this command uses.",
+                    "type"        : "dropdown",
+                    "required"    : false,
+                    "default"     : "default",
+                    "data"        : [
+                        {
+                            "title" : "Default",
+                            "value" : "default"
+                        },
+                        {
+                            "title" : "Gemini 2.0 Flash-Lite",
+                            "value" : "gemini-2.0-flash-lite"
+                        },
+                        {
+                            "title" : "Gemini 2.0 Flash",
+                            "value" : "gemini-2.0-flash"
+                        },
+                        {
+                            "title" : "Gemini 2.5 Flash Preview",
+                            "value" : "gemini-2.5-flash-preview-04-17"
+                        },
+                        {
+                            "title" : "Gemini 2.5 Pro Preview",
+                            "value" : "gemini-2.5-pro-preview-05-06"
+                        }
+                    ]
+                },
+                {
+                    "name"        : "promptFile",
+                    "title"       : "Markdown file with system prompt",
+                    "description" : "The system prompt to use for this command.",
+                    "type"        : "textfield",
+                    "required"    : false,
+                    "default"     : "Longer.md"
                 }
             ]
         }

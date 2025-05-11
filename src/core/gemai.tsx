@@ -87,8 +87,6 @@ export async function sendRequestToGemini(
 
 // --- Main component ---
 export default function GemAI(gemConfig: GemAIConfig) {
-    // dump({request, model, ui});
-
     const PageState = {Form: 0, Response: 1};
 
     // Init states

@@ -4,34 +4,30 @@ import {getSystemPrompt} from "./utils";
 
 const thinkingModels = [
     'gemini-2.5-flash-preview-04-17',
-    'gemini-2.5-pro-preview-05-06'
+    'gemini-2.5-pro-preview-05-06',
 ];
 
-const actionsWithotPrimaryLanguage = [
-    'translate',
-    'friendly',
-    'professional'
+const actionsWithPrimaryLanguage = [
+    'explainer',
+    'prompter',
+    'summator',
 ];
 
 function buildRealPrompt(actionName: string, prefs: any, fallbackPrompt?: string): string {
     const systemPrompt = getSystemPrompt(prefs.promptDir + "/" + prefs.promptFile, fallbackPrompt);
     const primaryLanguage = prefs.primaryLanguage.trim().toUpperCase()
     const defaultLanguage = `## Language Instruction Layer
-
 **Default Response Language:** ${primaryLanguage}.
-
 **Condition:** If a specific instruction to use a different language (e.g., "translate to English",
 "respond in French", "in Spanish please") is present either in the main body of the current prompt OR in any
 subsequent user messages within this conversation, please prioritize and follow that explicit language instruction.
 Otherwise, adhere to the Default Response Language specified above (${primaryLanguage}).
-
 ---
-
 `;
 
-    return actionsWithotPrimaryLanguage.includes(actionName.toLocaleLowerCase().trim())
-        ? systemPrompt
-        : `${defaultLanguage}\n${systemPrompt}`;
+    return actionsWithPrimaryLanguage.includes(actionName.toLocaleLowerCase().trim())
+        ? `${defaultLanguage}\n\n${systemPrompt}`
+        : systemPrompt;
 }
 
 export function buildGemAIConfig(actionName: string, props: any, fallbackPrompt?: string): GemAIConfig {
@@ -43,7 +39,7 @@ export function buildGemAIConfig(actionName: string, props: any, fallbackPrompt?
     const currentModelName = prefs.commandModel === "default" ? globalModelName : prefs.commandModel;
 
     // Thinking mode if any
-    const thinkingConfig = {includeThoughts: false, thinkingBudget: 2000};
+    const thinkingConfig = {includeThoughts: false, thinkingBudget: 4000};
 
     return {
         model: {
