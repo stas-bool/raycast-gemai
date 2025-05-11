@@ -1,587 +1,588 @@
 {
-    "$schema"         : "https://www.raycast.com/schemas/extension.json",
-    "name"            : "gemai",
-    "title"           : "GemAI",
-    "description"     : "AI Tools for text editing.",
-    "icon"            : "gemai-icon.png",
-    "author"          : "SmetDenis",
-    "owner"           : "SmetDenis",
-    "categories"      : ["Productivity", "Developer Tools"],
-    "license"         : "MIT",
-    "commands"        : [
+  "$schema": "https://www.raycast.com/schemas/extension.json",
+  "name": "gemai",
+  "title": "GemAI",
+  "description": "AI Toolbox for text editing.",
+  "icon": "gemai-icon.png",
+  "author": "SmetDenis",
+  "owner": "SmetDenis",
+  "categories": [
+    "Productivity",
+    "Developer Tools"
+  ],
+  "license": "MIT",
+  "commands": [
+    {
+      "name": "translator",
+      "title": "Translator",
+      "description": "Translate selected text",
+      "mode": "view",
+      "arguments": [
         {
-            "name"        : "translator",
-            "title"       : "Translator",
-            "description" : "Translate selected text",
-            "mode"        : "view",
-            "arguments"   : [
-                {
-                    "name"        : "query",
-                    "placeholder" : "Text to translate",
-                    "type"        : "text",
-                    "required"    : false
-                }
-            ],
-            "preferences" : [
-                {
-                    "name"        : "commandModel",
-                    "title"       : "Specific Model",
-                    "description" : "Which model this command uses.",
-                    "type"        : "dropdown",
-                    "required"    : false,
-                    "default"     : "default",
-                    "data"        : [
-                        {
-                            "title" : "Default",
-                            "value" : "default"
-                        },
-                        {
-                            "title" : "Gemini 2.0 Flash-Lite",
-                            "value" : "gemini-2.0-flash-lite"
-                        },
-                        {
-                            "title" : "Gemini 2.0 Flash",
-                            "value" : "gemini-2.0-flash"
-                        },
-                        {
-                            "title" : "Gemini 2.5 Flash Preview",
-                            "value" : "gemini-2.5-flash-preview-04-17"
-                        },
-                        {
-                            "title" : "Gemini 2.5 Pro Preview",
-                            "value" : "gemini-2.5-pro-preview-05-06"
-                        }
-                    ]
-                },
-                {
-                    "name"        : "secondaryLanguage",
-                    "title"       : "Secondary Language",
-                    "description" : "Please specify your second language to better configure the assistant's operation.",
-                    "type"        : "textfield",
-                    "default"     : "English",
-                    "required"    : true
-                },
-                {
-                    "name"        : "promptFile",
-                    "title"       : "Markdown file with system prompt",
-                    "description" : "The system prompt to use for this command.",
-                    "type"        : "textfield",
-                    "required"    : false,
-                    "default"     : "Translate.md"
-                }
-            ]
-        },
-        {
-            "name"        : "grammar",
-            "title"       : "Fix grammar & spelling",
-            "description" : "Fix correct grammar, spelling, punctuation for selected text",
-            "mode"        : "view",
-            "arguments"   : [
-                {
-                    "name"        : "query",
-                    "placeholder" : "Text to correct grammar",
-                    "type"        : "text",
-                    "required"    : false
-                }
-            ],
-            "preferences" : [
-                {
-                    "name"        : "commandModel",
-                    "title"       : "Specific Model",
-                    "description" : "Which model this command uses.",
-                    "type"        : "dropdown",
-                    "required"    : false,
-                    "default"     : "default",
-                    "data"        : [
-                        {
-                            "title" : "Default",
-                            "value" : "default"
-                        },
-                        {
-                            "title" : "Gemini 2.0 Flash-Lite",
-                            "value" : "gemini-2.0-flash-lite"
-                        },
-                        {
-                            "title" : "Gemini 2.0 Flash",
-                            "value" : "gemini-2.0-flash"
-                        },
-                        {
-                            "title" : "Gemini 2.5 Flash Preview",
-                            "value" : "gemini-2.5-flash-preview-04-17"
-                        },
-                        {
-                            "title" : "Gemini 2.5 Pro Preview",
-                            "value" : "gemini-2.5-pro-preview-05-06"
-                        }
-                    ]
-                },
-                {
-                    "name"        : "secondaryLanguage",
-                    "title"       : "Secondary Language",
-                    "description" : "Please specify your second language to better configure the assistant's operation.",
-                    "type"        : "textfield",
-                    "default"     : "English",
-                    "required"    : true
-                },
-                {
-                    "name"        : "promptFile",
-                    "title"       : "Markdown file with system prompt",
-                    "description" : "The system prompt to use for this command.",
-                    "type"        : "textfield",
-                    "required"    : false,
-                    "default"     : "Grammar.md"
-                }
-            ]
-        },
-        {
-            "name"        : "summator",
-            "title"       : "Summarize it",
-            "description" : "Summary selected text",
-            "mode"        : "view",
-            "preferences" : [
-                {
-                    "name"        : "commandModel",
-                    "title"       : "Specific Model",
-                    "description" : "Which model this command uses.",
-                    "type"        : "dropdown",
-                    "required"    : false,
-                    "default"     : "default",
-                    "data"        : [
-                        {
-                            "title" : "Default",
-                            "value" : "default"
-                        },
-                        {
-                            "title" : "Gemini 2.0 Flash-Lite",
-                            "value" : "gemini-2.0-flash-lite"
-                        },
-                        {
-                            "title" : "Gemini 2.0 Flash",
-                            "value" : "gemini-2.0-flash"
-                        },
-                        {
-                            "title" : "Gemini 2.5 Flash Preview",
-                            "value" : "gemini-2.5-flash-preview-04-17"
-                        },
-                        {
-                            "title" : "Gemini 2.5 Pro Preview",
-                            "value" : "gemini-2.5-pro-preview-05-06"
-                        }
-                    ]
-                },
-                {
-                    "name"        : "promptFile",
-                    "title"       : "Markdown file with system prompt",
-                    "description" : "The system prompt to use for this command.",
-                    "type"        : "textfield",
-                    "required"    : false,
-                    "default"     : "Summary.md"
-                }
-            ]
-        },
-        {
-            "name"        : "explainer",
-            "title"       : "Explain it",
-            "description" : "Explain selected text",
-            "mode"        : "view",
-            "preferences" : [
-                {
-                    "name"        : "commandModel",
-                    "title"       : "Specific Model",
-                    "description" : "Which model this command uses.",
-                    "type"        : "dropdown",
-                    "required"    : false,
-                    "default"     : "default",
-                    "data"        : [
-                        {
-                            "title" : "Default",
-                            "value" : "default"
-                        },
-                        {
-                            "title" : "Gemini 2.0 Flash-Lite",
-                            "value" : "gemini-2.0-flash-lite"
-                        },
-                        {
-                            "title" : "Gemini 2.0 Flash",
-                            "value" : "gemini-2.0-flash"
-                        },
-                        {
-                            "title" : "Gemini 2.5 Flash Preview",
-                            "value" : "gemini-2.5-flash-preview-04-17"
-                        },
-                        {
-                            "title" : "Gemini 2.5 Pro Preview",
-                            "value" : "gemini-2.5-pro-preview-05-06"
-                        }
-                    ]
-                },
-                {
-                    "name"        : "promptFile",
-                    "title"       : "Markdown file with system prompt",
-                    "description" : "The system prompt to use for this command.",
-                    "type"        : "textfield",
-                    "required"    : false,
-                    "default"     : "Explain.md"
-                }
-            ]
-        },
-        {
-            "name"        : "friend",
-            "title"       : "Make it friendly",
-            "description" : "Make text friendlier",
-            "mode"        : "view",
-            "preferences" : [
-                {
-                    "name"        : "commandModel",
-                    "title"       : "Specific Model",
-                    "description" : "Which model this command uses.",
-                    "type"        : "dropdown",
-                    "required"    : false,
-                    "default"     : "default",
-                    "data"        : [
-                        {
-                            "title" : "Default",
-                            "value" : "default"
-                        },
-                        {
-                            "title" : "Gemini 2.0 Flash-Lite",
-                            "value" : "gemini-2.0-flash-lite"
-                        },
-                        {
-                            "title" : "Gemini 2.0 Flash",
-                            "value" : "gemini-2.0-flash"
-                        },
-                        {
-                            "title" : "Gemini 2.5 Flash Preview",
-                            "value" : "gemini-2.5-flash-preview-04-17"
-                        },
-                        {
-                            "title" : "Gemini 2.5 Pro Preview",
-                            "value" : "gemini-2.5-pro-preview-05-06"
-                        }
-                    ]
-                },
-                {
-                    "name"        : "promptFile",
-                    "title"       : "Markdown file with system prompt",
-                    "description" : "The system prompt to use for this command.",
-                    "type"        : "textfield",
-                    "required"    : false,
-                    "default"     : "Friendly.md"
-                }
-            ]
-        },
-        {
-            "name"        : "professional",
-            "title"       : "Make it professional",
-            "description" : "Make text formal and professional",
-            "mode"        : "view",
-            "preferences" : [
-                {
-                    "name"        : "commandModel",
-                    "title"       : "Specific Model",
-                    "description" : "Which model this command uses.",
-                    "type"        : "dropdown",
-                    "required"    : false,
-                    "default"     : "default",
-                    "data"        : [
-                        {
-                            "title" : "Default",
-                            "value" : "default"
-                        },
-                        {
-                            "title" : "Gemini 2.0 Flash-Lite",
-                            "value" : "gemini-2.0-flash-lite"
-                        },
-                        {
-                            "title" : "Gemini 2.0 Flash",
-                            "value" : "gemini-2.0-flash"
-                        },
-                        {
-                            "title" : "Gemini 2.5 Flash Preview",
-                            "value" : "gemini-2.5-flash-preview-04-17"
-                        },
-                        {
-                            "title" : "Gemini 2.5 Pro Preview",
-                            "value" : "gemini-2.5-pro-preview-05-06"
-                        }
-                    ]
-                },
-                {
-                    "name"        : "promptFile",
-                    "title"       : "Markdown file with system prompt",
-                    "description" : "The system prompt to use for this command.",
-                    "type"        : "textfield",
-                    "required"    : false,
-                    "default"     : "Professional.md"
-                }
-            ]
-        },
-        {
-            "name"        : "prompter",
-            "title"       : "Prompt Generator",
-            "description" : "Create or improve your prompt",
-            "mode"        : "view",
-            "preferences" : [
-                {
-                    "name"        : "commandModel",
-                    "title"       : "Specific Model",
-                    "description" : "Which model this command uses.",
-                    "type"        : "dropdown",
-                    "required"    : false,
-                    "default"     : "default",
-                    "data"        : [
-                        {
-                            "title" : "Default",
-                            "value" : "default"
-                        },
-                        {
-                            "title" : "Gemini 2.0 Flash-Lite",
-                            "value" : "gemini-2.0-flash-lite"
-                        },
-                        {
-                            "title" : "Gemini 2.0 Flash",
-                            "value" : "gemini-2.0-flash"
-                        },
-                        {
-                            "title" : "Gemini 2.5 Flash Preview",
-                            "value" : "gemini-2.5-flash-preview-04-17"
-                        },
-                        {
-                            "title" : "Gemini 2.5 Pro Preview",
-                            "value" : "gemini-2.5-pro-preview-05-06"
-                        }
-                    ]
-                },
-                {
-                    "name"        : "promptFile",
-                    "title"       : "Markdown file with system prompt",
-                    "description" : "The system prompt to use for this command.",
-                    "type"        : "textfield",
-                    "required"    : false,
-                    "default"     : "Prompter.md"
-                }
-            ]
-        },
-        {
-            "name"        : "shorter",
-            "title"       : "Make text shorter",
-            "description" : "Make selected text significantly shorter and more concise",
-            "mode"        : "view",
-            "preferences" : [
-                {
-                    "name"        : "commandModel",
-                    "title"       : "Specific Model",
-                    "description" : "Which model this command uses.",
-                    "type"        : "dropdown",
-                    "required"    : false,
-                    "default"     : "default",
-                    "data"        : [
-                        {
-                            "title" : "Default",
-                            "value" : "default"
-                        },
-                        {
-                            "title" : "Gemini 2.0 Flash-Lite",
-                            "value" : "gemini-2.0-flash-lite"
-                        },
-                        {
-                            "title" : "Gemini 2.0 Flash",
-                            "value" : "gemini-2.0-flash"
-                        },
-                        {
-                            "title" : "Gemini 2.5 Flash Preview",
-                            "value" : "gemini-2.5-flash-preview-04-17"
-                        },
-                        {
-                            "title" : "Gemini 2.5 Pro Preview",
-                            "value" : "gemini-2.5-pro-preview-05-06"
-                        }
-                    ]
-                },
-                {
-                    "name"        : "promptFile",
-                    "title"       : "Markdown file with system prompt",
-                    "description" : "The system prompt to use for this command.",
-                    "type"        : "textfield",
-                    "required"    : false,
-                    "default"     : "Shorter.md"
-                }
-            ]
-        },
-        {
-            "name"        : "longer",
-            "title"       : "Make text longer",
-            "description" : "Make selected text significantly longer",
-            "mode"        : "view",
-            "preferences" : [
-                {
-                    "name"        : "commandModel",
-                    "title"       : "Specific Model",
-                    "description" : "Which model this command uses.",
-                    "type"        : "dropdown",
-                    "required"    : false,
-                    "default"     : "default",
-                    "data"        : [
-                        {
-                            "title" : "Default",
-                            "value" : "default"
-                        },
-                        {
-                            "title" : "Gemini 2.0 Flash-Lite",
-                            "value" : "gemini-2.0-flash-lite"
-                        },
-                        {
-                            "title" : "Gemini 2.0 Flash",
-                            "value" : "gemini-2.0-flash"
-                        },
-                        {
-                            "title" : "Gemini 2.5 Flash Preview",
-                            "value" : "gemini-2.5-flash-preview-04-17"
-                        },
-                        {
-                            "title" : "Gemini 2.5 Pro Preview",
-                            "value" : "gemini-2.5-pro-preview-05-06"
-                        }
-                    ]
-                },
-                {
-                    "name"        : "promptFile",
-                    "title"       : "Markdown file with system prompt",
-                    "description" : "The system prompt to use for this command.",
-                    "type"        : "textfield",
-                    "required"    : false,
-                    "default"     : "Longer.md"
-                }
-            ]
-        },
-        {
-            "name"        : "rephraser",
-            "title"       : "Rephrase it",
-            "description" : "Rewrite the provided text using different phrasing while maintaining the original meaning.",
-            "mode"        : "view",
-            "preferences" : [
-                {
-                    "name"        : "commandModel",
-                    "title"       : "Specific Model",
-                    "description" : "Which model this command uses.",
-                    "type"        : "dropdown",
-                    "required"    : false,
-                    "default"     : "default",
-                    "data"        : [
-                        {
-                            "title" : "Default",
-                            "value" : "default"
-                        },
-                        {
-                            "title" : "Gemini 2.0 Flash-Lite",
-                            "value" : "gemini-2.0-flash-lite"
-                        },
-                        {
-                            "title" : "Gemini 2.0 Flash",
-                            "value" : "gemini-2.0-flash"
-                        },
-                        {
-                            "title" : "Gemini 2.5 Flash Preview",
-                            "value" : "gemini-2.5-flash-preview-04-17"
-                        },
-                        {
-                            "title" : "Gemini 2.5 Pro Preview",
-                            "value" : "gemini-2.5-pro-preview-05-06"
-                        }
-                    ]
-                },
-                {
-                    "name"        : "promptFile",
-                    "title"       : "Markdown file with system prompt",
-                    "description" : "The system prompt to use for this command.",
-                    "type"        : "textfield",
-                    "required"    : false,
-                    "default"     : "Rephrase.md"
-                }
-            ]
+          "name": "query",
+          "placeholder": "Quick query text",
+          "type": "text",
+          "required": false
         }
-    ],
-
-    "preferences"     : [
+      ],
+      "preferences": [
         {
-            "name"        : "geminiApiKey",
-            "title"       : "Gemini API Key",
-            "description" : "Find it in your Google AI Studio.",
-            "type"        : "password",
-            "required"    : true
+          "name": "commandModel",
+          "title": "Specific Model",
+          "description": "Which model this command uses.",
+          "type": "dropdown",
+          "required": false,
+          "default": "default",
+          "data": [
+            {
+              "title": "Default",
+              "value": "default"
+            },
+            {
+              "title": "Gemini 2.0 Flash-Lite",
+              "value": "gemini-2.0-flash-lite"
+            },
+            {
+              "title": "Gemini 2.0 Flash",
+              "value": "gemini-2.0-flash"
+            },
+            {
+              "title": "Gemini 2.5 Flash Preview",
+              "value": "gemini-2.5-flash-preview-04-17"
+            },
+            {
+              "title": "Gemini 2.5 Pro Preview",
+              "value": "gemini-2.5-pro-preview-05-06"
+            }
+          ]
         },
         {
-            "name"        : "primaryLanguage",
-            "title"       : "Primary language",
-            "description" : "The default language for AI responses.",
-            "type"        : "textfield",
-            "default"     : "English",
-            "required"    : true
+          "name": "secondaryLanguage",
+          "title": "Secondary Language",
+          "description": "Please specify your second language to better configure the assistant's operation.",
+          "type": "textfield",
+          "default": "English",
+          "required": true
         },
         {
-            "description" : "Which model Gemini for Raycast uses by default (unless overriden by individual commands).",
-            "name"        : "defaultModel",
-            "title"       : "Model",
-            "type"        : "dropdown",
-            "required"    : true,
-            "default"     : "gemini-2.5-flash-preview-04-17",
-            "data"        : [
-                {
-                    "title" : "Gemini 2.0 Flash-Lite",
-                    "value" : "gemini-2.0-flash-lite"
-                },
-                {
-                    "title" : "Gemini 2.0 Flash",
-                    "value" : "gemini-2.0-flash"
-                },
-                {
-                    "title" : "Gemini 2.5 Flash Preview",
-                    "value" : "gemini-2.5-flash-preview-04-17"
-                },
-                {
-                    "title" : "Gemini 2.5 Pro Preview",
-                    "value" : "gemini-2.5-pro-preview-05-06"
-                }
-            ]
-        },
-        {
-            "name"        : "customModel",
-            "title"       : "Custom Model",
-            "description" : "Setup ustom model if you are using a specific model not included in the dropdown menu. This option will override the default model. Leave this field empty if you do not have a custom model.",
-            "type"        : "textfield",
-            "required"    : false
-        },
-        {
-            "name"        : "promptDir",
-            "title"       : "Prompt directory",
-            "description" : "The full path to the directory containing Prompts in markdown format",
-            "type"        : "textfield",
-            "required"    : false,
-            "default"     : "~/Documents/Prompts/Raycast"
+          "name": "promptFile",
+          "title": "Markdown file with system prompt",
+          "description": "The system prompt to use for this command.",
+          "type": "textfield",
+          "required": false,
+          "default": "Translator.md"
         }
-    ],
-
-    "dependencies"    : {
-        "@google/genai"  : "^0.13.0",
-        "@raycast/api"   : "^1.98.2",
-        "@raycast/utils" : "^1.17.0",
-        "mime-types"     : "^3.0.1"
+      ]
     },
-    "devDependencies" : {
-        "@raycast/eslint-config" : "^2.0.4",
-        "@types/node"            : "22.13.10",
-        "@types/react"           : "19.0.10",
-        "eslint"                 : "^9.22.0",
-        "prettier"               : "^3.5.3",
-        "typescript"             : "^5.8.2"
+    {
+      "name": "grammar",
+      "title": "Fix grammar & spelling",
+      "description": "Fix correct grammar, spelling, punctuation for selected text",
+      "mode": "view",
+      "arguments": [
+        {
+          "name": "query",
+          "placeholder": "Quick query text",
+          "type": "text",
+          "required": false
+        }
+      ],
+      "preferences": [
+        {
+          "name": "commandModel",
+          "title": "Specific Model",
+          "description": "Which model this command uses.",
+          "type": "dropdown",
+          "required": false,
+          "default": "default",
+          "data": [
+            {
+              "title": "Default",
+              "value": "default"
+            },
+            {
+              "title": "Gemini 2.0 Flash-Lite",
+              "value": "gemini-2.0-flash-lite"
+            },
+            {
+              "title": "Gemini 2.0 Flash",
+              "value": "gemini-2.0-flash"
+            },
+            {
+              "title": "Gemini 2.5 Flash Preview",
+              "value": "gemini-2.5-flash-preview-04-17"
+            },
+            {
+              "title": "Gemini 2.5 Pro Preview",
+              "value": "gemini-2.5-pro-preview-05-06"
+            }
+          ]
+        },
+        {
+          "name": "promptFile",
+          "title": "Markdown file with system prompt",
+          "description": "The system prompt to use for this command.",
+          "type": "textfield",
+          "required": false,
+          "default": "Grammar.md"
+        }
+      ]
     },
-    "scripts"         : {
-        "build"    : "ray build -e dist",
-        "dev"      : "ray develop",
-        "fix-lint" : "ray lint --fix",
-        "lint"     : "ray lint",
-        "pull"     : "ray pull-contributions",
-        "publish"  : "ray publish"
+    {
+      "name": "summator",
+      "title": "Summarize it",
+      "description": "Summary selected text",
+      "mode": "view",
+      "preferences": [
+        {
+          "name": "commandModel",
+          "title": "Specific Model",
+          "description": "Which model this command uses.",
+          "type": "dropdown",
+          "required": false,
+          "default": "default",
+          "data": [
+            {
+              "title": "Default",
+              "value": "default"
+            },
+            {
+              "title": "Gemini 2.0 Flash-Lite",
+              "value": "gemini-2.0-flash-lite"
+            },
+            {
+              "title": "Gemini 2.0 Flash",
+              "value": "gemini-2.0-flash"
+            },
+            {
+              "title": "Gemini 2.5 Flash Preview",
+              "value": "gemini-2.5-flash-preview-04-17"
+            },
+            {
+              "title": "Gemini 2.5 Pro Preview",
+              "value": "gemini-2.5-pro-preview-05-06"
+            }
+          ]
+        },
+        {
+          "name": "promptFile",
+          "title": "Markdown file with system prompt",
+          "description": "The system prompt to use for this command.",
+          "type": "textfield",
+          "required": false,
+          "default": "Summator.md"
+        }
+      ]
+    },
+    {
+      "name": "explainer",
+      "title": "Explain it",
+      "description": "Explain selected text",
+      "mode": "view",
+      "arguments": [
+        {
+          "name": "query",
+          "placeholder": "Quick query text",
+          "type": "text",
+          "required": false
+        }
+      ],
+      "preferences": [
+        {
+          "name": "commandModel",
+          "title": "Specific Model",
+          "description": "Which model this command uses.",
+          "type": "dropdown",
+          "required": false,
+          "default": "default",
+          "data": [
+            {
+              "title": "Default",
+              "value": "default"
+            },
+            {
+              "title": "Gemini 2.0 Flash-Lite",
+              "value": "gemini-2.0-flash-lite"
+            },
+            {
+              "title": "Gemini 2.0 Flash",
+              "value": "gemini-2.0-flash"
+            },
+            {
+              "title": "Gemini 2.5 Flash Preview",
+              "value": "gemini-2.5-flash-preview-04-17"
+            },
+            {
+              "title": "Gemini 2.5 Pro Preview",
+              "value": "gemini-2.5-pro-preview-05-06"
+            }
+          ]
+        },
+        {
+          "name": "promptFile",
+          "title": "Markdown file with system prompt",
+          "description": "The system prompt to use for this command.",
+          "type": "textfield",
+          "required": false,
+          "default": "Explainer.md"
+        }
+      ]
+    },
+    {
+      "name": "friend",
+      "title": "Make it friendly",
+      "description": "Make text friendlier",
+      "mode": "view",
+      "preferences": [
+        {
+          "name": "commandModel",
+          "title": "Specific Model",
+          "description": "Which model this command uses.",
+          "type": "dropdown",
+          "required": false,
+          "default": "default",
+          "data": [
+            {
+              "title": "Default",
+              "value": "default"
+            },
+            {
+              "title": "Gemini 2.0 Flash-Lite",
+              "value": "gemini-2.0-flash-lite"
+            },
+            {
+              "title": "Gemini 2.0 Flash",
+              "value": "gemini-2.0-flash"
+            },
+            {
+              "title": "Gemini 2.5 Flash Preview",
+              "value": "gemini-2.5-flash-preview-04-17"
+            },
+            {
+              "title": "Gemini 2.5 Pro Preview",
+              "value": "gemini-2.5-pro-preview-05-06"
+            }
+          ]
+        },
+        {
+          "name": "promptFile",
+          "title": "Markdown file with system prompt",
+          "description": "The system prompt to use for this command.",
+          "type": "textfield",
+          "required": false,
+          "default": "Friend.md"
+        }
+      ]
+    },
+    {
+      "name": "professional",
+      "title": "Make it professional",
+      "description": "Make text formal and professional",
+      "mode": "view",
+      "preferences": [
+        {
+          "name": "commandModel",
+          "title": "Specific Model",
+          "description": "Which model this command uses.",
+          "type": "dropdown",
+          "required": false,
+          "default": "default",
+          "data": [
+            {
+              "title": "Default",
+              "value": "default"
+            },
+            {
+              "title": "Gemini 2.0 Flash-Lite",
+              "value": "gemini-2.0-flash-lite"
+            },
+            {
+              "title": "Gemini 2.0 Flash",
+              "value": "gemini-2.0-flash"
+            },
+            {
+              "title": "Gemini 2.5 Flash Preview",
+              "value": "gemini-2.5-flash-preview-04-17"
+            },
+            {
+              "title": "Gemini 2.5 Pro Preview",
+              "value": "gemini-2.5-pro-preview-05-06"
+            }
+          ]
+        },
+        {
+          "name": "promptFile",
+          "title": "Markdown file with system prompt",
+          "description": "The system prompt to use for this command.",
+          "type": "textfield",
+          "required": false,
+          "default": "Professional.md"
+        }
+      ]
+    },
+    {
+      "name": "prompter",
+      "title": "Prompt Generator",
+      "description": "Create or improve your prompt",
+      "mode": "view",
+      "preferences": [
+        {
+          "name": "commandModel",
+          "title": "Specific Model",
+          "description": "Which model this command uses.",
+          "type": "dropdown",
+          "required": false,
+          "default": "default",
+          "data": [
+            {
+              "title": "Default",
+              "value": "default"
+            },
+            {
+              "title": "Gemini 2.0 Flash-Lite",
+              "value": "gemini-2.0-flash-lite"
+            },
+            {
+              "title": "Gemini 2.0 Flash",
+              "value": "gemini-2.0-flash"
+            },
+            {
+              "title": "Gemini 2.5 Flash Preview",
+              "value": "gemini-2.5-flash-preview-04-17"
+            },
+            {
+              "title": "Gemini 2.5 Pro Preview",
+              "value": "gemini-2.5-pro-preview-05-06"
+            }
+          ]
+        },
+        {
+          "name": "promptFile",
+          "title": "Markdown file with system prompt",
+          "description": "The system prompt to use for this command.",
+          "type": "textfield",
+          "required": false,
+          "default": "Prompter.md"
+        }
+      ]
+    },
+    {
+      "name": "shorter",
+      "title": "Make text shorter",
+      "description": "Make selected text significantly shorter and more concise",
+      "mode": "view",
+      "preferences": [
+        {
+          "name": "commandModel",
+          "title": "Specific Model",
+          "description": "Which model this command uses.",
+          "type": "dropdown",
+          "required": false,
+          "default": "default",
+          "data": [
+            {
+              "title": "Default",
+              "value": "default"
+            },
+            {
+              "title": "Gemini 2.0 Flash-Lite",
+              "value": "gemini-2.0-flash-lite"
+            },
+            {
+              "title": "Gemini 2.0 Flash",
+              "value": "gemini-2.0-flash"
+            },
+            {
+              "title": "Gemini 2.5 Flash Preview",
+              "value": "gemini-2.5-flash-preview-04-17"
+            },
+            {
+              "title": "Gemini 2.5 Pro Preview",
+              "value": "gemini-2.5-pro-preview-05-06"
+            }
+          ]
+        },
+        {
+          "name": "promptFile",
+          "title": "Markdown file with system prompt",
+          "description": "The system prompt to use for this command.",
+          "type": "textfield",
+          "required": false,
+          "default": "Shorter.md"
+        }
+      ]
+    },
+    {
+      "name": "longer",
+      "title": "Make text longer",
+      "description": "Make selected text significantly longer",
+      "mode": "view",
+      "preferences": [
+        {
+          "name": "commandModel",
+          "title": "Specific Model",
+          "description": "Which model this command uses.",
+          "type": "dropdown",
+          "required": false,
+          "default": "default",
+          "data": [
+            {
+              "title": "Default",
+              "value": "default"
+            },
+            {
+              "title": "Gemini 2.0 Flash-Lite",
+              "value": "gemini-2.0-flash-lite"
+            },
+            {
+              "title": "Gemini 2.0 Flash",
+              "value": "gemini-2.0-flash"
+            },
+            {
+              "title": "Gemini 2.5 Flash Preview",
+              "value": "gemini-2.5-flash-preview-04-17"
+            },
+            {
+              "title": "Gemini 2.5 Pro Preview",
+              "value": "gemini-2.5-pro-preview-05-06"
+            }
+          ]
+        },
+        {
+          "name": "promptFile",
+          "title": "Markdown file with system prompt",
+          "description": "The system prompt to use for this command.",
+          "type": "textfield",
+          "required": false,
+          "default": "Longer.md"
+        }
+      ]
+    },
+    {
+      "name": "rephraser",
+      "title": "Rephrase it",
+      "description": "Rewrite the provided text using different phrasing while maintaining the original meaning.",
+      "mode": "view",
+      "preferences": [
+        {
+          "name": "commandModel",
+          "title": "Specific Model",
+          "description": "Which model this command uses.",
+          "type": "dropdown",
+          "required": false,
+          "default": "default",
+          "data": [
+            {
+              "title": "Default",
+              "value": "default"
+            },
+            {
+              "title": "Gemini 2.0 Flash-Lite",
+              "value": "gemini-2.0-flash-lite"
+            },
+            {
+              "title": "Gemini 2.0 Flash",
+              "value": "gemini-2.0-flash"
+            },
+            {
+              "title": "Gemini 2.5 Flash Preview",
+              "value": "gemini-2.5-flash-preview-04-17"
+            },
+            {
+              "title": "Gemini 2.5 Pro Preview",
+              "value": "gemini-2.5-pro-preview-05-06"
+            }
+          ]
+        },
+        {
+          "name": "promptFile",
+          "title": "Markdown file with system prompt",
+          "description": "The system prompt to use for this command.",
+          "type": "textfield",
+          "required": false,
+          "default": "Rephraser.md"
+        }
+      ]
     }
+  ],
+  "preferences": [
+    {
+      "name": "geminiApiKey",
+      "title": "Gemini API Key",
+      "description": "Find it in your Google AI Studio.",
+      "type": "password",
+      "required": true
+    },
+    {
+      "name": "primaryLanguage",
+      "title": "Primary language",
+      "description": "The default language for AI responses.",
+      "type": "textfield",
+      "default": "English",
+      "required": true
+    },
+    {
+      "description": "Which model Gemini for Raycast uses by default (unless overriden by individual commands).",
+      "name": "defaultModel",
+      "title": "Model",
+      "type": "dropdown",
+      "required": true,
+      "default": "gemini-2.5-flash-preview-04-17",
+      "data": [
+        {
+          "title": "Gemini 2.0 Flash-Lite",
+          "value": "gemini-2.0-flash-lite"
+        },
+        {
+          "title": "Gemini 2.0 Flash",
+          "value": "gemini-2.0-flash"
+        },
+        {
+          "title": "Gemini 2.5 Flash Preview",
+          "value": "gemini-2.5-flash-preview-04-17"
+        },
+        {
+          "title": "Gemini 2.5 Pro Preview",
+          "value": "gemini-2.5-pro-preview-05-06"
+        }
+      ]
+    },
+    {
+      "name": "customModel",
+      "title": "Custom Model",
+      "description": "Setup custom model if you are using a specific model not included in the dropdown menu. This option will override the default model. Leave this field empty if you do not have a custom model.",
+      "type": "textfield",
+      "required": false
+    },
+    {
+      "name": "promptDir",
+      "title": "Prompt directory",
+      "description": "The full path to the directory containing Prompts in markdown format",
+      "type": "textfield",
+      "required": false,
+      "default": "~/Documents/Prompts/Raycast"
+    }
+  ],
+  "dependencies": {
+    "@google/genai": "^0.13.0",
+    "@raycast/api": "^1.98.2",
+    "@raycast/utils": "^1.17.0",
+    "mime-types": "^3.0.1"
+  },
+  "devDependencies": {
+    "@raycast/eslint-config": "^2.0.4",
+    "@types/node": "22.13.10",
+    "@types/react": "19.0.10",
+    "eslint": "^9.22.0",
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.2"
+  },
+  "scripts": {
+    "build": "ray build -e dist",
+    "dev": "ray develop",
+    "fix-lint": "ray lint --fix",
+    "lint": "ray lint",
+    "pull": "ray pull-contributions",
+    "publish": "ray publish"
+  }
 }
