@@ -15,7 +15,7 @@
     {
       "name": "translator",
       "title": "Translator",
-      "description": "Translate selected text",
+      "description": "Translate selected text.",
       "mode": "view",
       "arguments": [
         {
@@ -28,8 +28,8 @@
       "preferences": [
         {
           "name": "commandModel",
-          "title": "Specific Model",
-          "description": "Which model this command uses.",
+          "title": "Model for the command",
+          "description": "Specifies the model utilized for this command.",
           "type": "dropdown",
           "required": false,
           "default": "default",
@@ -77,7 +77,7 @@
     {
       "name": "grammar",
       "title": "Fix grammar & spelling",
-      "description": "Fix correct grammar, spelling, punctuation for selected text",
+      "description": "Fix correct grammar, spelling, punctuation for selected text.",
       "mode": "view",
       "arguments": [
         {
@@ -90,8 +90,8 @@
       "preferences": [
         {
           "name": "commandModel",
-          "title": "Specific Model",
-          "description": "Which model this command uses.",
+          "title": "Model for the command",
+          "description": "Specifies the model utilized for this command.",
           "type": "dropdown",
           "required": false,
           "default": "default",
@@ -131,13 +131,13 @@
     {
       "name": "summator",
       "title": "Summarize it",
-      "description": "Summary selected text",
+      "description": "Summary selected text.",
       "mode": "view",
       "preferences": [
         {
           "name": "commandModel",
-          "title": "Specific Model",
-          "description": "Which model this command uses.",
+          "title": "Model for the command",
+          "description": "Specifies the model utilized for this command.",
           "type": "dropdown",
           "required": false,
           "default": "default",
@@ -177,7 +177,7 @@
     {
       "name": "explainer",
       "title": "Explain it",
-      "description": "Explain selected text",
+      "description": "Explain selected text.",
       "mode": "view",
       "arguments": [
         {
@@ -190,8 +190,8 @@
       "preferences": [
         {
           "name": "commandModel",
-          "title": "Specific Model",
-          "description": "Which model this command uses.",
+          "title": "Model for the command",
+          "description": "Specifies the model utilized for this command.",
           "type": "dropdown",
           "required": false,
           "default": "default",
@@ -230,14 +230,14 @@
     },
     {
       "name": "friend",
-      "title": "Make it friendly",
-      "description": "Make text friendlier",
+      "title": "Friendly text",
+      "description": "Make text warmer and friendly",
       "mode": "view",
       "preferences": [
         {
           "name": "commandModel",
-          "title": "Specific Model",
-          "description": "Which model this command uses.",
+          "title": "Model for the command",
+          "description": "Specifies the model utilized for this command.",
           "type": "dropdown",
           "required": false,
           "default": "default",
@@ -276,14 +276,14 @@
     },
     {
       "name": "professional",
-      "title": "Make it professional",
+      "title": "Professional text",
       "description": "Make text formal and professional",
       "mode": "view",
       "preferences": [
         {
           "name": "commandModel",
-          "title": "Specific Model",
-          "description": "Which model this command uses.",
+          "title": "Model for the command",
+          "description": "Specifies the model utilized for this command.",
           "type": "dropdown",
           "required": false,
           "default": "default",
@@ -328,8 +328,8 @@
       "preferences": [
         {
           "name": "commandModel",
-          "title": "Specific Model",
-          "description": "Which model this command uses.",
+          "title": "Model for the command",
+          "description": "Specifies the model utilized for this command.",
           "type": "dropdown",
           "required": false,
           "default": "default",
@@ -369,13 +369,13 @@
     {
       "name": "shorter",
       "title": "Make text shorter",
-      "description": "Make selected text significantly shorter and more concise",
+      "description": "Make selected text significantly shorter and more concise.",
       "mode": "view",
       "preferences": [
         {
           "name": "commandModel",
-          "title": "Specific Model",
-          "description": "Which model this command uses.",
+          "title": "Model for the command",
+          "description": "Specifies the model utilized for this command.",
           "type": "dropdown",
           "required": false,
           "default": "default",
@@ -415,13 +415,13 @@
     {
       "name": "longer",
       "title": "Make text longer",
-      "description": "Make selected text significantly longer",
+      "description": "Make selected text significantly longer.",
       "mode": "view",
       "preferences": [
         {
           "name": "commandModel",
-          "title": "Specific Model",
-          "description": "Which model this command uses.",
+          "title": "Model for the command",
+          "description": "Specifies the model utilized for this command.",
           "type": "dropdown",
           "required": false,
           "default": "default",
@@ -466,8 +466,8 @@
       "preferences": [
         {
           "name": "commandModel",
-          "title": "Specific Model",
-          "description": "Which model this command uses.",
+          "title": "Model for the command",
+          "description": "Specifies the model utilized for this command.",
           "type": "dropdown",
           "required": false,
           "default": "default",
@@ -509,7 +509,7 @@
     {
       "name": "geminiApiKey",
       "title": "Gemini API Key",
-      "description": "Find it in your Google AI Studio.",
+      "description": "Find it at your Google AI Studio.",
       "type": "password",
       "required": true
     },
@@ -550,14 +550,14 @@
     {
       "name": "customModel",
       "title": "Custom Model",
-      "description": "Setup custom model if you are using a specific model not included in the dropdown menu. This option will override the default model. Leave this field empty if you do not have a custom model.",
+      "description": "If you are using a specific model not found in the dropdown list, configure a custom model. This selection will override the default model. If you do not have a custom model, leave this field blank.",
       "type": "textfield",
       "required": false
     },
     {
       "name": "promptDir",
       "title": "Prompt directory",
-      "description": "The full path to the directory containing Prompts in markdown format",
+      "description": "The full path to the directory containing Prompts in markdown format.",
       "type": "textfield",
       "required": false,
       "default": "~/Documents/Prompts/Raycast"

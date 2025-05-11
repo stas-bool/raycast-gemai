@@ -5,7 +5,6 @@ function capitalizeFirstLetter(str: string): string {
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-// Общий список моделей
 const models = [
     {title: "Default", value: "default"},
     {title: "Gemini 2.0 Flash-Lite", value: "gemini-2.0-flash-lite"},
@@ -14,17 +13,19 @@ const models = [
     {title: "Gemini 2.5 Pro Preview", value: "gemini-2.5-pro-preview-05-06"},
 ];
 
-// Общие preferences для команд с языками
-const languagePreferences = [
+const modelPreferences = [
     {
         name: "commandModel",
-        title: "Specific Model",
-        description: "Which model this command uses.",
+        title: "Model for the command",
+        description: "Specifies the model utilized for this command.",
         type: "dropdown",
         required: false,
         default: "default",
         data: models,
     },
+];
+
+const languagePreferences = [
     {
         name: "secondaryLanguage",
         title: "Secondary Language",
@@ -35,20 +36,6 @@ const languagePreferences = [
     },
 ];
 
-// Общие preferences для команд без secondaryLanguage
-const modelPreferences = [
-    {
-        name: "commandModel",
-        title: "Specific Model",
-        description: "Which model this command uses.",
-        type: "dropdown",
-        required: false,
-        default: "default",
-        data: models,
-    },
-];
-
-// Фабрика для команд
 function makeCommand({name, title, description, promptFile, hasQuery = true, withSecondaryLanguage = true}: {
     name: string;
     title: string;
@@ -73,7 +60,8 @@ function makeCommand({name, title, description, promptFile, hasQuery = true, wit
             ],
         }),
         preferences: [
-            ...(withSecondaryLanguage ? languagePreferences : modelPreferences),
+            ...modelPreferences,
+            ...(withSecondaryLanguage ? languagePreferences : []),
             {
                 name: "promptFile",
                 title: "Markdown file with system prompt",
@@ -86,26 +74,25 @@ function makeCommand({name, title, description, promptFile, hasQuery = true, wit
     };
 }
 
-// Список команд
 const commands = [
     makeCommand({
         name: "translator",
         title: "Translator",
-        description: "Translate selected text",
+        description: "Translate selected text.",
         promptFile: "Translator.md",
         withSecondaryLanguage: true,
     }),
     makeCommand({
         name: "grammar",
         title: "Fix grammar & spelling",
-        description: "Fix correct grammar, spelling, punctuation for selected text",
+        description: "Fix correct grammar, spelling, punctuation for selected text.",
         promptFile: "Grammar.md",
         withSecondaryLanguage: false,
     }),
     makeCommand({
         name: "summator",
         title: "Summarize it",
-        description: "Summary selected text",
+        description: "Summary selected text.",
         promptFile: "Summator.md",
         withSecondaryLanguage: false,
         hasQuery: false,
@@ -113,22 +100,22 @@ const commands = [
     makeCommand({
         name: "explainer",
         title: "Explain it",
-        description: "Explain selected text",
+        description: "Explain selected text.",
         promptFile: "Explainer.md",
         withSecondaryLanguage: false,
         hasQuery: true,
     }),
     makeCommand({
         name: "friend",
-        title: "Make it friendly",
-        description: "Make text friendlier",
+        title: "Friendly text",
+        description: "Make text warmer and friendly",
         promptFile: "Friend.md",
         withSecondaryLanguage: false,
         hasQuery: false,
     }),
     makeCommand({
         name: "professional",
-        title: "Make it professional",
+        title: "Professional text",
         description: "Make text formal and professional",
         promptFile: "Professional.md",
         withSecondaryLanguage: false,
@@ -145,7 +132,7 @@ const commands = [
     makeCommand({
         name: "shorter",
         title: "Make text shorter",
-        description: "Make selected text significantly shorter and more concise",
+        description: "Make selected text significantly shorter and more concise.",
         promptFile: "Shorter.md",
         withSecondaryLanguage: false,
         hasQuery: false,
@@ -153,7 +140,7 @@ const commands = [
     makeCommand({
         name: "longer",
         title: "Make text longer",
-        description: "Make selected text significantly longer",
+        description: "Make selected text significantly longer.",
         promptFile: "Longer.md",
         withSecondaryLanguage: false,
         hasQuery: false,
@@ -168,12 +155,11 @@ const commands = [
     }),
 ];
 
-// Корневые preferences
 const rootPreferences = [
     {
         name: "geminiApiKey",
         title: "Gemini API Key",
-        description: "Find it in your Google AI Studio.",
+        description: "Find it at your Google AI Studio.",
         type: "password",
         required: true,
     },
@@ -197,14 +183,14 @@ const rootPreferences = [
     {
         name: "customModel",
         title: "Custom Model",
-        description: "Setup custom model if you are using a specific model not included in the dropdown menu. This option will override the default model. Leave this field empty if you do not have a custom model.",
+        description: "If you are using a specific model not found in the dropdown list, configure a custom model. This selection will override the default model. If you do not have a custom model, leave this field blank.",
         type: "textfield",
         required: false,
     },
     {
         name: "promptDir",
         title: "Prompt directory",
-        description: "The full path to the directory containing Prompts in markdown format",
+        description: "The full path to the directory containing Prompts in markdown format.",
         type: "textfield",
         required: false,
         default: "~/Documents/Prompts/Raycast",
@@ -248,6 +234,5 @@ const pkg = {
     },
 };
 
-// Запись файла
-fs.writeFileSync("./package.json", JSON.stringify(pkg, null, 2), "utf-8");
+fs.writeFileSync("./package.json", JSON.stringify(pkg, null, 2) + "\n", "utf-8");
 console.log("package.json успешно сгенерирован!");

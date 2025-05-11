@@ -11,7 +11,6 @@ ALWAYS return ONLY the rephrased text, without any preamble.`;
     const gemAiConfig = buildGemAIConfig("Rephraser", props, fallbackPrompt);
     gemAiConfig.ui.placeholder = "Enter text to rephrase it";
     gemAiConfig.model.temperature = 0.5;
-    gemAiConfig.model.frequencyPenalty = 0.2;
     gemAiConfig.model.topP = 0.9;
 
     return GemAI(gemAiConfig);
