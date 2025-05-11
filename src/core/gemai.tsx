@@ -14,7 +14,6 @@ import {GoogleGenAI, createPartFromUri, Part} from '@google/genai';
 import * as fs from "fs";
 import * as path from "path";
 import mime from "mime-types";
-import {dump} from "./utils";
 
 export async function prepareAttachment(ai: GoogleGenAI, actualFilePath?: string): Promise<Part> {
     if (!actualFilePath || !fs.existsSync(actualFilePath) || !fs.lstatSync(actualFilePath).isFile()) {
@@ -66,8 +65,6 @@ export async function sendRequestToGemini(
         contents.push(filePart);
     }
 
-    dump(contents);
-
     const requestParams = {
         model: model.modelName,
         contents: contents,
@@ -82,6 +79,8 @@ export async function sendRequestToGemini(
             presencePenalty: model.presencePenalty,
         },
     };
+
+    //console.log(requestParams);
 
     return await ai.models.generateContentStream(requestParams);
 }
@@ -127,6 +126,7 @@ export default function GemAI(request: GeminiRequestParams, model: GeminiModelPa
                 usageMetadata = chunk.usageMetadata;
             }
 
+            setMarkdown(markdown.trim() + "\n");
             setLastResponse(markdown);
 
             const inputTokens = await ai.models.countTokens({model: model.modelName, contents: query});

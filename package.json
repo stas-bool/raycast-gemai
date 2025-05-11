@@ -26,7 +26,7 @@
                 {
                     "name"        : "secondaryLanguage",
                     "title"       : "Secondary Language",
-                    "description" : "The secondary language for AI responses.",
+                    "description" : "Please specify your second language to better configure the assistant's operation.",
                     "type"        : "textfield",
                     "default"     : "English",
                     "required"    : true
@@ -38,6 +38,38 @@
                     "type"        : "textfield",
                     "required"    : false,
                     "default"     : "Translate.md"
+                }
+            ]
+        },
+        {
+            "name"        : "summary",
+            "title"       : "Summary",
+            "description" : "Summary selected text",
+            "mode"        : "view",
+            "preferences" : [
+                {
+                    "name"        : "promptFile",
+                    "title"       : "Markdown file with system prompt",
+                    "description" : "The system prompt to use for this command.",
+                    "type"        : "textfield",
+                    "required"    : false,
+                    "default"     : "Summary.md"
+                }
+            ]
+        },
+        {
+            "name"        : "explain",
+            "title"       : "Explain",
+            "description" : "Explain selected text",
+            "mode"        : "view",
+            "preferences" : [
+                {
+                    "name"        : "promptFile",
+                    "title"       : "Markdown file with system prompt",
+                    "description" : "The system prompt to use for this command.",
+                    "type"        : "textfield",
+                    "required"    : false,
+                    "default"     : "Explain.md"
                 }
             ]
         }
