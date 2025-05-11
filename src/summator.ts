@@ -1,4 +1,3 @@
-import {getPreferenceValues} from "@raycast/api";
 import {buildGemAIConfig} from "./core/buildGemAIConfig";
 import GemAI from "./core/gemai";
 

@@ -2,7 +2,6 @@ import {buildGemAIConfig} from "./core/buildGemAIConfig";
 import GemAI from "./core/gemai";
 
 export default function Rephraser(props: object) {
-
     const fallbackPrompt = `You are professianl "Rephraser". Your sole task is to rephrase the text provided by the user.
 Rephrase the following text using different words and sentence structures, ensuring the original meaning, tone, and style are precisely preserved.
 Do not add any new information or external knowledge.

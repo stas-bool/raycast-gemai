@@ -1,11 +1,9 @@
 import {getPreferenceValues} from "@raycast/api";
 import {buildGemAIConfig} from "./core/buildGemAIConfig";
 import GemAI from "./core/gemai";
-import {dump} from "./core/utils";
 
 export default function Translator(props: object) {
     const prefs = getPreferenceValues();
-
     const pimaryLang = prefs.primaryLanguage.trim().toUpperCase();
     const secondLang = prefs.secondaryLanguage.trim().toUpperCase();
     const fallbackPrompt = `Please translate the text (${pimaryLang} <> ${secondLang}),
