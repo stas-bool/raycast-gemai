@@ -72,6 +72,68 @@
             ]
         },
         {
+            "name"        : "grammar",
+            "title"       : "Grammar",
+            "description" : "Fix correct grammar, spelling, punctuation for selected text",
+            "mode"        : "view",
+            "arguments"   : [
+                {
+                    "name"        : "query",
+                    "placeholder" : "Text to correct grammar",
+                    "type"        : "text",
+                    "required"    : false
+                }
+            ],
+            "preferences" : [
+                {
+                    "name"        : "commandModel",
+                    "title"       : "Specific Model",
+                    "description" : "Which model this command uses.",
+                    "type"        : "dropdown",
+                    "required"    : false,
+                    "default"     : "default",
+                    "data"        : [
+                        {
+                            "title" : "Default",
+                            "value" : "default"
+                        },
+                        {
+                            "title" : "Gemini 2.0 Flash-Lite",
+                            "value" : "gemini-2.0-flash-lite"
+                        },
+                        {
+                            "title" : "Gemini 2.0 Flash",
+                            "value" : "gemini-2.0-flash"
+                        },
+                        {
+                            "title" : "Gemini 2.5 Flash Preview",
+                            "value" : "gemini-2.5-flash-preview-04-17"
+                        },
+                        {
+                            "title" : "Gemini 2.5 Pro Preview",
+                            "value" : "gemini-2.5-pro-preview-05-06"
+                        }
+                    ]
+                },
+                {
+                    "name"        : "secondaryLanguage",
+                    "title"       : "Secondary Language",
+                    "description" : "Please specify your second language to better configure the assistant's operation.",
+                    "type"        : "textfield",
+                    "default"     : "English",
+                    "required"    : true
+                },
+                {
+                    "name"        : "promptFile",
+                    "title"       : "Markdown file with system prompt",
+                    "description" : "The system prompt to use for this command.",
+                    "type"        : "textfield",
+                    "required"    : false,
+                    "default"     : "Grammar.md"
+                }
+            ]
+        },
+        {
             "name"        : "summary",
             "title"       : "Summary",
             "description" : "Summary selected text",
