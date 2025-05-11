@@ -151,6 +151,13 @@ const commands = [
         mode: "no-view",
         promptFile: "Screenshot-Markdown.md",
     }),
+    makeCommand({
+        name: "screenshotToExplain",
+        title: "Screenshot -> Explain",
+        description: "View the screenshot, analyze it, and answer the user's question (if applicable)",
+        mode: "no-view",
+        promptFile: "Screenshot-Explain.md",
+    }),
 ];
 
 const rootPreferences = [

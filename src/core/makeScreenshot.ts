@@ -29,7 +29,7 @@ export default async function makeScreenshot(
         return;
     }
 
-    console.log(`Screenshot captured at ${screenshotPath}`);
+    console.debug(`Screenshot captured at ${screenshotPath}`);
 
     try {
         await launchCommand({
