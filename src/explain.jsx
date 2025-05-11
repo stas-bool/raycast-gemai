@@ -8,7 +8,8 @@ export default function Explain(props) {
         "Do not use introductory phrases, greetings, or repeat the request. " +
         "ALWAYS return ONLY the explanation itself and nothing more.";
 
-    [request, model, ui] = buildGemAIConfig("Explain", props, fallbackPrompt);
+    const gemAiConfig = buildGemAIConfig("Explain", props, fallbackPrompt);
+    gemAiConfig.ui.placeholder = "Enter text to explain it";
 
-    return GemAI(request, model, ui);
+    return GemAI(gemAiConfig);
 }

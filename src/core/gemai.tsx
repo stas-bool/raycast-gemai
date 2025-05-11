@@ -9,7 +9,7 @@ import {
     showToast
 } from "@raycast/api";
 import {useEffect, useState} from "react";
-import {GeminiRequestParams, GeminiModelParams, RaycastUIParams} from "./types";
+import {GemAIConfig} from "./types";
 import {GoogleGenAI, createPartFromUri, Part} from '@google/genai';
 import * as fs from "fs";
 import * as path from "path";
@@ -55,7 +55,7 @@ export async function prepareAttachment(ai: GoogleGenAI, actualFilePath?: string
 
 export async function sendRequestToGemini(
     ai: GoogleGenAI,
-    model: GeminiModelParams,
+    gemConfig: GemAIConfig,
     query?: string,
     filePart?: Part,
 ) {
@@ -66,17 +66,17 @@ export async function sendRequestToGemini(
     }
 
     const requestParams = {
-        model: model.modelName,
+        model: gemConfig.model.modelName,
         contents: contents,
         config: {
-            maxOutputTokens: model.maxOutputTokens,
-            temperature: model.temperature,
-            thinkingConfig: model.thinkingConfig,
-            systemInstruction: model.systemPrompt,
-            topK: model.topK,
-            topP: model.topP,
-            frequencyPenalty: model.frequencyPenalty,
-            presencePenalty: model.presencePenalty,
+            maxOutputTokens: gemConfig.model.maxOutputTokens,
+            temperature: gemConfig.model.temperature,
+            thinkingConfig: gemConfig.model.thinkingConfig,
+            systemInstruction: gemConfig.model.systemPrompt,
+            topK: gemConfig.model.topK,
+            topP: gemConfig.model.topP,
+            frequencyPenalty: gemConfig.model.frequencyPenalty,
+            presencePenalty: gemConfig.model.presencePenalty,
         },
     };
 
@@ -86,7 +86,7 @@ export async function sendRequestToGemini(
 }
 
 // --- Main component ---
-export default function GemAI(request: GeminiRequestParams, model: GeminiModelParams, ui: RaycastUIParams) {
+export default function GemAI(gemConfig: GemAIConfig) {
     // dump({request, model, ui});
 
     const PageState = {Form: 0, Response: 1};
@@ -108,12 +108,12 @@ export default function GemAI(request: GeminiRequestParams, model: GeminiModelPa
         await showToast({style: Toast.Style.Animated, title: "Waiting for AI..."});
 
         const startTime = Date.now();
-        const ai = new GoogleGenAI({apiKey: model.geminiApiKey});
+        const ai = new GoogleGenAI({apiKey: gemConfig.model.geminiApiKey});
 
         try {
-            const actualFilePath = data?.attachmentFile || request.attachmentFile;
+            const actualFilePath = data?.attachmentFile || gemConfig.request.attachmentFile;
             const filePart = await prepareAttachment(ai, actualFilePath);
-            const response = await sendRequestToGemini(ai, model, query, filePart);
+            const response = await sendRequestToGemini(ai, gemConfig, query, filePart);
             const totalTime = ((Date.now() - startTime) / 1000).toFixed(1);
 
             let markdown = "";
@@ -129,10 +129,10 @@ export default function GemAI(request: GeminiRequestParams, model: GeminiModelPa
             setMarkdown(markdown.trim() + "\n");
             setLastResponse(markdown);
 
-            const inputTokens = await ai.models.countTokens({model: model.modelName, contents: query});
+            const inputTokens = await ai.models.countTokens({model: gemConfig.model.modelName, contents: query});
 
             const timer = `Time: ${totalTime} sec`;
-            const stats = `*Model: ${model.modelName}*\n\n` +
+            const stats = `*Model: ${gemConfig.model.modelName}*\n\n` +
                 `*${timer}; ` +
                 `Prompt: ${usageMetadata?.promptTokenCount ?? 0}; ` +
                 `Input: ${inputTokens?.totalTokens ?? 0}; ` +
@@ -156,7 +156,7 @@ export default function GemAI(request: GeminiRequestParams, model: GeminiModelPa
             try {
                 let selectedText = "";
 
-                if (ui.useSelected) {
+                if (gemConfig.ui.useSelected) {
                     try {
                         selectedText = await getSelectedText();
                         setSelectedText(selectedText);
@@ -166,7 +166,7 @@ export default function GemAI(request: GeminiRequestParams, model: GeminiModelPa
                     }
                 }
 
-                const hasUserPrompt = request.userPrompt.trim() !== "";
+                const hasUserPrompt = gemConfig.request.userPrompt.trim() !== "";
                 const hasSelected = selectedText.trim() !== "";
 
                 if (!hasUserPrompt && !hasSelected) {
@@ -175,9 +175,9 @@ export default function GemAI(request: GeminiRequestParams, model: GeminiModelPa
                 }
 
                 if (hasUserPrompt && hasSelected) {
-                    getAiResponse(`${request.userPrompt}\n\n${selectedText}`);
+                    getAiResponse(`${gemConfig.request.userPrompt}\n\n${selectedText}`);
                 } else if (hasUserPrompt) {
-                    getAiResponse(request.userPrompt);
+                    getAiResponse(gemConfig.request.userPrompt);
                 } else if (hasSelected) {
                     getAiResponse(selectedText);
                 }
@@ -195,7 +195,7 @@ export default function GemAI(request: GeminiRequestParams, model: GeminiModelPa
             actions={
                 !isLoading && (
                     <ActionPanel>
-                        {ui.allowPaste && <Action.Paste content={markdown} />}
+                        {gemConfig.ui.allowPaste && <Action.Paste content={markdown} />}
                         <Action.CopyToClipboard shortcut={Keyboard.Shortcut.Common.Copy} content={markdown} />
                         {/*{lastQuery && lastResponse && (*/}
                         {/*    <Action*/}
@@ -241,7 +241,7 @@ export default function GemAI(request: GeminiRequestParams, model: GeminiModelPa
                                 filePathValue = values.file[0];
                             }
 
-                            if (ui.useSelected) {
+                            if (gemConfig.ui.useSelected) {
                                 getAiResponse(`${values.query}\n\n---\n\n${selectedState}`, {attachmentFile: filePathValue});
                                 return;
                             }
@@ -257,10 +257,10 @@ export default function GemAI(request: GeminiRequestParams, model: GeminiModelPa
                 title="User Prompt"
                 value={textarea}
                 onChange={(value) => setTextarea(value)}
-                placeholder={ui.placeholder}
+                placeholder={gemConfig.ui.placeholder}
                 autoFocus={true}
             />
-            {!request.attachmentFile && (
+            {!gemConfig.request.attachmentFile && (
                 <>
                     <Form.Description title="Attachment" text="You can attach image or file to analyze it." />
                     <Form.FilePicker id="file" title="" showHiddenFiles={true} allowMultipleSelection={false} />

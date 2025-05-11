@@ -24,6 +24,36 @@
             ],
             "preferences" : [
                 {
+                    "name"        : "commandModel",
+                    "title"       : "Specific Model",
+                    "description" : "Which model this command uses.",
+                    "type"        : "dropdown",
+                    "required"    : false,
+                    "default"     : "default",
+                    "data"        : [
+                        {
+                            "title" : "Default",
+                            "value" : "default"
+                        },
+                        {
+                            "title" : "Gemini 2.0 Flash-Lite",
+                            "value" : "gemini-2.0-flash-lite"
+                        },
+                        {
+                            "title" : "Gemini 2.0 Flash",
+                            "value" : "gemini-2.0-flash"
+                        },
+                        {
+                            "title" : "Gemini 2.5 Flash Preview",
+                            "value" : "gemini-2.5-flash-preview-04-17"
+                        },
+                        {
+                            "title" : "Gemini 2.5 Pro Preview",
+                            "value" : "gemini-2.5-pro-preview-05-06"
+                        }
+                    ]
+                },
+                {
                     "name"        : "secondaryLanguage",
                     "title"       : "Secondary Language",
                     "description" : "Please specify your second language to better configure the assistant's operation.",
@@ -48,6 +78,36 @@
             "mode"        : "view",
             "preferences" : [
                 {
+                    "name"        : "commandModel",
+                    "title"       : "Specific Model",
+                    "description" : "Which model this command uses.",
+                    "type"        : "dropdown",
+                    "required"    : false,
+                    "default"     : "default",
+                    "data"        : [
+                        {
+                            "title" : "Default",
+                            "value" : "default"
+                        },
+                        {
+                            "title" : "Gemini 2.0 Flash-Lite",
+                            "value" : "gemini-2.0-flash-lite"
+                        },
+                        {
+                            "title" : "Gemini 2.0 Flash",
+                            "value" : "gemini-2.0-flash"
+                        },
+                        {
+                            "title" : "Gemini 2.5 Flash Preview",
+                            "value" : "gemini-2.5-flash-preview-04-17"
+                        },
+                        {
+                            "title" : "Gemini 2.5 Pro Preview",
+                            "value" : "gemini-2.5-pro-preview-05-06"
+                        }
+                    ]
+                },
+                {
                     "name"        : "promptFile",
                     "title"       : "Markdown file with system prompt",
                     "description" : "The system prompt to use for this command.",
@@ -63,6 +123,36 @@
             "description" : "Explain selected text",
             "mode"        : "view",
             "preferences" : [
+                {
+                    "name"        : "commandModel",
+                    "title"       : "Specific Model",
+                    "description" : "Which model this command uses.",
+                    "type"        : "dropdown",
+                    "required"    : false,
+                    "default"     : "default",
+                    "data"        : [
+                        {
+                            "title" : "Default",
+                            "value" : "default"
+                        },
+                        {
+                            "title" : "Gemini 2.0 Flash-Lite",
+                            "value" : "gemini-2.0-flash-lite"
+                        },
+                        {
+                            "title" : "Gemini 2.0 Flash",
+                            "value" : "gemini-2.0-flash"
+                        },
+                        {
+                            "title" : "Gemini 2.5 Flash Preview",
+                            "value" : "gemini-2.5-flash-preview-04-17"
+                        },
+                        {
+                            "title" : "Gemini 2.5 Pro Preview",
+                            "value" : "gemini-2.5-pro-preview-05-06"
+                        }
+                    ]
+                },
                 {
                     "name"        : "promptFile",
                     "title"       : "Markdown file with system prompt",

@@ -15,9 +15,8 @@ Please do not distort or simplify the content.
 If the following text is in ${pimaryLang} then translate it to ${secondLang}, otherwise translate following text to ${pimaryLang}.
 ALSWAYS ONLY return the translated text and nothing else.`;
 
-    [request, model, ui] = buildGemAIConfig("Translate", props, fallbackPrompt);
-    model.temperature = 0.6;
-    ui.placeholder = "Enter text to translate";
+    const gemAiConfig = buildGemAIConfig("Translate", props, fallbackPrompt);
+    gemAiConfig.ui.placeholder = "Enter text to translate";
 
-    return GemAI(request, model, ui);
+    return GemAI(gemAiConfig);
 }

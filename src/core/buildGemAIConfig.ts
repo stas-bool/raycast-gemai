@@ -1,5 +1,5 @@
 import {getPreferenceValues} from "@raycast/api";
-import {GeminiRequestParams, GeminiModelParams, RaycastUIParams} from "./types";
+import {GemAIConfig} from "./types";
 import {getSystemPrompt} from "./utils";
 
 const thinkingModels = [
@@ -29,45 +29,42 @@ Otherwise, adhere to the Default Response Language specified above (${primaryLan
         : `${defaultLanguage}\n${systemPrompt}`;
 }
 
-export function buildGemAIConfig(actionName: string, props: any, fallbackPrompt?: string): [GeminiRequestParams, GeminiModelParams, RaycastUIParams] {
+export function buildGemAIConfig(actionName: string, props: any, fallbackPrompt?: string): GemAIConfig {
     const prefs = getPreferenceValues();
 
     // Select model name
     const isCustomModelValid = Boolean(prefs.customModel && prefs.customModel.trim().length > 0);
-    const modelName = isCustomModelValid ? prefs.customModel : prefs.defaultModel;
-    //const modelName = prefs.commandModel === "default" ? defaultModel : prefs.commandModel;
+    const globalModelName = isCustomModelValid ? prefs.customModel.toLowerCase().trim() : prefs.defaultModel;
+    const currentModelName = prefs.commandModel === "default" ? globalModelName : prefs.commandModel;
 
     // Thinking mode if any
-    const thinkingConfig = {includeThoughts: false, thinkingBudget: 4000};
+    const thinkingConfig = {includeThoughts: false, thinkingBudget: 0};
 
-    // Prepare model configuration
-    const model: GeminiModelParams = {
-        geminiApiKey: prefs.geminiApiKey.trim(),
-        modelName: modelName.trim(),
-        systemPrompt: buildRealPrompt(actionName, prefs, fallbackPrompt),
-        ...(thinkingModels.includes(modelName.trim()) && {thinkingConfig}),
-        maxOutputTokens: 32000,
-        temperature: 0.3,
-        topP: 0.94,
-        topK: 0,
-        frequencyPenalty: 0,
-        presencePenalty: 0,
-    };
+    return {
+        model: {
+            geminiApiKey: prefs.geminiApiKey.trim(),
+            modelName: currentModelName,
+            maxOutputTokens: 32000,
+            ...(thinkingModels.includes(currentModelName) && {thinkingConfig}),
+            temperature: 0.3,
+            topP: 0.94,
+            topK: 0,
+            frequencyPenalty: 0,
+            presencePenalty: 0,
+            systemPrompt: buildRealPrompt(actionName, prefs, fallbackPrompt),
+        },
 
-    // Prepare model request
-    const request: GeminiRequestParams = {
-        actionName: actionName,
-        origProps: props,
-        primaryLanguage: prefs.primaryLanguage,
-        userPrompt: props.arguments?.query || props.fallbackText || "",
-    };
+        request: {
+            actionName: actionName,
+            origProps: props,
+            primaryLanguage: prefs.primaryLanguage,
+            userPrompt: props.arguments?.query || props.fallbackText || "",
+        },
 
-    // Prepare Raycast UI
-    const ui: RaycastUIParams = {
-        placeholder: "Your question to AI here",
-        allowPaste: true,
-        useSelected: true,
-    };
-
-    return [request, model, ui];
+        ui: {
+            placeholder: "Your question to AI here",
+            allowPaste: true,
+            useSelected: true,
+        }
+    }
 }
