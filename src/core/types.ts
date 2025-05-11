@@ -10,6 +10,7 @@ export interface GemAIConfig {
         geminiApiKey: string;
         systemPrompt: string;
         modelName: string;
+        modelNameUser: string;
         maxOutputTokens: number;
         temperature: number;
         topK: number;

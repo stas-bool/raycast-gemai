@@ -103,7 +103,10 @@ export default function GemAI(gemConfig: GemAIConfig) {
         setLastQuery(query);
         setPage(PageState.Response);
 
-        await showToast({style: Toast.Style.Animated, title: `Waiting for ${gemConfig.request.actionName} AI...`});
+        await showToast({
+            style: Toast.Style.Animated,
+            title: `Waiting for ${gemConfig.request.actionName} GemAI; ${gemConfig.model.modelNameUser}`
+        });
 
         const startTime = Date.now();
         const ai = new GoogleGenAI({apiKey: gemConfig.model.geminiApiKey});
@@ -129,17 +132,17 @@ export default function GemAI(gemConfig: GemAIConfig) {
 
             const inputTokens = await ai.models.countTokens({model: gemConfig.model.modelName, contents: query});
 
-            const timer = `Time: ${totalTime} sec`;
-            const stats = `*Model: ${gemConfig.model.modelName}*\n\n` +
-                `*${timer}; ` +
-                `Prompt: ${usageMetadata?.promptTokenCount ?? 0}; ` +
-                `Input: ${inputTokens?.totalTokens ?? 0}; ` +
-                `Thinking: ${usageMetadata?.thoughtsTokenCount ?? 0}; ` +
-                `Total: ${usageMetadata?.totalTokenCount ?? 0}*`;
+            const timer = `${totalTime} sec.`;
+            const stats = `*${gemConfig.model.modelNameUser}; ` +
+                `Time: ${timer} ` +
+                `Tokens: P:${usageMetadata?.promptTokenCount ?? 0} + ` +
+                `I:${inputTokens?.totalTokens ?? 0} + ` +
+                `T:${usageMetadata?.thoughtsTokenCount ?? 0} ~ ` +
+                `${usageMetadata?.totalTokenCount ?? 0}*`;
+
+            await showToast({style: Toast.Style.Success, title: "OK", message: `Time: ${timer}`});
 
             setRenderedText(`${markdown}\n\n----\n\n${stats}`);
-
-            await showToast({style: Toast.Style.Success, title: "OK", message: timer});
         } catch (e: any) {
             console.error(e);
             await showToast({style: Toast.Style.Failure, title: "Response Failed"});

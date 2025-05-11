@@ -2,6 +2,13 @@ import {getPreferenceValues} from "@raycast/api";
 import {GemAIConfig} from "./types";
 import {getSystemPrompt} from "./utils";
 
+const allModels = {
+    'gemini-2.0-flash-lite': "Gemini 2.0 Flash-Lite",
+    'gemini-2.0-flash': "Gemini 2.0 Flash",
+    'gemini-2.5-flash-preview-04-17': "Gemini 2.5 Flash Preview",
+    'gemini-2.5-pro-preview-05-06': "Gemini 2.5 Pro Preview",
+};
+
 const thinkingModels = [
     'gemini-2.5-flash-preview-04-17',
     'gemini-2.5-pro-preview-05-06',
@@ -13,7 +20,7 @@ const actionsWithPrimaryLanguage = [
     'summator',
 ];
 
-function buildRealPrompt(actionName: string, prefs: any, fallbackPrompt?: string): string {
+function buildRealPrompt(actionName: string, prefs: any, fallbackPrompt?: string): [boolean, string] {
     const systemPrompt = getSystemPrompt(prefs.promptDir + "/" + prefs.promptFile, fallbackPrompt);
     const primaryLanguage = prefs.primaryLanguage.trim().toUpperCase()
     const defaultLanguage = `## Language Instruction Layer
@@ -25,34 +32,42 @@ Otherwise, adhere to the Default Response Language specified above (${primaryLan
 ---
 `;
 
-    return actionsWithPrimaryLanguage.includes(actionName.toLocaleLowerCase().trim())
+    const prompt = actionsWithPrimaryLanguage.includes(actionName.toLocaleLowerCase().trim())
         ? `${defaultLanguage}\n\n${systemPrompt}`
         : systemPrompt;
+
+    return [systemPrompt.trim() !== fallbackPrompt.trim(), prompt];
+}
+
+function getCurrentModel(prefs: any): string {
+    const isCustomModelValid = Boolean(prefs.customModel && prefs.customModel.trim().length > 0);
+    const globalModelName = isCustomModelValid ? prefs.customModel.toLowerCase().trim() : prefs.defaultModel;
+
+    return prefs.commandModel === "default" ? globalModelName : prefs.commandModel;
 }
 
 export function buildGemAIConfig(actionName: string, props: any, fallbackPrompt?: string): GemAIConfig {
     const prefs = getPreferenceValues();
 
-    // Select model name
-    const isCustomModelValid = Boolean(prefs.customModel && prefs.customModel.trim().length > 0);
-    const globalModelName = isCustomModelValid ? prefs.customModel.toLowerCase().trim() : prefs.defaultModel;
-    const currentModelName = prefs.commandModel === "default" ? globalModelName : prefs.commandModel;
+    const currentModelName = getCurrentModel(prefs);
 
     // Thinking mode if any
-    const thinkingConfig = {includeThoughts: false, thinkingBudget: 4000};
+    const thinkingConfig = {includeThoughts: false, thinkingBudget: 1000};
+    const [isCustomPrompt, realSystemPrompt] = buildRealPrompt(actionName, prefs, fallbackPrompt);
 
     return {
         model: {
             geminiApiKey: prefs.geminiApiKey.trim(),
             modelName: currentModelName,
-            maxOutputTokens: 32000,
+            modelNameUser: (allModels[currentModelName] ?? currentModelName) + (isCustomPrompt ? ' 💭' : ''),
+            maxOutputTokens: 16000,
             ...(thinkingModels.includes(currentModelName) && {thinkingConfig}),
             temperature: 0.3,
             topP: 0.94,
             topK: 0,
             frequencyPenalty: 0,
             presencePenalty: 0,
-            systemPrompt: buildRealPrompt(actionName, prefs, fallbackPrompt),
+            systemPrompt: realSystemPrompt,
         },
 
         request: {
