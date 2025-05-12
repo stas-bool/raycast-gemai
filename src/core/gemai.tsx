@@ -1,266 +1,259 @@
-import {createPartFromUri, GoogleGenAI, Part} from '@google/genai';
-import {Action, ActionPanel, Detail, Form, getSelectedText, Keyboard, showToast, Toast} from "@raycast/api";
+import { createPartFromUri, GoogleGenAI, Part } from "@google/genai";
+import { Action, ActionPanel, Detail, Form, getSelectedText, Keyboard, showToast, Toast } from "@raycast/api";
 import * as fs from "fs";
 import mime from "mime-types";
 import * as path from "path";
-import {useEffect, useState} from "react";
-import {GemAIConfig} from "./types";
+import { useEffect, useState } from "react";
+import { GemAIConfig } from "./types";
 
 export async function prepareAttachment(ai: GoogleGenAI, actualFilePath?: string): Promise<Part> {
-    if (!actualFilePath || !fs.existsSync(actualFilePath) || !fs.lstatSync(actualFilePath).isFile()) {
-        return null;
+  if (!actualFilePath || !fs.existsSync(actualFilePath) || !fs.lstatSync(actualFilePath).isFile()) {
+    return null;
+  }
+
+  try {
+    const fileName = path.basename(actualFilePath);
+    const mimeType = mime.lookup(fileName) || "application/octet-stream";
+    const fileBuffer = fs.readFileSync(actualFilePath);
+    const blob = new Blob([fileBuffer], { type: mimeType });
+    const file = await ai.files.upload({ file: blob, config: { displayName: fileName, mimeType: mimeType } });
+
+    let getFile = await ai.files.get({ name: file.name });
+    while (getFile.state === "PROCESSING") {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      getFile = await ai.files.get({ name: file.name });
     }
 
-    try {
-        const fileName = path.basename(actualFilePath);
-        const mimeType = mime.lookup(fileName) || "application/octet-stream";
-        const fileBuffer = fs.readFileSync(actualFilePath);
-        const blob = new Blob([fileBuffer], {type: mimeType});
-        const file = await ai.files.upload({file: blob, config: {displayName: fileName, mimeType: mimeType}});
-
-        let getFile = await ai.files.get({name: file.name});
-        while (getFile.state === 'PROCESSING') {
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            getFile = await ai.files.get({name: file.name});
-        }
-
-        if (getFile.state === 'FAILED') {
-            throw new Error('File processing failed');
-        }
-
-        if (file.uri && file.mimeType) {
-            return createPartFromUri(file.uri, file.mimeType);
-        }
-
-        return null;
-    } catch (fileError: any) {
-        console.error("Error processing file:", fileError);
-        await showToast({
-            style: Toast.Style.Failure,
-            title: "File processing failed",
-            message: fileError.message
-        });
-        return null;
+    if (getFile.state === "FAILED") {
+      throw new Error("File processing failed");
     }
+
+    if (file.uri && file.mimeType) {
+      return createPartFromUri(file.uri, file.mimeType);
+    }
+
+    return null;
+  } catch (fileError: any) {
+    console.error("Error processing file:", fileError);
+    await showToast({
+      style: Toast.Style.Failure,
+      title: "File processing failed",
+      message: fileError.message,
+    });
+    return null;
+  }
 }
 
-export async function sendRequestToGemini(
-    ai: GoogleGenAI,
-    gemConfig: GemAIConfig,
-    query?: string,
-    filePart?: Part,
-) {
-    const contents = [query];
-    if (filePart) {
-        // @ts-ignore
-        contents.push(filePart);
-    }
+export async function sendRequestToGemini(ai: GoogleGenAI, gemConfig: GemAIConfig, query?: string, filePart?: Part) {
+  const contents = [query];
+  if (filePart) {
+    // @ts-ignore
+    contents.push(filePart);
+  }
 
-    const requestParams = {
-        model: gemConfig.model.modelName,
-        contents: contents,
-        config: {
-            maxOutputTokens: gemConfig.model.maxOutputTokens,
-            temperature: gemConfig.model.temperature,
-            thinkingConfig: gemConfig.model.thinkingConfig,
-            systemInstruction: gemConfig.model.systemPrompt,
-            frequencyPenalty: gemConfig.model.frequencyPenalty,
-            presencePenalty: gemConfig.model.presencePenalty,
-            topK: gemConfig.model.topK,
-            topP: gemConfig.model.topP,
-        },
-    };
+  const requestParams = {
+    model: gemConfig.model.modelName,
+    contents: contents,
+    config: {
+      maxOutputTokens: gemConfig.model.maxOutputTokens,
+      temperature: gemConfig.model.temperature,
+      thinkingConfig: gemConfig.model.thinkingConfig,
+      systemInstruction: gemConfig.model.systemPrompt,
+      frequencyPenalty: gemConfig.model.frequencyPenalty,
+      presencePenalty: gemConfig.model.presencePenalty,
+      topK: gemConfig.model.topK,
+      topP: gemConfig.model.topP,
+    },
+  };
 
-    // console.log(requestParams);
+  // console.log(requestParams);
 
-    return await ai.models.generateContentStream(requestParams);
+  return await ai.models.generateContentStream(requestParams);
 }
 
 // --- Main component ---
 export default function GemAI(gemConfig: GemAIConfig) {
-    const PageState = {Form: 0, Response: 1};
+  const PageState = { Form: 0, Response: 1 };
 
-    // Init states
-    const [selectedState, setSelectedText] = useState("");
-    const [markdown, setMarkdown] = useState("");
-    const [page, setPage] = useState(PageState.Response);
-    const [isLoading, setIsLoading] = useState(true);
-    const [textarea, setTextarea] = useState("");
-    const [lastQuery, setLastQuery] = useState("");
-    const [lastResponse, setLastResponse] = useState("");
-    const [renderedText, setRenderedText] = useState("");
+  // Init states
+  const [selectedState, setSelectedText] = useState("");
+  const [markdown, setMarkdown] = useState("");
+  const [page, setPage] = useState(PageState.Response);
+  const [isLoading, setIsLoading] = useState(true);
+  const [textarea, setTextarea] = useState("");
+  const [lastQuery, setLastQuery] = useState("");
+  const [lastResponse, setLastResponse] = useState("");
+  const [renderedText, setRenderedText] = useState("");
 
-    const getAiResponse = async (query?: string, data?: any) => {
-        setLastQuery(query);
-        setPage(PageState.Response);
+  const getAiResponse = async (query?: string, data?: any) => {
+    setLastQuery(query);
+    setPage(PageState.Response);
 
-        await showToast({
-            style: Toast.Style.Animated,
-            title: `Waiting for ${gemConfig.request.actionName} GemAI; ${gemConfig.model.modelNameUser}`
-        });
+    await showToast({
+      style: Toast.Style.Animated,
+      title: `Waiting for ${gemConfig.request.actionName} GemAI; ${gemConfig.model.modelNameUser}`,
+    });
 
-        const startTime = Date.now();
-        const ai = new GoogleGenAI({apiKey: gemConfig.model.geminiApiKey});
+    const startTime = Date.now();
+    const ai = new GoogleGenAI({ apiKey: gemConfig.model.geminiApiKey });
 
-        try {
-            const actualFilePath = data?.attachmentFile || gemConfig.request.attachmentFile;
-            const filePart = await prepareAttachment(ai, actualFilePath);
-            const response = await sendRequestToGemini(ai, gemConfig, query, filePart);
-            const totalTime = ((Date.now() - startTime) / 1000).toFixed(1);
+    try {
+      const actualFilePath = data?.attachmentFile || gemConfig.request.attachmentFile;
+      const filePart = await prepareAttachment(ai, actualFilePath);
+      const response = await sendRequestToGemini(ai, gemConfig, query, filePart);
+      const totalTime = ((Date.now() - startTime) / 1000).toFixed(1);
 
-            let markdown = "";
-            let usageMetadata = undefined;
+      let markdown = "";
+      let usageMetadata = undefined;
 
-            for await (const chunk of response) {
-                // Add only if chunk.text is defined
-                if (typeof chunk.text === "string") {
-                    markdown += chunk.text;
-                }
-                setMarkdown(markdown);
-                setRenderedText(markdown);
-                usageMetadata = chunk.usageMetadata;
-            }
-
-            setMarkdown(markdown.trim() + "\n");
-            setLastResponse(markdown);
-
-            const inputTokens = await ai.models.countTokens({model: gemConfig.model.modelName, contents: query});
-
-            const timer = `${totalTime} sec.`;
-            const stats = `*${gemConfig.model.modelNameUser}*; ` +
-                `Stats: ${timer}; ` +
-                `*P:${usageMetadata?.promptTokenCount ?? 0} + ` +
-                `I:${inputTokens?.totalTokens ?? 0} + ` +
-                `T:${usageMetadata?.thoughtsTokenCount ?? 0} ~ ` +
-                `${usageMetadata?.totalTokenCount ?? 0} tokens*`;
-
-            await showToast({style: Toast.Style.Success, title: "OK", message: `Time: ${timer}`});
-
-            setRenderedText(`${markdown}\n\n----\n\n${stats}`);
-        } catch (e: any) {
-            console.error(e);
-            await showToast({style: Toast.Style.Failure, title: "Response Failed"});
-            setRenderedText(`## Fatal Error\n\n----\n\n${e.message}\n\n----\n\n${(Date.now() - startTime) / 1000} seconds`);
+      for await (const chunk of response) {
+        // Add only if chunk.text is defined
+        if (typeof chunk.text === "string") {
+          markdown += chunk.text;
         }
+        setMarkdown(markdown);
+        setRenderedText(markdown);
+        usageMetadata = chunk.usageMetadata;
+      }
 
-        setIsLoading(false);
+      setMarkdown(markdown.trim() + "\n");
+      setLastResponse(markdown);
+
+      const inputTokens = await ai.models.countTokens({ model: gemConfig.model.modelName, contents: query });
+
+      const timer = `${totalTime} sec.`;
+      const stats =
+        `*${gemConfig.model.modelNameUser}*; ` +
+        `Stats: ${timer}; ` +
+        `*P:${usageMetadata?.promptTokenCount ?? 0} + ` +
+        `I:${inputTokens?.totalTokens ?? 0} + ` +
+        `T:${usageMetadata?.thoughtsTokenCount ?? 0} ~ ` +
+        `${usageMetadata?.totalTokenCount ?? 0} tokens*`;
+
+      await showToast({ style: Toast.Style.Success, title: "OK", message: `Time: ${timer}` });
+
+      setRenderedText(`${markdown}\n\n----\n\n${stats}`);
+    } catch (e: any) {
+      console.error(e);
+      await showToast({ style: Toast.Style.Failure, title: "Response Failed" });
+      setRenderedText(`## Fatal Error\n\n----\n\n${e.message}\n\n----\n\n${(Date.now() - startTime) / 1000} seconds`);
     }
 
-    useEffect(() => {
-        (async () => {
-            try {
-                let selectedText = "";
+    setIsLoading(false);
+  };
 
-                if (gemConfig.ui.useSelected) {
-                    try {
-                        selectedText = await getSelectedText();
-                        setSelectedText(selectedText);
-                    } catch (e) {
-                        await showToast({style: Toast.Style.Success, title: "No selected text. Use form."});
-                        selectedText = "";
-                    }
-                }
+  useEffect(() => {
+    (async () => {
+      try {
+        let selectedText = "";
 
-                const hasUserPrompt = gemConfig.request.userPrompt.trim() !== "";
-                const hasSelected = selectedText.trim() !== "";
+        if (gemConfig.ui.useSelected) {
+          try {
+            selectedText = await getSelectedText();
+            setSelectedText(selectedText);
+          } catch (e) {
+            await showToast({ style: Toast.Style.Success, title: "No selected text. Use form." });
+            selectedText = "";
+          }
+        }
 
-                if (!hasUserPrompt && !hasSelected) {
-                    setPage(PageState.Form);
-                    return;
-                }
+        const hasUserPrompt = gemConfig.request.userPrompt.trim() !== "";
+        const hasSelected = selectedText.trim() !== "";
 
-                if (hasUserPrompt && hasSelected) {
-                    getAiResponse(`${gemConfig.request.userPrompt}\n\n${selectedText}`);
-                } else if (hasUserPrompt) {
-                    getAiResponse(gemConfig.request.userPrompt);
-                } else if (hasSelected) {
-                    getAiResponse(selectedText);
-                }
-            } catch (e: any) {
-                console.error("Fatal error in useEffect:", e);
-                await showToast({style: Toast.Style.Failure, title: "An error occurred", message: e.message});
-                setPage(PageState.Response);
-                setMarkdown(e.message)
-            }
-        })();
-    }, []);
+        if (!hasUserPrompt && !hasSelected) {
+          setPage(PageState.Form);
+          return;
+        }
 
-    return page === PageState.Response ? (
-        <Detail
-            actions={
-                !isLoading && (
-                    <ActionPanel>
-                        {gemConfig.ui.allowPaste && <Action.Paste content={markdown} />}
-                        <Action.CopyToClipboard shortcut={Keyboard.Shortcut.Common.Copy} content={markdown} />
-                        {/*{lastQuery && lastResponse && (*/}
-                        {/*    <Action*/}
-                        {/*        title="Continue in Chat"*/}
-                        {/*        icon={Icon.Message}*/}
-                        {/*        shortcut={{modifiers: ["cmd"], key: "j"}}*/}
-                        {/*        onAction={async () => {*/}
-                        {/*            await launchCommand({*/}
-                        {/*                name: "aiChat",*/}
-                        {/*                type: LaunchType.UserInitiated,*/}
-                        {/*                context: {query: lastQuery, response: lastResponse, creationName: ""},*/}
-                        {/*            });*/}
-                        {/*        }}*/}
-                        {/*    />*/}
-                        {/*)}*/}
-                        {/*<Action*/}
-                        {/*    title="View History"*/}
-                        {/*    icon={Icon.Clock}*/}
-                        {/*    shortcut={{modifiers: ["cmd"], key: "h"}}*/}
-                        {/*    onAction={async () => {*/}
-                        {/*        await launchCommand({name: "history", type: LaunchType.UserInitiated,});*/}
-                        {/*    }}*/}
-                        {/*/>*/}
-                    </ActionPanel>
-                )
-            }
-            isLoading={isLoading}
-            markdown={renderedText}
-        />
-    ) : (
-        <Form
-            actions={
-                <ActionPanel>
-                    <Action.SubmitForm
-                        onSubmit={(values) => {
-                            setMarkdown("");
+        if (hasUserPrompt && hasSelected) {
+          getAiResponse(`${gemConfig.request.userPrompt}\n\n${selectedText}`);
+        } else if (hasUserPrompt) {
+          getAiResponse(gemConfig.request.userPrompt);
+        } else if (hasSelected) {
+          getAiResponse(selectedText);
+        }
+      } catch (e: any) {
+        console.error("Fatal error in useEffect:", e);
+        await showToast({ style: Toast.Style.Failure, title: "An error occurred", message: e.message });
+        setPage(PageState.Response);
+        setMarkdown(e.message);
+      }
+    })();
+  }, []);
 
-                            let filePathValue = undefined;
-                            if (values?.file?.length > 0 &&
-                                fs.existsSync(values.file[0]) &&
-                                fs.lstatSync(values.file[0]).isFile()
-                            ) {
-                                filePathValue = values.file[0];
-                            }
+  return page === PageState.Response ? (
+    <Detail
+      actions={
+        !isLoading && (
+          <ActionPanel>
+            {gemConfig.ui.allowPaste && <Action.Paste content={markdown} />}
+            <Action.CopyToClipboard shortcut={Keyboard.Shortcut.Common.Copy} content={markdown} />
+            {/*{lastQuery && lastResponse && (*/}
+            {/*    <Action*/}
+            {/*        title="Continue in Chat"*/}
+            {/*        icon={Icon.Message}*/}
+            {/*        shortcut={{modifiers: ["cmd"], key: "j"}}*/}
+            {/*        onAction={async () => {*/}
+            {/*            await launchCommand({*/}
+            {/*                name: "aiChat",*/}
+            {/*                type: LaunchType.UserInitiated,*/}
+            {/*                context: {query: lastQuery, response: lastResponse, creationName: ""},*/}
+            {/*            });*/}
+            {/*        }}*/}
+            {/*    />*/}
+            {/*)}*/}
+            {/*<Action*/}
+            {/*    title="View History"*/}
+            {/*    icon={Icon.Clock}*/}
+            {/*    shortcut={{modifiers: ["cmd"], key: "h"}}*/}
+            {/*    onAction={async () => {*/}
+            {/*        await launchCommand({name: "history", type: LaunchType.UserInitiated,});*/}
+            {/*    }}*/}
+            {/*/>*/}
+          </ActionPanel>
+        )
+      }
+      isLoading={isLoading}
+      markdown={renderedText}
+    />
+  ) : (
+    <Form
+      actions={
+        <ActionPanel>
+          <Action.SubmitForm
+            onSubmit={(values) => {
+              setMarkdown("");
 
-                            if (gemConfig.ui.useSelected) {
-                                getAiResponse(`${values.query}\n\n---\n\n${selectedState}`, {attachmentFile: filePathValue});
-                                return;
-                            }
+              let filePathValue = undefined;
+              if (values?.file?.length > 0 && fs.existsSync(values.file[0]) && fs.lstatSync(values.file[0]).isFile()) {
+                filePathValue = values.file[0];
+              }
 
-                            getAiResponse(values.query, {attachmentFile: filePathValue});
-                        }}
-                    />
-                </ActionPanel>
-            }
-        >
-            <Form.TextArea
-                id="query"
-                title="User Prompt"
-                value={textarea}
-                onChange={(value) => setTextarea(value)}
-                placeholder={gemConfig.ui.placeholder}
-                autoFocus={true}
-            />
-            {!gemConfig.request.attachmentFile && (
-                <>
-                    <Form.Description title="Attachment" text="You can attach image or file to analyze it." />
-                    <Form.FilePicker id="file" title="" showHiddenFiles={true} allowMultipleSelection={false} />
-                </>
-            )}
-        </Form>
-    );
-};
+              if (gemConfig.ui.useSelected) {
+                getAiResponse(`${values.query}\n\n---\n\n${selectedState}`, { attachmentFile: filePathValue });
+                return;
+              }
+
+              getAiResponse(values.query, { attachmentFile: filePathValue });
+            }}
+          />
+        </ActionPanel>
+      }
+    >
+      <Form.TextArea
+        id="query"
+        title="User Prompt"
+        value={textarea}
+        onChange={(value) => setTextarea(value)}
+        placeholder={gemConfig.ui.placeholder}
+        autoFocus={true}
+      />
+      {!gemConfig.request.attachmentFile && (
+        <>
+          <Form.Description title="Attachment" text="You can attach image or file to analyze it." />
+          <Form.FilePicker id="file" title="" showHiddenFiles={true} allowMultipleSelection={false} />
+        </>
+      )}
+    </Form>
+  );
+}
