@@ -808,6 +808,13 @@
           "default": "Screenshot-Translate.md"
         }
       ]
+    },
+    {
+      "name": "history",
+      "title": "Gem AI history",
+      "description": "Take a screenshot and translate it.",
+      "mode": "view",
+      "preferences": []
     }
   ],
   "preferences": [

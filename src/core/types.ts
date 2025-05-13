@@ -34,7 +34,6 @@ export interface GemAIConfig {
 
 export interface HistoryItem {
   timestamp: number;
-  date: string;
   actionName?: string;
   query?: string;
   isAttachmentFile?: boolean;

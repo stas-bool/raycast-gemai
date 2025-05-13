@@ -41,7 +41,8 @@ export function formatDate(date: Date): string {
   const month = monthNames[date.getMonth()];
   const hours = date.getHours().toString().padStart(2, "0");
   const minutes = date.getMinutes().toString().padStart(2, "0");
-  return `${day} ${month}, ${hours}:${minutes}`;
+  const seconds = date.getSeconds().toString().padStart(2, "0");
+  return `${hours}:${minutes}:${seconds}, ${month} ${day}`;
 }
 
 export function dump(variable: unknown, label?: string): void {

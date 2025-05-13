@@ -44,19 +44,21 @@ function makeCommand({
                        withSecondaryLanguage = false,
                        promptFile,
                        mode = "view",
-                       temperature = "0.3"
+                       temperature = "0.3",
+                       modelSelector = true,
                      }: {
   name: string;
   title: string;
   mode?: string,
   description: string;
-  promptFile?: string;
+  promptFile?: string | boolean;
   hasQuery?: boolean;
   withSecondaryLanguage?: boolean | string;
-  temperature?: string;
+  temperature?: string | boolean;
+  modelSelector?: boolean;
 }) {
   const preferences = [
-    ...modelPreferences,
+    ...(modelSelector ? modelPreferences : []),
     ...(withSecondaryLanguage
       ? [{
         ...languagePreferences[0],
@@ -65,23 +67,27 @@ function makeCommand({
           : {})
       }]
       : []),
-    {
-      name: "temperature",
-      title: "Temperature",
-      description: "Lower temperatures yield deterministic responses (0 is fully deterministic), " +
-        "while higher temperatures produce diverse results. Max value is 2.0",
-      type: "textfield",
-      required: false,
-      default: temperature ?? "0.3",
-    },
-    {
-      name: "promptFile",
-      title: "Markdown file with system prompt",
-      description: "The system prompt to use for this command.",
-      type: "textfield",
-      required: false,
-      default: promptFile ?? `${capitalizeFirstLetter(name)}.md`,
-    },
+    ...(temperature !== false
+      ? [{
+        name: "temperature",
+        title: "Temperature",
+        description: "Lower temperatures yield deterministic responses (0 is fully deterministic), " +
+          "while higher temperatures produce diverse results. Max value is 2.0",
+        type: "textfield",
+        required: false,
+        default: typeof temperature === "string" ? temperature : "0.3",
+      }]
+      : []),
+    ...(promptFile !== false
+      ? [{
+        name: "promptFile",
+        title: "Markdown file with system prompt",
+        description: "The system prompt to use for this command.",
+        type: "textfield",
+        required: false,
+        default: typeof promptFile === "string" ? promptFile : `${capitalizeFirstLetter(name)}.md`,
+      }]
+      : []),
   ];
 
   return {
@@ -190,6 +196,14 @@ const commands = [
     mode: "no-view",
     promptFile: "Screenshot-Translate.md",
     withSecondaryLanguage: "Source language",
+  }),
+  makeCommand({
+    name: "history",
+    title: "Gem AI history",
+    description: "Take a screenshot and translate it.",
+    modelSelector: false,
+    temperature: false,
+    promptFile: false,
   }),
 ];
 

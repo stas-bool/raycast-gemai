@@ -6,7 +6,6 @@ import * as path from "path";
 import { useEffect, useState } from "react";
 import { useCommandHistory } from "./history";
 import { GemAIConfig } from "./types";
-import { formatDate } from "./utils";
 
 async function prepareAttachment(ai: GoogleGenAI, actualFilePath?: string): Promise<Part> {
   if (!actualFilePath || !fs.existsSync(actualFilePath) || !fs.lstatSync(actualFilePath).isFile()) {
@@ -144,7 +143,6 @@ export default function GemAI(gemConfig: GemAIConfig) {
 
       await addToHistory({
         timestamp: Date.now(),
-        date: formatDate(new Date()),
         actionName: gemConfig.request.actionName,
         query: query,
         isAttachmentFile: !!gemConfig.request.attachmentFile,

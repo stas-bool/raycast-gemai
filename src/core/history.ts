@@ -8,10 +8,12 @@ var storageKeyName = "gemai_history";
 export async function loadHistoryFromStorage(): Promise<HistoryItem[]> {
   try {
     const storedHistory = await LocalStorage.getItem(storageKeyName);
+
     if (storedHistory) {
       const parsed = JSON.parse("" + storedHistory);
       return Array.isArray(parsed) ? (parsed as HistoryItem[]) : [];
     }
+
     return [];
   } catch (error) {
     showFailureToast(error);
@@ -63,23 +65,17 @@ export function useCommandHistory() {
     try {
       let currentHistory = await loadHistoryFromStorage();
 
-      // Only consider entries from the last 5 minutes as potential duplicates
-      const second = new Date(Date.now() - 1000).toISOString();
       const isDuplicate = currentHistory.some(
-        (entry: HistoryItem) => entry.query === historyItem.query && entry.date > second,
+        (entry: HistoryItem) => entry.query === historyItem.query && Date.now() - entry.timestamp <= 1000,
       );
 
       if (isDuplicate) {
         return;
       }
 
-      // Update with new entry
       const updatedHistory = [historyItem, ...currentHistory];
-
-      // Store in LocalStorage first to ensure persistence
       await LocalStorage.setItem(storageKeyName, JSON.stringify(updatedHistory));
 
-      // Then update state to reflect changes
       setHistory(updatedHistory);
     } catch (error) {
       showFailureToast(error);
@@ -87,9 +83,6 @@ export function useCommandHistory() {
     }
   };
 
-  /**
-   * Load command history from LocalStorage
-   */
   const loadHistory = async () => {
     setIsLoading(true);
     const loaded = await loadHistoryFromStorage();
@@ -97,9 +90,18 @@ export function useCommandHistory() {
     setIsLoading(false);
   };
 
-  /**
-   * Clear all command history
-   */
+  const removeFromHistory = async (timestamp: number) => {
+    try {
+      let currentHistory = await loadHistoryFromStorage();
+      const updatedHistory = currentHistory.filter((item: HistoryItem) => item.timestamp !== timestamp);
+      await LocalStorage.setItem(storageKeyName, JSON.stringify(updatedHistory));
+      setHistory(updatedHistory);
+    } catch (error) {
+      showFailureToast(error);
+      console.error("Failed to remove history item:", error);
+    }
+  };
+
   const clearHistory = async () => {
     try {
       setHistory([]);
@@ -114,6 +116,7 @@ export function useCommandHistory() {
     history,
     isLoading,
     addToHistory,
+    removeFromHistory,
     getHistoryStats,
     clearHistory,
     loadHistory,
