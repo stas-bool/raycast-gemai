@@ -162,16 +162,23 @@ const commands = [
   makeCommand({
     name: "screenshotToMarkdown",
     title: "Screenshot -> Markdown",
-    description: "Convert screenshot to markdown",
+    description: "Take a screenshot and convert it to markdown.",
     mode: "no-view",
     promptFile: "Screenshot-Markdown.md",
   }),
   makeCommand({
     name: "screenshotToExplain",
     title: "Screenshot -> Explain",
-    description: "View the screenshot, analyze it, and answer the user's question (if applicable)",
+    description: "Take a screenshot and analyze it, and answer the user's question (if applicable).",
     mode: "no-view",
     promptFile: "Screenshot-Explain.md",
+  }),
+  makeCommand({
+    name: "screenshotToTranslate",
+    title: "Screenshot -> Translate",
+    description: "Take a screenshot and translate it.",
+    mode: "no-view",
+    promptFile: "Screenshot-Translate.md",
   }),
 ];
 

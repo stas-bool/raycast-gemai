@@ -21,7 +21,7 @@ Your task:
 5.  Output *only* the resulting GFM. Do not add any introductions, explanations, or comments before or after the Markdown code.
 `;
 
-  const gemAiConfig = buildGemAIConfig("ScreenshotToMarkdown", props, fallbackPrompt);
+  const gemAiConfig = buildGemAIConfig("Screenshot -> Markdown", props, fallbackPrompt);
   gemAiConfig.ui.placeholder = "Additional instructions if any";
   gemAiConfig.ui.useSelected = false;
 

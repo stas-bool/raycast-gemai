@@ -642,7 +642,7 @@
     {
       "name": "screenshotToMarkdown",
       "title": "Screenshot -> Markdown",
-      "description": "Convert screenshot to markdown",
+      "description": "Take a screenshot and convert it to markdown.",
       "mode": "no-view",
       "preferences": [
         {
@@ -696,7 +696,7 @@
     {
       "name": "screenshotToExplain",
       "title": "Screenshot -> Explain",
-      "description": "View the screenshot, analyze it, and answer the user's question (if applicable)",
+      "description": "Take a screenshot and analyze it, and answer the user's question (if applicable).",
       "mode": "no-view",
       "preferences": [
         {
@@ -744,6 +744,60 @@
           "type": "textfield",
           "required": false,
           "default": "Screenshot-Explain.md"
+        }
+      ]
+    },
+    {
+      "name": "screenshotToTranslate",
+      "title": "Screenshot -> Translate",
+      "description": "Take a screenshot and translate it.",
+      "mode": "no-view",
+      "preferences": [
+        {
+          "name": "commandModel",
+          "title": "Model for the command",
+          "description": "Specifies the model utilized for this command.",
+          "type": "dropdown",
+          "required": false,
+          "default": "default",
+          "data": [
+            {
+              "title": "Default",
+              "value": "default"
+            },
+            {
+              "title": "Gemini 2.0 Flash-Lite",
+              "value": "gemini-2.0-flash-lite"
+            },
+            {
+              "title": "Gemini 2.0 Flash",
+              "value": "gemini-2.0-flash"
+            },
+            {
+              "title": "Gemini 2.5 Flash Preview",
+              "value": "gemini-2.5-flash-preview-04-17"
+            },
+            {
+              "title": "Gemini 2.5 Pro Preview",
+              "value": "gemini-2.5-pro-preview-05-06"
+            }
+          ]
+        },
+        {
+          "name": "temperature",
+          "title": "Temperature",
+          "description": "Lower temperatures yield deterministic responses (0 is fully deterministic), while higher temperatures produce diverse results. Max value is 2.0",
+          "type": "textfield",
+          "required": false,
+          "default": "0.3"
+        },
+        {
+          "name": "promptFile",
+          "title": "Markdown file with system prompt",
+          "description": "The system prompt to use for this command.",
+          "type": "textfield",
+          "required": false,
+          "default": "Screenshot-Translate.md"
         }
       ]
     }

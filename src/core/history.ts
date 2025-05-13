@@ -5,14 +5,11 @@ import { HistoryItem, HistoryStats } from "./types";
 
 var storageKeyName = "gemai_history";
 
-// Общая функция для загрузки истории с приведением к типу HistoryItem[]
 export async function loadHistoryFromStorage(): Promise<HistoryItem[]> {
   try {
     const storedHistory = await LocalStorage.getItem(storageKeyName);
     if (storedHistory) {
-      // Приводим к типу HistoryItem[]
       const parsed = JSON.parse("" + storedHistory);
-      // Можно добавить дополнительную проверку структуры, если нужно
       return Array.isArray(parsed) ? (parsed as HistoryItem[]) : [];
     }
     return [];
@@ -54,12 +51,10 @@ export async function getHistoryStats(): Promise<HistoryStats> {
   };
 }
 
-// Основной хук
 export function useCommandHistory() {
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Load history on component mount
   useEffect(() => {
     loadHistory();
   }, []);

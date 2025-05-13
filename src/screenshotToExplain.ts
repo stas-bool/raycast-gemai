@@ -10,7 +10,7 @@ export default async function ScreenshotToExplain(props: RaycastProps) {
     "Be ready to answer any follow-up questions." +
     "Respond ONLY with the direct result.";
 
-  const gemAiConfig = buildGemAIConfig("ScreenshotToExplain", props, fallbackPrompt);
+  const gemAiConfig = buildGemAIConfig("Screenshot -> Explain", props, fallbackPrompt);
   gemAiConfig.ui.placeholder = "Additional instructions if any";
   gemAiConfig.ui.useSelected = false;
 

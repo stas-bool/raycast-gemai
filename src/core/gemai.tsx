@@ -86,7 +86,6 @@ export default function GemAI(gemConfig: GemAIConfig) {
   const getAiResponse = async (query?: string, attachmentFile?: string) => {
     setPage(PageState.Response);
     setLatestQuery({ query: query, attachmentFile: attachmentFile });
-
     // dumpLog({ query, attachmentFile }, "getAiResponse");
 
     await showToast({
@@ -109,8 +108,7 @@ export default function GemAI(gemConfig: GemAIConfig) {
 
       for await (const chunk of response) {
         if (typeof chunk.text === "string") {
-          // Add only if chunk.text is defined. Without 'undefined'.
-          markdown += chunk.text;
+          markdown += chunk.text; // Add only if chunk.text is defined. Without 'undefined'.
         }
         setRenderedText(markdown);
         usageMetadata = chunk.usageMetadata;
@@ -126,7 +124,11 @@ export default function GemAI(gemConfig: GemAIConfig) {
         message: `Total time: ${totalTime} sec; Tokens: ${usageMetadata?.totalTokenCount}`,
       });
 
-      const inputTokens = await ai.models.countTokens({ model: gemConfig.model.modelName, contents: query });
+      const inputTokens = await ai.models.countTokens({
+        model: gemConfig.model.modelName,
+        contents: filePart ? [query, filePart] : [query],
+      });
+
       const timeStr =
         Math.abs(totalTime - firstRespTime) < 0.1
           ? `Time: ${firstRespTime.toFixed(1)} sec;`
@@ -154,8 +156,8 @@ export default function GemAI(gemConfig: GemAIConfig) {
       const historyStatsMessage =
         `History: ${historyStats.hour}/h, ` +
         `${historyStats.day}/today, ` +
-        // `${historyStats.week}/week, ` +
-        // `${historyStats.month}/month. ` +
+        `${historyStats.week}/week, ` +
+        `${historyStats.month}/month. ` +
         `Total ${historyStats.total}.`;
 
       setRenderedText(`${markdown}\n\n----\n\n*${stats}*\n\n*${historyStatsMessage}*`);
