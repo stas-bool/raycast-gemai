@@ -4,19 +4,19 @@ import { GemAIConfig, RaycastProps } from "./types";
 import { getSystemPrompt } from "./utils";
 
 const allModels = {
-  "gemini-2.0-flash-lite": "Gemini 2.0 Flash-Lite",
-  "gemini-2.0-flash": "Gemini 2.0 Flash",
-  "gemini-2.5-flash-preview-04-17": "Gemini 2.5 Flash Preview",
-  "gemini-2.5-pro-preview-05-06": "Gemini 2.5 Pro Preview",
+  "gemini-2.0-flash-lite": "2.0 Flash Lite",
+  "gemini-2.0-flash": "2.0 Flash",
+  "gemini-2.5-flash-preview-04-17": "2.5 Flash",
+  "gemini-2.5-pro-preview-05-06": "2.5 Pro",
 };
 
 const thinkingModels = ["gemini-2.5-flash-preview-04-17", "gemini-2.5-pro-preview-05-06"];
-
 const actionsWithPrimaryLanguage = ["askquestion", "explainer", "prompter", "summator", "screenshottoexplain"];
 
 function buildRealPrompt(actionName: string, prefs: any, fallbackPrompt?: string): [boolean, string] {
   const systemPrompt = getSystemPrompt(prefs.promptDir + "/" + prefs.promptFile, fallbackPrompt);
   const primaryLanguage = prefs.primaryLanguage.trim().toUpperCase();
+
   const defaultLanguage = `## Language Instruction Layer
 **Default Response Language:** ${primaryLanguage}.
 **Condition:** If a specific instruction to use a different language (e.g., "translate to English",
@@ -26,9 +26,15 @@ Otherwise, adhere to the Default Response Language specified above (${primaryLan
 ---
 `;
 
+  const autoLanguage = `### Language Policy
+**Response Language Priority:** Your responses should be formulated in the same language as the user's most recent query.
+**Ignoring System Instruction Language:** The language in which this system prompt is written (including this instruction) should not affect the language of your response to the user.
+**Exception:** If the user explicitly specifies a different language for the response in their query, you must follow that instruction.
+`;
+
   const prompt = actionsWithPrimaryLanguage.includes(actionName.toLocaleLowerCase().trim())
     ? `${defaultLanguage}\n\n${systemPrompt}`
-    : systemPrompt;
+    : `${autoLanguage}\n\n${systemPrompt}`;
 
   return [systemPrompt.trim() !== fallbackPrompt.trim(), prompt];
 }
@@ -45,8 +51,7 @@ export function buildGemAIConfig(actionName: string, props: RaycastProps, fallba
 
   const currentModelName = getCurrentModel(prefs);
 
-  // Thinking mode if any
-  const thinkingConfig = { includeThoughts: false, thinkingBudget: 2000 };
+  const thinkingConfig = { includeThoughts: false, thinkingBudget: 0 }; // Disable thinking mode if any
   const [isCustomPrompt, realSystemPrompt] = buildRealPrompt(actionName, prefs, fallbackPrompt);
 
   return {
@@ -56,7 +61,7 @@ export function buildGemAIConfig(actionName: string, props: RaycastProps, fallba
       modelNameUser: (allModels[currentModelName] ?? currentModelName) + (isCustomPrompt ? " 💭" : ""),
       maxOutputTokens: 16000,
       ...(thinkingModels.includes(currentModelName) && { thinkingConfig }),
-      temperature: 0.3,
+      temperature: 0.2,
       topP: 0.95,
       topK: 0,
       frequencyPenalty: 0,

@@ -110,11 +110,11 @@ export default function GemAI(gemConfig: GemAIConfig) {
       const actualFilePath = attachmentFile || gemConfig.request.attachmentFile;
       const filePart = await prepareAttachment(ai, actualFilePath);
       const response = await sendRequestToGemini(ai, gemConfig, query, filePart);
-      const firstRespTime = ((Date.now() - startTime) / 1000).toFixed(1);
+      const firstRespTime = (Date.now() - startTime) / 1000;
 
       let markdown = "";
       let usageMetadata = undefined;
-      let totalTime = "";
+      let totalTime = 0;
 
       for await (const chunk of response) {
         if (typeof chunk.text === "string") {
@@ -123,15 +123,16 @@ export default function GemAI(gemConfig: GemAIConfig) {
         }
         setRenderedText(markdown);
         usageMetadata = chunk.usageMetadata;
-        totalTime = ((Date.now() - startTime) / 1000).toFixed(1);
+        totalTime = (Date.now() - startTime) / 1000;
       }
 
       setMarkdown(markdown);
 
       const inputTokens = await ai.models.countTokens({ model: gemConfig.model.modelName, contents: query });
-
       const timeStr =
-        totalTime === firstRespTime ? `Time: ${firstRespTime}s.;` : `Resp: ${firstRespTime}s.; Total: ${totalTime}s;`;
+        Math.abs(totalTime - firstRespTime) < 0.1
+          ? `Time: ${firstRespTime.toFixed(1)}s.;`
+          : `Time: ${firstRespTime.toFixed(1)}s.; Typing: +${(totalTime - firstRespTime).toFixed(1)}s;`;
 
       const stats =
         `${gemConfig.model.modelNameUser}; ` +
