@@ -44,6 +44,7 @@ function makeCommand({
                        withSecondaryLanguage = false,
                        promptFile,
                        mode = "view",
+                       temperature = "0.3"
                      }: {
   name: string;
   title: string;
@@ -52,6 +53,7 @@ function makeCommand({
   promptFile?: string;
   hasQuery?: boolean;
   withSecondaryLanguage?: boolean;
+  temperature?: string;
 }) {
   return {
     name,
@@ -71,6 +73,15 @@ function makeCommand({
     preferences: [
       ...modelPreferences,
       ...(withSecondaryLanguage ? languagePreferences : []),
+      {
+        name: "temperature",
+        title: "Temperature",
+        description: "Lower temperatures yield deterministic responses (0 is fully deterministic), " +
+          "while higher temperatures produce diverse results. Max value is 2.0",
+        type: "textfield",
+        required: false,
+        default: temperature ?? "0.3",
+      },
       {
         name: "promptFile",
         title: "Markdown file with system prompt",
@@ -122,21 +133,25 @@ const commands = [
     name: "prompter",
     title: "Prompt Generator",
     description: "Create or improve your prompt",
+    temperature: "0.6"
   }),
   makeCommand({
     name: "shorter",
     title: "Shorter Text Maker",
     description: "Make selected text significantly shorter and more concise.",
+    temperature: "1.0"
   }),
   makeCommand({
     name: "longer",
     title: "Longer Text Maker",
     description: "Make selected text significantly longer.",
+    temperature: "1.0"
   }),
   makeCommand({
     name: "rephraser",
     title: "Rephrase It",
     description: "Rewrite the provided text using different phrasing while maintaining the original meaning.",
+    temperature: "1.0"
   }),
   makeCommand({
     name: "askQuestion",

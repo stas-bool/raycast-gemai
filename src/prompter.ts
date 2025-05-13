@@ -11,7 +11,7 @@ Process the user's input and output only the resulting prompt`;
   const gemAiConfig = buildGemAIConfig("Prompter", props, fallbackPrompt);
   gemAiConfig.ui.placeholder = "Enter any idea for new prompt";
   gemAiConfig.ui.useSelected = false;
-  gemAiConfig.model.temperature = 0.3;
+  gemAiConfig.model.temperature = 0.8;
 
   return GemAI(gemAiConfig);
 }

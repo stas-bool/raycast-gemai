@@ -66,6 +66,14 @@
           "required": true
         },
         {
+          "name": "temperature",
+          "title": "Temperature",
+          "description": "Lower temperatures yield deterministic responses (0 is fully deterministic), while higher temperatures produce diverse results. Max value is 2.0",
+          "type": "textfield",
+          "required": false,
+          "default": "0.3"
+        },
+        {
           "name": "promptFile",
           "title": "Markdown file with system prompt",
           "description": "The system prompt to use for this command.",
@@ -120,6 +128,14 @@
           "required": true
         },
         {
+          "name": "temperature",
+          "title": "Temperature",
+          "description": "Lower temperatures yield deterministic responses (0 is fully deterministic), while higher temperatures produce diverse results. Max value is 2.0",
+          "type": "textfield",
+          "required": false,
+          "default": "0.3"
+        },
+        {
           "name": "promptFile",
           "title": "Markdown file with system prompt",
           "description": "The system prompt to use for this command.",
@@ -164,6 +180,14 @@
               "value": "gemini-2.5-pro-preview-05-06"
             }
           ]
+        },
+        {
+          "name": "temperature",
+          "title": "Temperature",
+          "description": "Lower temperatures yield deterministic responses (0 is fully deterministic), while higher temperatures produce diverse results. Max value is 2.0",
+          "type": "textfield",
+          "required": false,
+          "default": "0.3"
         },
         {
           "name": "promptFile",
@@ -220,6 +244,14 @@
           ]
         },
         {
+          "name": "temperature",
+          "title": "Temperature",
+          "description": "Lower temperatures yield deterministic responses (0 is fully deterministic), while higher temperatures produce diverse results. Max value is 2.0",
+          "type": "textfield",
+          "required": false,
+          "default": "0.3"
+        },
+        {
           "name": "promptFile",
           "title": "Markdown file with system prompt",
           "description": "The system prompt to use for this command.",
@@ -264,6 +296,14 @@
               "value": "gemini-2.5-pro-preview-05-06"
             }
           ]
+        },
+        {
+          "name": "temperature",
+          "title": "Temperature",
+          "description": "Lower temperatures yield deterministic responses (0 is fully deterministic), while higher temperatures produce diverse results. Max value is 2.0",
+          "type": "textfield",
+          "required": false,
+          "default": "0.3"
         },
         {
           "name": "promptFile",
@@ -312,6 +352,14 @@
           ]
         },
         {
+          "name": "temperature",
+          "title": "Temperature",
+          "description": "Lower temperatures yield deterministic responses (0 is fully deterministic), while higher temperatures produce diverse results. Max value is 2.0",
+          "type": "textfield",
+          "required": false,
+          "default": "0.3"
+        },
+        {
           "name": "promptFile",
           "title": "Markdown file with system prompt",
           "description": "The system prompt to use for this command.",
@@ -356,6 +404,14 @@
               "value": "gemini-2.5-pro-preview-05-06"
             }
           ]
+        },
+        {
+          "name": "temperature",
+          "title": "Temperature",
+          "description": "Lower temperatures yield deterministic responses (0 is fully deterministic), while higher temperatures produce diverse results. Max value is 2.0",
+          "type": "textfield",
+          "required": false,
+          "default": "0.6"
         },
         {
           "name": "promptFile",
@@ -404,6 +460,14 @@
           ]
         },
         {
+          "name": "temperature",
+          "title": "Temperature",
+          "description": "Lower temperatures yield deterministic responses (0 is fully deterministic), while higher temperatures produce diverse results. Max value is 2.0",
+          "type": "textfield",
+          "required": false,
+          "default": "1.0"
+        },
+        {
           "name": "promptFile",
           "title": "Markdown file with system prompt",
           "description": "The system prompt to use for this command.",
@@ -448,6 +512,14 @@
               "value": "gemini-2.5-pro-preview-05-06"
             }
           ]
+        },
+        {
+          "name": "temperature",
+          "title": "Temperature",
+          "description": "Lower temperatures yield deterministic responses (0 is fully deterministic), while higher temperatures produce diverse results. Max value is 2.0",
+          "type": "textfield",
+          "required": false,
+          "default": "1.0"
         },
         {
           "name": "promptFile",
@@ -496,6 +568,14 @@
           ]
         },
         {
+          "name": "temperature",
+          "title": "Temperature",
+          "description": "Lower temperatures yield deterministic responses (0 is fully deterministic), while higher temperatures produce diverse results. Max value is 2.0",
+          "type": "textfield",
+          "required": false,
+          "default": "1.0"
+        },
+        {
           "name": "promptFile",
           "title": "Markdown file with system prompt",
           "description": "The system prompt to use for this command.",
@@ -540,6 +620,14 @@
               "value": "gemini-2.5-pro-preview-05-06"
             }
           ]
+        },
+        {
+          "name": "temperature",
+          "title": "Temperature",
+          "description": "Lower temperatures yield deterministic responses (0 is fully deterministic), while higher temperatures produce diverse results. Max value is 2.0",
+          "type": "textfield",
+          "required": false,
+          "default": "0.3"
         },
         {
           "name": "promptFile",
@@ -588,6 +676,14 @@
           ]
         },
         {
+          "name": "temperature",
+          "title": "Temperature",
+          "description": "Lower temperatures yield deterministic responses (0 is fully deterministic), while higher temperatures produce diverse results. Max value is 2.0",
+          "type": "textfield",
+          "required": false,
+          "default": "0.3"
+        },
+        {
           "name": "promptFile",
           "title": "Markdown file with system prompt",
           "description": "The system prompt to use for this command.",
@@ -632,6 +728,14 @@
               "value": "gemini-2.5-pro-preview-05-06"
             }
           ]
+        },
+        {
+          "name": "temperature",
+          "title": "Temperature",
+          "description": "Lower temperatures yield deterministic responses (0 is fully deterministic), while higher temperatures produce diverse results. Max value is 2.0",
+          "type": "textfield",
+          "required": false,
+          "default": "0.3"
         },
         {
           "name": "promptFile",

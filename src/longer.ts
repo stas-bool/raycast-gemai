@@ -10,7 +10,6 @@ ALWAYS return ONLY the expanded text itself, without any preamble.`;
 
   const gemAiConfig = buildGemAIConfig("Longer", props, fallbackPrompt);
   gemAiConfig.ui.placeholder = "Enter text to make it longer";
-  gemAiConfig.model.temperature = 0.7;
 
   return GemAI(gemAiConfig);
 }

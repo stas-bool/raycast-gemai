@@ -17,26 +17,28 @@ function buildRealPrompt(actionName: string, prefs: any, fallbackPrompt?: string
   const systemPrompt = getSystemPrompt(prefs.promptDir + "/" + prefs.promptFile, fallbackPrompt);
   const primaryLanguage = prefs.primaryLanguage.trim().toUpperCase();
 
-  const defaultLanguage = `## Language Instruction Layer
+  const defaultLanguage = `## Language Policy
 **Default Response Language:** ${primaryLanguage}.
 **Condition:** If a specific instruction to use a different language (e.g., "translate to English",
 "respond in French", "in Spanish please") is present either in the main body of the current prompt OR in any
 subsequent user messages within this conversation, please prioritize and follow that explicit language instruction.
-Otherwise, adhere to the Default Response Language specified above (${primaryLanguage}).
----
-`;
+Otherwise, adhere to the Default Response Language specified above (${primaryLanguage}).`;
 
   const autoLanguage = `### Language Policy
 **Response Language Priority:** Your responses should be formulated in the same language as the user's most recent query.
 **Ignoring System Instruction Language:** The language in which this system prompt is written (including this instruction) should not affect the language of your response to the user.
-**Exception:** If the user explicitly specifies a different language for the response in their query, you must follow that instruction.
-`;
+**Exception:** If the user explicitly specifies a different language for the response in their query, you must follow that instruction.`;
 
   const prompt = actionsWithPrimaryLanguage.includes(actionName.toLocaleLowerCase().trim())
     ? `${defaultLanguage}\n\n${systemPrompt}`
     : `${autoLanguage}\n\n${systemPrompt}`;
 
   return [systemPrompt.trim() !== fallbackPrompt.trim(), prompt];
+}
+
+function getTemperature(prefs: any): number {
+  const temp = prefs.temperature.trim();
+  return parseFloat(temp === "" ? "0.3" : temp);
 }
 
 function getCurrentModel(prefs: any): string {
@@ -58,10 +60,10 @@ export function buildGemAIConfig(actionName: string, props: RaycastProps, fallba
     model: {
       geminiApiKey: prefs.geminiApiKey.trim(),
       modelName: currentModelName,
-      modelNameUser: (allModels[currentModelName] ?? currentModelName) + (isCustomPrompt ? " 💭" : ""),
+      modelNameUser: (isCustomPrompt ? "💭 " : "") + (allModels[currentModelName] ?? currentModelName),
       maxOutputTokens: 16000,
       ...(thinkingModels.includes(currentModelName) && { thinkingConfig }),
-      temperature: 0.2,
+      temperature: getTemperature(prefs),
       topP: 0.95,
       topK: 0,
       frequencyPenalty: 0,

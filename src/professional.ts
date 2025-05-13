@@ -10,7 +10,6 @@ export default function Professional(props: RaycastProps) {
 
   const gemAiConfig = buildGemAIConfig("Professional", props, fallbackPrompt);
   gemAiConfig.ui.placeholder = "Enter text to make it formal";
-  gemAiConfig.model.temperature = 0.7;
 
   return GemAI(gemAiConfig);
 }

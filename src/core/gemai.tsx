@@ -124,6 +124,7 @@ export default function GemAI(gemConfig: GemAIConfig) {
         setRenderedText(markdown);
         usageMetadata = chunk.usageMetadata;
         totalTime = (Date.now() - startTime) / 1000;
+        showToast({ style: Toast.Style.Animated, title: `Typing...` });
       }
 
       setMarkdown(markdown);
@@ -131,17 +132,17 @@ export default function GemAI(gemConfig: GemAIConfig) {
       const inputTokens = await ai.models.countTokens({ model: gemConfig.model.modelName, contents: query });
       const timeStr =
         Math.abs(totalTime - firstRespTime) < 0.1
-          ? `Time: ${firstRespTime.toFixed(1)}s.;`
-          : `Time: ${firstRespTime.toFixed(1)}s.; Typing: +${(totalTime - firstRespTime).toFixed(1)}s;`;
+          ? `Time: ${firstRespTime.toFixed(1)} sec;`
+          : `Time: ${firstRespTime.toFixed(1)}+${(totalTime - firstRespTime).toFixed(1)} sec;`;
 
       const stats =
-        `${gemConfig.model.modelNameUser}; ` +
-        `Req: ${apiReqCounter}; ` +
+        `${gemConfig.model.modelNameUser}; ${gemConfig.model.temperature}°; ` +
         `${timeStr} ` +
         `P:${usageMetadata?.promptTokenCount ?? 0} + ` +
         `I:${inputTokens?.totalTokens ?? 0} + ` +
         `T:${usageMetadata?.thoughtsTokenCount ?? 0} ` +
-        `~ ${usageMetadata?.totalTokenCount ?? 0} tokens`;
+        `~ ${usageMetadata?.totalTokenCount ?? 0} tokens; ` +
+        `Req: ${apiReqCounter}`;
 
       // await addToHistory({
       //   id: Date.now(),
