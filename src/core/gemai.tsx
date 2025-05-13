@@ -6,7 +6,7 @@ import * as path from "path";
 import { useEffect, useState } from "react";
 import { useCommandHistory } from "./history";
 import { GemAIConfig } from "./types";
-import { dumpLog, formatDate } from "./utils";
+import { formatDate } from "./utils";
 
 async function prepareAttachment(ai: GoogleGenAI, actualFilePath?: string): Promise<Part> {
   if (!actualFilePath || !fs.existsSync(actualFilePath) || !fs.lstatSync(actualFilePath).isFile()) {
@@ -87,7 +87,7 @@ export default function GemAI(gemConfig: GemAIConfig) {
     setPage(PageState.Response);
     setLatestQuery({ query: query, attachmentFile: attachmentFile });
 
-    dumpLog({ query, attachmentFile }, "getAiResponse");
+    // dumpLog({ query, attachmentFile }, "getAiResponse");
 
     await showToast({
       style: Toast.Style.Animated,
@@ -154,8 +154,8 @@ export default function GemAI(gemConfig: GemAIConfig) {
       const historyStatsMessage =
         `History: ${historyStats.hour}/h, ` +
         `${historyStats.day}/today, ` +
-        `${historyStats.week}/week, ` +
-        `${historyStats.month}/month. ` +
+        // `${historyStats.week}/week, ` +
+        // `${historyStats.month}/month. ` +
         `Total ${historyStats.total}.`;
 
       setRenderedText(`${markdown}\n\n----\n\n*${stats}*\n\n*${historyStatsMessage}*`);
