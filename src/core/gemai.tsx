@@ -84,7 +84,6 @@ export default function GemAI(gemConfig: GemAIConfig) {
   const PageState = { Form: 0, Response: 1 };
 
   // Init states
-  const [selectedTextState, setSelectedText] = useState("");
   const [markdown, setMarkdown] = useState("");
   const [page, setPage] = useState(PageState.Response);
   const [isLoading, setIsLoading] = useState(true);
@@ -111,10 +110,11 @@ export default function GemAI(gemConfig: GemAIConfig) {
       const actualFilePath = attachmentFile || gemConfig.request.attachmentFile;
       const filePart = await prepareAttachment(ai, actualFilePath);
       const response = await sendRequestToGemini(ai, gemConfig, query, filePart);
-      const totalTime = ((Date.now() - startTime) / 1000).toFixed(1);
+      const firstRespTime = ((Date.now() - startTime) / 1000).toFixed(1);
 
       let markdown = "";
       let usageMetadata = undefined;
+      let totalTime = "";
 
       for await (const chunk of response) {
         if (typeof chunk.text === "string") {
@@ -123,17 +123,20 @@ export default function GemAI(gemConfig: GemAIConfig) {
         }
         setRenderedText(markdown);
         usageMetadata = chunk.usageMetadata;
+        totalTime = ((Date.now() - startTime) / 1000).toFixed(1);
       }
 
       setMarkdown(markdown);
 
       const inputTokens = await ai.models.countTokens({ model: gemConfig.model.modelName, contents: query });
 
-      const timer = `${totalTime} sec`;
+      const timeStr =
+        totalTime === firstRespTime ? `Time: ${firstRespTime}s.;` : `Resp: ${firstRespTime}s.; Total: ${totalTime}s;`;
+
       const stats =
         `${gemConfig.model.modelNameUser}; ` +
         `Req: ${apiReqCounter}; ` +
-        `Time: ${timer}; ` +
+        `${timeStr} ` +
         `P:${usageMetadata?.promptTokenCount ?? 0} + ` +
         `I:${inputTokens?.totalTokens ?? 0} + ` +
         `T:${usageMetadata?.thoughtsTokenCount ?? 0} ` +
@@ -150,7 +153,11 @@ export default function GemAI(gemConfig: GemAIConfig) {
       //   stats: stats
       // });
 
-      await showToast({ style: Toast.Style.Success, title: "OK", message: `Time: ${timer}` });
+      await showToast({
+        style: Toast.Style.Success,
+        title: "OK",
+        message: `Total time: ${totalTime} sec; Tokens: ${usageMetadata?.totalTokenCount}`,
+      });
 
       setRenderedText(`${markdown}\n\n----\n\n*${stats}*`);
     } catch (e: any) {
@@ -170,7 +177,6 @@ export default function GemAI(gemConfig: GemAIConfig) {
         if (gemConfig.ui.useSelected) {
           try {
             selectedText = await getSelectedText();
-            setSelectedText(selectedText);
           } catch (e) {
             await showToast({ style: Toast.Style.Success, title: "No selected text. Use form." });
             selectedText = "";
@@ -212,6 +218,7 @@ export default function GemAI(gemConfig: GemAIConfig) {
               shortcut={Keyboard.Shortcut.Common.Refresh}
               onAction={async () => {
                 setMarkdown("");
+                setRenderedText("Resent request. Waiting...");
                 getAiResponse(latestQuery.query, latestQuery.attachmentFile);
               }}
             />
@@ -229,7 +236,6 @@ export default function GemAI(gemConfig: GemAIConfig) {
           <Action.SubmitForm
             onSubmit={(values) => {
               setMarkdown("");
-              setRenderedText("Resent request. Waiting...");
 
               let filePathValue = undefined;
               if (values?.file?.length > 0 && fs.existsSync(values.file[0]) && fs.lstatSync(values.file[0]).isFile()) {
