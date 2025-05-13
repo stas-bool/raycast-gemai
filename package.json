@@ -1,8 +1,8 @@
 {
   "$schema": "https://www.raycast.com/schemas/extension.json",
   "name": "gemai",
-  "title": "Gemai",
-  "description": "Gemini Toolbox for quick text editing (BYOK!).",
+  "title": "Gem AI",
+  "description": "Gemini Toolbox for quick text editing, BYOK.",
   "icon": "gemai-icon.png",
   "type": "module",
   "author": "SmetDenis",
@@ -587,7 +587,7 @@
     },
     {
       "name": "askQuestion",
-      "title": "Ask Gemai Any Question",
+      "title": "Ask Gem AI any question",
       "description": "Ask AI any question on any topic.",
       "mode": "view",
       "preferences": [

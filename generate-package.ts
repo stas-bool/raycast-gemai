@@ -52,10 +52,10 @@ function makeCommand({
   description: string;
   promptFile?: string;
   hasQuery?: boolean;
-  withSecondaryLanguage?: boolean;
+  withSecondaryLanguage?: boolean | string;
   temperature?: string;
 }) {
-  return {
+  let result = {
     name,
     title,
     description,
@@ -92,6 +92,12 @@ function makeCommand({
       },
     ],
   };
+
+  if (typeof (withSecondaryLanguage) === "string") {
+    result.preferences[1].title = withSecondaryLanguage;
+  }
+
+  return result;
 }
 
 const commands = [
@@ -155,7 +161,7 @@ const commands = [
   }),
   makeCommand({
     name: "askQuestion",
-    title: "Ask Gemai Any Question",
+    title: "Ask Gem AI any question",
     description: "Ask AI any question on any topic.",
     promptFile: "AskQuestion.md",
   }),
@@ -179,6 +185,7 @@ const commands = [
     description: "Take a screenshot and translate it.",
     mode: "no-view",
     promptFile: "Screenshot-Translate.md",
+    // withSecondaryLanguage: "Source language",
   }),
 ];
 
@@ -227,8 +234,8 @@ const rootPreferences = [
 const pkg = {
   $schema: "https://www.raycast.com/schemas/extension.json",
   name: "gemai",
-  title: "Gemai",
-  description: "Gemini Toolbox for quick text editing (BYOK!).",
+  title: "Gem AI",
+  description: "Gemini Toolbox for quick text editing, BYOK.",
   icon: "gemai-icon.png",
   type: "module",
   author: "SmetDenis",
