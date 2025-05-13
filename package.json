@@ -784,6 +784,14 @@
           ]
         },
         {
+          "name": "secondaryLanguage",
+          "title": "Source language",
+          "description": "Please specify your second language to better configure the assistant's operation.",
+          "type": "textfield",
+          "default": "English",
+          "required": true
+        },
+        {
           "name": "temperature",
           "title": "Temperature",
           "description": "Lower temperatures yield deterministic responses (0 is fully deterministic), while higher temperatures produce diverse results. Max value is 2.0",

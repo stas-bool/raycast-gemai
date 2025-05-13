@@ -55,7 +55,36 @@ function makeCommand({
   withSecondaryLanguage?: boolean | string;
   temperature?: string;
 }) {
-  let result = {
+  const preferences = [
+    ...modelPreferences,
+    ...(withSecondaryLanguage
+      ? [{
+        ...languagePreferences[0],
+        ...(typeof withSecondaryLanguage === "string"
+          ? {title: withSecondaryLanguage}
+          : {})
+      }]
+      : []),
+    {
+      name: "temperature",
+      title: "Temperature",
+      description: "Lower temperatures yield deterministic responses (0 is fully deterministic), " +
+        "while higher temperatures produce diverse results. Max value is 2.0",
+      type: "textfield",
+      required: false,
+      default: temperature ?? "0.3",
+    },
+    {
+      name: "promptFile",
+      title: "Markdown file with system prompt",
+      description: "The system prompt to use for this command.",
+      type: "textfield",
+      required: false,
+      default: promptFile ?? `${capitalizeFirstLetter(name)}.md`,
+    },
+  ];
+
+  return {
     name,
     title,
     description,
@@ -70,35 +99,10 @@ function makeCommand({
         },
       ],
     }),
-    preferences: [
-      ...modelPreferences,
-      ...(withSecondaryLanguage ? languagePreferences : []),
-      {
-        name: "temperature",
-        title: "Temperature",
-        description: "Lower temperatures yield deterministic responses (0 is fully deterministic), " +
-          "while higher temperatures produce diverse results. Max value is 2.0",
-        type: "textfield",
-        required: false,
-        default: temperature ?? "0.3",
-      },
-      {
-        name: "promptFile",
-        title: "Markdown file with system prompt",
-        description: "The system prompt to use for this command.",
-        type: "textfield",
-        required: false,
-        default: promptFile ?? `${capitalizeFirstLetter(name)}.md`,
-      },
-    ],
+    preferences,
   };
-
-  if (typeof (withSecondaryLanguage) === "string") {
-    result.preferences[1].title = withSecondaryLanguage;
-  }
-
-  return result;
 }
+
 
 const commands = [
   makeCommand({
@@ -185,7 +189,7 @@ const commands = [
     description: "Take a screenshot and translate it.",
     mode: "no-view",
     promptFile: "Screenshot-Translate.md",
-    // withSecondaryLanguage: "Source language",
+    withSecondaryLanguage: "Source language",
   }),
 ];
 
