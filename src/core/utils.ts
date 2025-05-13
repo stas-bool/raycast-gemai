@@ -24,9 +24,9 @@ export function getSystemPrompt(promptPath: string | undefined, defaultPrompt?: 
 
 export function dump(variable: unknown, label?: string): void {
   if (label) {
-    console.debug(label + ":", JSON.stringify(variable));
+    console.debug(label + ":", JSON.stringify(variable, null, 2));
   } else {
-    console.debug(JSON.stringify(variable));
+    console.debug(JSON.stringify(variable, null, 2));
   }
 }
 

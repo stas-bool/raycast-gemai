@@ -1,3 +1,5 @@
+import { SafetySetting } from "@google/genai";
+
 export interface GemAIConfig {
   request: {
     actionName: string;
@@ -21,6 +23,7 @@ export interface GemAIConfig {
       includeThoughts?: boolean;
       thinkingBudget?: number;
     };
+    safetySettings: SafetySetting[];
   };
   ui: {
     placeholder: string;
@@ -30,7 +33,12 @@ export interface GemAIConfig {
 }
 
 export interface HistoryItem {
-  config: GemAIConfig;
+  id: number;
+  timestamp: string;
+  actionName: string;
+  query: string;
+  userPrompt: string;
+  isAttachmentFile: boolean;
   response: string;
   stats: string;
 }

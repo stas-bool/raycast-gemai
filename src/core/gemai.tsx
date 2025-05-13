@@ -1,12 +1,15 @@
 import { createPartFromUri, GoogleGenAI, Part } from "@google/genai";
-import { Action, ActionPanel, Detail, Form, getSelectedText, Keyboard, showToast, Toast } from "@raycast/api";
+import { Action, ActionPanel, Detail, Form, getSelectedText, Icon, Keyboard, showToast, Toast } from "@raycast/api";
 import * as fs from "fs";
 import mime from "mime-types";
 import * as path from "path";
 import { useEffect, useState } from "react";
 import { GemAIConfig } from "./types";
+import { dumpLog } from "./utils";
 
-export async function prepareAttachment(ai: GoogleGenAI, actualFilePath?: string): Promise<Part> {
+var apiReqCounter = 0;
+
+async function prepareAttachment(ai: GoogleGenAI, actualFilePath?: string): Promise<Part> {
   if (!actualFilePath || !fs.existsSync(actualFilePath) || !fs.lstatSync(actualFilePath).isFile()) {
     return null;
   }
@@ -35,21 +38,19 @@ export async function prepareAttachment(ai: GoogleGenAI, actualFilePath?: string
     return null;
   } catch (fileError: any) {
     console.error("Error processing file:", fileError);
-    await showToast({
-      style: Toast.Style.Failure,
-      title: "File processing failed",
-      message: fileError.message,
-    });
+    await showToast({ style: Toast.Style.Failure, title: "File processing failed", message: fileError.message });
     return null;
   }
 }
 
-export async function sendRequestToGemini(ai: GoogleGenAI, gemConfig: GemAIConfig, query?: string, filePart?: Part) {
+async function sendRequestToGemini(ai: GoogleGenAI, gemConfig: GemAIConfig, query?: string, filePart?: Part) {
   const contents = [query];
   if (filePart) {
     // @ts-ignore
     contents.push(filePart);
   }
+
+  apiReqCounter++;
 
   const requestParams = {
     model: gemConfig.model.modelName,
@@ -63,10 +64,17 @@ export async function sendRequestToGemini(ai: GoogleGenAI, gemConfig: GemAIConfi
       presencePenalty: gemConfig.model.presencePenalty,
       topK: gemConfig.model.topK,
       topP: gemConfig.model.topP,
+      safetySettings: gemConfig.model.safetySettings,
     },
   };
 
-  // console.log(requestParams);
+  dumpLog(
+    {
+      model: requestParams.model,
+      contents: requestParams.contents,
+    },
+    "Real request",
+  );
 
   return await ai.models.generateContentStream(requestParams);
 }
@@ -76,18 +84,20 @@ export default function GemAI(gemConfig: GemAIConfig) {
   const PageState = { Form: 0, Response: 1 };
 
   // Init states
-  const [selectedState, setSelectedText] = useState("");
+  const [selectedTextState, setSelectedText] = useState("");
   const [markdown, setMarkdown] = useState("");
   const [page, setPage] = useState(PageState.Response);
   const [isLoading, setIsLoading] = useState(true);
   const [textarea, setTextarea] = useState("");
-  const [lastQuery, setLastQuery] = useState("");
-  const [lastResponse, setLastResponse] = useState("");
   const [renderedText, setRenderedText] = useState("");
+  const [latestQuery, setLatestQuery] = useState({ query: undefined, attachmentFile: undefined });
+  // const { addToHistory, history } = useCommandHistory();
 
-  const getAiResponse = async (query?: string, data?: any) => {
-    setLastQuery(query);
+  const getAiResponse = async (query?: string, attachmentFile?: string) => {
     setPage(PageState.Response);
+    setLatestQuery({ query: query, attachmentFile: attachmentFile });
+
+    dumpLog({ query, attachmentFile, apiReqCounter }, "getAiResponse");
 
     await showToast({
       style: Toast.Style.Animated,
@@ -98,7 +108,7 @@ export default function GemAI(gemConfig: GemAIConfig) {
     const ai = new GoogleGenAI({ apiKey: gemConfig.model.geminiApiKey });
 
     try {
-      const actualFilePath = data?.attachmentFile || gemConfig.request.attachmentFile;
+      const actualFilePath = attachmentFile || gemConfig.request.attachmentFile;
       const filePart = await prepareAttachment(ai, actualFilePath);
       const response = await sendRequestToGemini(ai, gemConfig, query, filePart);
       const totalTime = ((Date.now() - startTime) / 1000).toFixed(1);
@@ -107,32 +117,42 @@ export default function GemAI(gemConfig: GemAIConfig) {
       let usageMetadata = undefined;
 
       for await (const chunk of response) {
-        // Add only if chunk.text is defined
         if (typeof chunk.text === "string") {
+          // Add only if chunk.text is defined. Without 'undefined'.
           markdown += chunk.text;
         }
-        setMarkdown(markdown);
         setRenderedText(markdown);
         usageMetadata = chunk.usageMetadata;
       }
 
-      setMarkdown(markdown.trim() + "\n");
-      setLastResponse(markdown);
+      setMarkdown(markdown);
 
       const inputTokens = await ai.models.countTokens({ model: gemConfig.model.modelName, contents: query });
 
-      const timer = `${totalTime} sec.`;
+      const timer = `${totalTime} sec`;
       const stats =
-        `*${gemConfig.model.modelNameUser}*; ` +
-        `Stats: ${timer}; ` +
-        `*P:${usageMetadata?.promptTokenCount ?? 0} + ` +
+        `${gemConfig.model.modelNameUser}; ` +
+        `Req: ${apiReqCounter}; ` +
+        `Time: ${timer}; ` +
+        `P:${usageMetadata?.promptTokenCount ?? 0} + ` +
         `I:${inputTokens?.totalTokens ?? 0} + ` +
-        `T:${usageMetadata?.thoughtsTokenCount ?? 0} ~ ` +
-        `${usageMetadata?.totalTokenCount ?? 0} tokens*`;
+        `T:${usageMetadata?.thoughtsTokenCount ?? 0} ` +
+        `~ ${usageMetadata?.totalTokenCount ?? 0} tokens`;
+
+      // await addToHistory({
+      //   id: Date.now(),
+      //   timestamp: new Date().toISOString(),
+      //   actionName: gemConfig.request.actionName,
+      //   query: query,
+      //   userPrompt: gemConfig.request.userPrompt,
+      //   isAttachmentFile: !!gemConfig.request.attachmentFile,
+      //   response: markdown,
+      //   stats: stats
+      // });
 
       await showToast({ style: Toast.Style.Success, title: "OK", message: `Time: ${timer}` });
 
-      setRenderedText(`${markdown}\n\n----\n\n${stats}`);
+      setRenderedText(`${markdown}\n\n----\n\n*${stats}*`);
     } catch (e: any) {
       console.error(e);
       await showToast({ style: Toast.Style.Failure, title: "Response Failed" });
@@ -165,9 +185,7 @@ export default function GemAI(gemConfig: GemAIConfig) {
           return;
         }
 
-        if (hasUserPrompt && hasSelected) {
-          getAiResponse(`${gemConfig.request.userPrompt}\n\n${selectedText}`);
-        } else if (hasUserPrompt) {
+        if (hasUserPrompt) {
           getAiResponse(gemConfig.request.userPrompt);
         } else if (hasSelected) {
           getAiResponse(selectedText);
@@ -188,33 +206,21 @@ export default function GemAI(gemConfig: GemAIConfig) {
           <ActionPanel>
             {gemConfig.ui.allowPaste && <Action.Paste content={markdown} />}
             <Action.CopyToClipboard shortcut={Keyboard.Shortcut.Common.Copy} content={markdown} />
-            {/*{lastQuery && lastResponse && (*/}
-            {/*    <Action*/}
-            {/*        title="Continue in Chat"*/}
-            {/*        icon={Icon.Message}*/}
-            {/*        shortcut={{modifiers: ["cmd"], key: "j"}}*/}
-            {/*        onAction={async () => {*/}
-            {/*            await launchCommand({*/}
-            {/*                name: "aiChat",*/}
-            {/*                type: LaunchType.UserInitiated,*/}
-            {/*                context: {query: lastQuery, response: lastResponse, creationName: ""},*/}
-            {/*            });*/}
-            {/*        }}*/}
-            {/*    />*/}
-            {/*)}*/}
-            {/*<Action*/}
-            {/*    title="View History"*/}
-            {/*    icon={Icon.Clock}*/}
-            {/*    shortcut={{modifiers: ["cmd"], key: "h"}}*/}
-            {/*    onAction={async () => {*/}
-            {/*        await launchCommand({name: "history", type: LaunchType.UserInitiated,});*/}
-            {/*    }}*/}
-            {/*/>*/}
+            <Action
+              title="Submit Again"
+              icon={Icon.Repeat}
+              shortcut={Keyboard.Shortcut.Common.Refresh}
+              onAction={async () => {
+                setMarkdown("");
+                getAiResponse(latestQuery.query, latestQuery.attachmentFile);
+              }}
+            />
           </ActionPanel>
         )
       }
       isLoading={isLoading}
       markdown={renderedText}
+      navigationTitle={gemConfig.request.actionName}
     />
   ) : (
     <Form
@@ -223,18 +229,14 @@ export default function GemAI(gemConfig: GemAIConfig) {
           <Action.SubmitForm
             onSubmit={(values) => {
               setMarkdown("");
+              setRenderedText("Resent request. Waiting...");
 
               let filePathValue = undefined;
               if (values?.file?.length > 0 && fs.existsSync(values.file[0]) && fs.lstatSync(values.file[0]).isFile()) {
                 filePathValue = values.file[0];
               }
 
-              if (gemConfig.ui.useSelected) {
-                getAiResponse(`${values.query}\n\n---\n\n${selectedState}`, { attachmentFile: filePathValue });
-                return;
-              }
-
-              getAiResponse(values.query, { attachmentFile: filePathValue });
+              getAiResponse(values.query, filePathValue);
             }}
           />
         </ActionPanel>

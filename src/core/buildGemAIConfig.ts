@@ -1,3 +1,4 @@
+import { HarmBlockThreshold, HarmCategory } from "@google/genai";
 import { getPreferenceValues } from "@raycast/api";
 import { GemAIConfig, RaycastProps } from "./types";
 import { getSystemPrompt } from "./utils";
@@ -45,7 +46,7 @@ export function buildGemAIConfig(actionName: string, props: RaycastProps, fallba
   const currentModelName = getCurrentModel(prefs);
 
   // Thinking mode if any
-  const thinkingConfig = { includeThoughts: false, thinkingBudget: 1000 };
+  const thinkingConfig = { includeThoughts: false, thinkingBudget: 2000 };
   const [isCustomPrompt, realSystemPrompt] = buildRealPrompt(actionName, prefs, fallbackPrompt);
 
   return {
@@ -56,11 +57,17 @@ export function buildGemAIConfig(actionName: string, props: RaycastProps, fallba
       maxOutputTokens: 16000,
       ...(thinkingModels.includes(currentModelName) && { thinkingConfig }),
       temperature: 0.3,
-      topP: 0.94,
+      topP: 0.95,
       topK: 0,
       frequencyPenalty: 0,
       presencePenalty: 0,
       systemPrompt: realSystemPrompt,
+      safetySettings: [
+        { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+        { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_NONE },
+        { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_NONE },
+        { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+      ],
     },
 
     request: {
