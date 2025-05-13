@@ -4,10 +4,9 @@ import * as fs from "fs";
 import mime from "mime-types";
 import * as path from "path";
 import { useEffect, useState } from "react";
+import { useCommandHistory } from "./history";
 import { GemAIConfig } from "./types";
-import { dumpLog } from "./utils";
-
-var apiReqCounter = 0;
+import { dumpLog, formatDate } from "./utils";
 
 async function prepareAttachment(ai: GoogleGenAI, actualFilePath?: string): Promise<Part> {
   if (!actualFilePath || !fs.existsSync(actualFilePath) || !fs.lstatSync(actualFilePath).isFile()) {
@@ -50,8 +49,6 @@ async function sendRequestToGemini(ai: GoogleGenAI, gemConfig: GemAIConfig, quer
     contents.push(filePart);
   }
 
-  apiReqCounter++;
-
   const requestParams = {
     model: gemConfig.model.modelName,
     contents: contents,
@@ -68,13 +65,7 @@ async function sendRequestToGemini(ai: GoogleGenAI, gemConfig: GemAIConfig, quer
     },
   };
 
-  dumpLog(
-    {
-      model: requestParams.model,
-      contents: requestParams.contents,
-    },
-    "Real request",
-  );
+  // dumpLog({model: requestParams.model, contents: requestParams.contents}, "Real request");
 
   return await ai.models.generateContentStream(requestParams);
 }
@@ -90,13 +81,13 @@ export default function GemAI(gemConfig: GemAIConfig) {
   const [textarea, setTextarea] = useState("");
   const [renderedText, setRenderedText] = useState("");
   const [latestQuery, setLatestQuery] = useState({ query: undefined, attachmentFile: undefined });
-  // const { addToHistory, history } = useCommandHistory();
+  const { addToHistory, getHistoryStats } = useCommandHistory();
 
   const getAiResponse = async (query?: string, attachmentFile?: string) => {
     setPage(PageState.Response);
     setLatestQuery({ query: query, attachmentFile: attachmentFile });
 
-    dumpLog({ query, attachmentFile, apiReqCounter }, "getAiResponse");
+    dumpLog({ query, attachmentFile }, "getAiResponse");
 
     await showToast({
       style: Toast.Style.Animated,
@@ -129,6 +120,12 @@ export default function GemAI(gemConfig: GemAIConfig) {
 
       setMarkdown(markdown);
 
+      await showToast({
+        style: Toast.Style.Success,
+        title: "OK",
+        message: `Total time: ${totalTime} sec; Tokens: ${usageMetadata?.totalTokenCount}`,
+      });
+
       const inputTokens = await ai.models.countTokens({ model: gemConfig.model.modelName, contents: query });
       const timeStr =
         Math.abs(totalTime - firstRespTime) < 0.1
@@ -141,27 +138,27 @@ export default function GemAI(gemConfig: GemAIConfig) {
         `P:${usageMetadata?.promptTokenCount ?? 0} + ` +
         `I:${inputTokens?.totalTokens ?? 0} + ` +
         `T:${usageMetadata?.thoughtsTokenCount ?? 0} ` +
-        `~ ${usageMetadata?.totalTokenCount ?? 0} tokens; ` +
-        `Req: ${apiReqCounter}`;
+        `~ ${usageMetadata?.totalTokenCount ?? 0} tokens.`;
 
-      // await addToHistory({
-      //   id: Date.now(),
-      //   timestamp: new Date().toISOString(),
-      //   actionName: gemConfig.request.actionName,
-      //   query: query,
-      //   userPrompt: gemConfig.request.userPrompt,
-      //   isAttachmentFile: !!gemConfig.request.attachmentFile,
-      //   response: markdown,
-      //   stats: stats
-      // });
-
-      await showToast({
-        style: Toast.Style.Success,
-        title: "OK",
-        message: `Total time: ${totalTime} sec; Tokens: ${usageMetadata?.totalTokenCount}`,
+      await addToHistory({
+        timestamp: Date.now(),
+        date: formatDate(new Date()),
+        actionName: gemConfig.request.actionName,
+        query: query,
+        isAttachmentFile: !!gemConfig.request.attachmentFile,
+        response: markdown,
+        stats: stats,
       });
 
-      setRenderedText(`${markdown}\n\n----\n\n*${stats}*`);
+      const historyStats = await getHistoryStats();
+      const historyStatsMessage =
+        `History: ${historyStats.hour}/h, ` +
+        `${historyStats.day}/today, ` +
+        `${historyStats.week}/week, ` +
+        `${historyStats.month}/month. ` +
+        `Total ${historyStats.total}.`;
+
+      setRenderedText(`${markdown}\n\n----\n\n*${stats}*\n\n*${historyStatsMessage}*`);
     } catch (e: any) {
       console.error(e);
       await showToast({ style: Toast.Style.Failure, title: "Response Failed" });

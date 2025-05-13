@@ -22,6 +22,28 @@ export function getSystemPrompt(promptPath: string | undefined, defaultPrompt?: 
   return finalPrompt;
 }
 
+export function formatDate(date: Date): string {
+  const day = date.getDate();
+  const monthNames = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+  const month = monthNames[date.getMonth()];
+  const hours = date.getHours().toString().padStart(2, "0");
+  const minutes = date.getMinutes().toString().padStart(2, "0");
+  return `${day} ${month}, ${hours}:${minutes}`;
+}
+
 export function dump(variable: unknown, label?: string): void {
   if (label) {
     console.debug(label + ":", JSON.stringify(variable, null, 2));

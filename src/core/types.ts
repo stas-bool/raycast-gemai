@@ -33,14 +33,21 @@ export interface GemAIConfig {
 }
 
 export interface HistoryItem {
-  id: number;
-  timestamp: string;
-  actionName: string;
-  query: string;
-  userPrompt: string;
-  isAttachmentFile: boolean;
-  response: string;
-  stats: string;
+  timestamp: number;
+  date: string;
+  actionName?: string;
+  query?: string;
+  isAttachmentFile?: boolean;
+  response?: string;
+  stats?: string;
+}
+
+export interface HistoryStats {
+  hour: number;
+  day: number;
+  week: number;
+  month: number;
+  total: number;
 }
 
 export interface RaycastProps {

@@ -1,12 +1,62 @@
 import { LocalStorage } from "@raycast/api";
 import { showFailureToast } from "@raycast/utils";
 import { useEffect, useState } from "react";
-import { HistoryItem } from "./types";
+import { HistoryItem, HistoryStats } from "./types";
 
+var storageKeyName = "gemai_history";
+
+// Общая функция для загрузки истории с приведением к типу HistoryItem[]
+export async function loadHistoryFromStorage(): Promise<HistoryItem[]> {
+  try {
+    const storedHistory = await LocalStorage.getItem(storageKeyName);
+    if (storedHistory) {
+      // Приводим к типу HistoryItem[]
+      const parsed = JSON.parse("" + storedHistory);
+      // Можно добавить дополнительную проверку структуры, если нужно
+      return Array.isArray(parsed) ? (parsed as HistoryItem[]) : [];
+    }
+    return [];
+  } catch (error) {
+    showFailureToast(error);
+    console.error("Failed to load command history:", error);
+    return [];
+  }
+}
+
+export async function getHistoryStats(): Promise<HistoryStats> {
+  const history = await loadHistoryFromStorage();
+
+  const now = Date.now();
+  const MS_PER_HOUR = 60 * 60 * 1000;
+  const MS_PER_DAY = 24 * MS_PER_HOUR;
+  const MS_PER_WEEK = 7 * MS_PER_DAY;
+  const MS_PER_MONTH = 30 * MS_PER_DAY;
+
+  let hour = 0,
+    day = 0,
+    week = 0,
+    month = 0;
+
+  for (const item of history) {
+    const diff = now - item.timestamp;
+    if (diff <= MS_PER_HOUR) hour++;
+    if (diff <= MS_PER_DAY) day++;
+    if (diff <= MS_PER_WEEK) week++;
+    if (diff <= MS_PER_MONTH) month++;
+  }
+
+  return {
+    hour,
+    day,
+    week,
+    month,
+    total: history.length,
+  };
+}
+
+// Основной хук
 export function useCommandHistory() {
-  const storageKeyName = "gemai_history";
-
-  const [history, setHistory] = useState([]);
+  const [history, setHistory] = useState<HistoryItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   // Load history on component mount
@@ -16,13 +66,12 @@ export function useCommandHistory() {
 
   const addToHistory = async (historyItem: HistoryItem) => {
     try {
-      const storedHistory = await LocalStorage.getItem(storageKeyName);
-      let currentHistory = storedHistory ? JSON.parse("" + storedHistory) : [];
+      let currentHistory = await loadHistoryFromStorage();
 
       // Only consider entries from the last 5 minutes as potential duplicates
       const second = new Date(Date.now() - 1000).toISOString();
       const isDuplicate = currentHistory.some(
-        (entry: HistoryItem) => entry.query === historyItem.query && entry.timestamp > second,
+        (entry: HistoryItem) => entry.query === historyItem.query && entry.date > second,
       );
 
       if (isDuplicate) {
@@ -47,18 +96,10 @@ export function useCommandHistory() {
    * Load command history from LocalStorage
    */
   const loadHistory = async () => {
-    try {
-      setIsLoading(true);
-      const storedHistory = await LocalStorage.getItem(storageKeyName);
-      if (storedHistory) {
-        setHistory(JSON.parse("" + storedHistory));
-      }
-      setIsLoading(false);
-    } catch (error) {
-      showFailureToast(error);
-      console.error("Failed to load command history:", error);
-      setIsLoading(false);
-    }
+    setIsLoading(true);
+    const loaded = await loadHistoryFromStorage();
+    setHistory(loaded);
+    setIsLoading(false);
   };
 
   /**
@@ -78,6 +119,7 @@ export function useCommandHistory() {
     history,
     isLoading,
     addToHistory,
+    getHistoryStats,
     clearHistory,
     loadHistory,
   };
