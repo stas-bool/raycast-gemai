@@ -52,16 +52,18 @@ export function buildGemAIConfig(actionName: string, props: RaycastProps, fallba
   const prefs = getPreferenceValues();
 
   const currentModelName = getCurrentModel(prefs);
-
-  const thinkingConfig = { includeThoughts: false, thinkingBudget: 0 }; // Disable thinking mode if any
   const [isCustomPrompt, realSystemPrompt] = buildRealPrompt(actionName, prefs, fallbackPrompt);
+  const thinkingConfig = {
+    includeThoughts: false,
+    thinkingBudget: currentModelName === "gemini-2.5-pro-preview-05-06" ? 16000 : 0,
+  };
 
   return {
     model: {
       geminiApiKey: prefs.geminiApiKey.trim(),
       modelName: currentModelName,
       modelNameUser: (isCustomPrompt ? "💭 " : "") + (allModels[currentModelName] ?? currentModelName),
-      maxOutputTokens: 16000,
+      maxOutputTokens: 64000,
       ...(thinkingModels.includes(currentModelName) && { thinkingConfig }),
       temperature: getTemperature(prefs),
       topP: 0.95,

@@ -44,7 +44,7 @@ function makeCommand({
                        withSecondaryLanguage = false,
                        promptFile,
                        mode = "view",
-                       temperature = "0.3",
+                       temperature = "0.2",
                        modelSelector = true,
                      }: {
   name: string;
