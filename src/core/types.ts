@@ -39,6 +39,16 @@ export interface HistoryItem {
   isAttachmentFile?: boolean;
   response?: string;
   stats?: string;
+  requestStats?: RequestStats;
+}
+
+export interface RequestStats {
+  prompt: number;
+  input: number;
+  thoughts: number;
+  total: number;
+  totalTime: number;
+  firstRespTime: number;
 }
 
 export interface HistoryStats {

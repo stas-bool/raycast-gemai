@@ -1,7 +1,7 @@
 import { LocalStorage } from "@raycast/api";
 import { showFailureToast } from "@raycast/utils";
 import { useEffect, useState } from "react";
-import { HistoryItem, HistoryStats } from "./types";
+import { HistoryItem } from "./types";
 
 var storageKeyName = "gemai_history";
 
@@ -22,7 +22,7 @@ export async function loadHistoryFromStorage(): Promise<HistoryItem[]> {
   }
 }
 
-export async function getHistoryStats(): Promise<HistoryStats> {
+export async function renderHistoryStats(): Promise<string> {
   const history = await loadHistoryFromStorage();
 
   const now = Date.now();
@@ -44,13 +44,7 @@ export async function getHistoryStats(): Promise<HistoryStats> {
     if (diff <= MS_PER_MONTH) month++;
   }
 
-  return {
-    hour,
-    day,
-    week,
-    month,
-    total: history.length,
-  };
+  return `History: ${hour}/h, ${day}/today, ${week}/week, ${month}/month. Total ${history.length}.`;
 }
 
 export function useCommandHistory() {
@@ -117,7 +111,7 @@ export function useCommandHistory() {
     isLoading,
     addToHistory,
     removeFromHistory,
-    getHistoryStats,
+    getHistoryStats: renderHistoryStats,
     clearHistory,
     loadHistory,
   };

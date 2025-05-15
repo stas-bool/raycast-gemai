@@ -5,7 +5,8 @@ import mime from "mime-types";
 import * as path from "path";
 import { useEffect, useState } from "react";
 import { useCommandHistory } from "./history";
-import { GemAIConfig } from "./types";
+import { GemAIConfig, RequestStats } from "./types";
+import { dump, renderStats } from "./utils";
 
 async function prepareAttachment(ai: GoogleGenAI, actualFilePath?: string): Promise<Part> {
   if (!actualFilePath || !fs.existsSync(actualFilePath) || !fs.lstatSync(actualFilePath).isFile()) {
@@ -64,9 +65,32 @@ async function sendRequestToGemini(ai: GoogleGenAI, gemConfig: GemAIConfig, quer
     },
   };
 
-  // dumpLog({model: requestParams.model, contents: requestParams.contents}, "Real request");
+  dump(
+    {
+      system: requestParams.config.systemInstruction,
+      model: requestParams.model,
+      contents: requestParams.contents,
+    },
+    "Real request",
+  );
 
   return await ai.models.generateContentStream(requestParams);
+}
+
+async function getTokenStats(ai, gemConfig, usageMetadata, query, filePart): Promise<RequestStats> {
+  const inputTokens = await ai.models.countTokens({
+    model: gemConfig.model.modelName,
+    contents: filePart ? [query, filePart] : [query],
+  });
+
+  return {
+    prompt: usageMetadata?.promptTokenCount ?? 0,
+    input: inputTokens?.totalTokens ?? 0,
+    thoughts: usageMetadata?.thoughtsTokenCount ?? 0,
+    total: usageMetadata?.totalTokenCount ?? 0,
+    firstRespTime: 0,
+    totalTime: 0,
+  };
 }
 
 // --- Main component ---
@@ -123,23 +147,11 @@ export default function GemAI(gemConfig: GemAIConfig) {
         message: `Total time: ${totalTime} sec; Tokens: ${usageMetadata?.totalTokenCount}`,
       });
 
-      const inputTokens = await ai.models.countTokens({
-        model: gemConfig.model.modelName,
-        contents: filePart ? [query, filePart] : [query],
-      });
+      const requestStats = await getTokenStats(ai, gemConfig, usageMetadata, query, filePart);
+      requestStats.firstRespTime = firstRespTime;
+      requestStats.totalTime = totalTime;
 
-      const timeStr =
-        Math.abs(totalTime - firstRespTime) < 0.1
-          ? `Time: ${firstRespTime.toFixed(1)} sec;`
-          : `Time: ${firstRespTime.toFixed(1)}+${(totalTime - firstRespTime).toFixed(1)} sec;`;
-
-      const stats =
-        `${gemConfig.model.modelNameUser}; ${gemConfig.model.temperature}°; ` +
-        `${timeStr} ` +
-        `P:${usageMetadata?.promptTokenCount ?? 0} + ` +
-        `I:${inputTokens?.totalTokens ?? 0} + ` +
-        `T:${usageMetadata?.thoughtsTokenCount ?? 0} ` +
-        `~ ${usageMetadata?.totalTokenCount ?? 0} tokens.`;
+      const stats = renderStats(gemConfig.model.modelNameUser, gemConfig.model.temperature, requestStats);
 
       await addToHistory({
         timestamp: Date.now(),
@@ -148,15 +160,10 @@ export default function GemAI(gemConfig: GemAIConfig) {
         isAttachmentFile: !!gemConfig.request.attachmentFile,
         response: markdown,
         stats: stats,
+        requestStats: requestStats,
       });
 
-      const historyStats = await getHistoryStats();
-      const historyStatsMessage =
-        `History: ${historyStats.hour}/h, ` +
-        `${historyStats.day}/today, ` +
-        `${historyStats.week}/week, ` +
-        `${historyStats.month}/month. ` +
-        `Total ${historyStats.total}.`;
+      const historyStatsMessage = await getHistoryStats();
 
       setRenderedText(`${markdown}\n\n----\n\n*${stats}*\n\n*${historyStatsMessage}*`);
     } catch (e: any) {

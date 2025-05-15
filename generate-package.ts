@@ -44,7 +44,7 @@ function makeCommand({
                        withSecondaryLanguage = false,
                        promptFile,
                        mode = "view",
-                       temperature = "0.2",
+                       temperature = 0.2,
                        modelSelector = true,
                      }: {
   name: string;
@@ -54,7 +54,7 @@ function makeCommand({
   promptFile?: string | boolean;
   hasQuery?: boolean;
   withSecondaryLanguage?: boolean | string;
-  temperature?: string | boolean;
+  temperature?: number | boolean;
   modelSelector?: boolean;
 }) {
   const preferences = [
@@ -75,7 +75,7 @@ function makeCommand({
           "while higher temperatures produce diverse results. Max value is 2.0",
         type: "textfield",
         required: false,
-        default: typeof temperature === "string" ? temperature : "0.3",
+        default: typeof temperature === "number" ? "" + temperature : "0.3",
       }]
       : []),
     ...(promptFile !== false
@@ -112,11 +112,19 @@ function makeCommand({
 
 const commands = [
   makeCommand({
+    name: "translator-thinking",
+    title: "Translator (Thinking)",
+    description: "Translate selected text with deep thinking.",
+    withSecondaryLanguage: true,
+    hasQuery: true,
+  }),
+  makeCommand({
     name: "translator",
     title: "Translator",
     description: "Translate selected text.",
     withSecondaryLanguage: true,
     hasQuery: true,
+    temperature: 0.1
   }),
   makeCommand({
     name: "grammar",
@@ -149,25 +157,25 @@ const commands = [
     name: "prompter",
     title: "Prompt Generator",
     description: "Create or improve your prompt",
-    temperature: "0.6"
+    temperature: 0.6
   }),
   makeCommand({
     name: "shorter",
     title: "Shorter Text Maker",
     description: "Make selected text significantly shorter and more concise.",
-    temperature: "1.0"
+    temperature: 1.0
   }),
   makeCommand({
     name: "longer",
     title: "Longer Text Maker",
     description: "Make selected text significantly longer.",
-    temperature: "1.0"
+    temperature: 1.0
   }),
   makeCommand({
     name: "rephraser",
     title: "Rephrase It",
     description: "Rewrite the provided text using different phrasing while maintaining the original meaning.",
-    temperature: "1.0"
+    temperature: 1.0
   }),
   makeCommand({
     name: "askQuestion",
