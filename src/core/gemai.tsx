@@ -136,7 +136,7 @@ export default function GemAI(gemConfig: GemAIConfig) {
         setRenderedText(markdown);
         usageMetadata = chunk.usageMetadata;
         totalTime = (Date.now() - startTime) / 1000;
-        showToast({ style: Toast.Style.Animated, title: `Typing...` });
+        showToast({ style: Toast.Style.Success, title: `Typing...` });
       }
 
       setMarkdown(markdown);
