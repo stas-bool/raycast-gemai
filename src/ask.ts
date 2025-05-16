@@ -1,8 +1,9 @@
 import { buildGemAIConfig } from "./core/buildGemAIConfig";
+import { CMD_ASK, getCmd } from "./core/commands";
 import GemAI from "./core/gemai";
 import { RaycastProps } from "./core/types";
 
-export default function AskQuestion(props: RaycastProps) {
+export default function Ask(props: RaycastProps) {
   if (props?.launchContext?.attachmentFile) {
     const contextConfig = props.launchContext.gemAiConfig;
     contextConfig.request.attachmentFile = props.launchContext.attachmentFile;
@@ -17,8 +18,8 @@ export default function AskQuestion(props: RaycastProps) {
     "If necessary, present different viewpoints objectively or request clarification." +
     "ALWAYS return only the answer itself, without any explanations, greetings, or unnecessary words.";
 
-  const gemAiConfig = buildGemAIConfig("Ask Question", props, fallbackPrompt);
-  gemAiConfig.ui.placeholder = "Ask any question";
+  const gemAiConfig = buildGemAIConfig(getCmd(CMD_ASK).id, props, fallbackPrompt);
+  gemAiConfig.ui.placeholder = getCmd(CMD_ASK).ui_placeholder;
   gemAiConfig.ui.useSelected = false;
 
   return GemAI(gemAiConfig);

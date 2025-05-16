@@ -1,6 +1,25 @@
 import * as fs from "fs";
+
 // @ts-ignore
-import { CMD_EXPLAINER, CMD_GRAMMAR, CMD_SUMMATOR, CMD_TRANSLATOR, getCmd } from "./src/core/commands.ts";
+import {
+  CMD_ASK,
+  CMD_EXPLAINER,
+  CMD_FRIEND,
+  CMD_GRAMMAR,
+  CMD_HISTORY,
+  CMD_LONGER,
+  CMD_PROFESSIONAL,
+  CMD_PROMPT_BUILDER,
+  CMD_REPHRASER,
+  CMD_SCR_EXPLAIN,
+  CMD_SCR_MARKDOWN,
+  CMD_SCR_TRANSLATE,
+  CMD_SHORTER,
+  CMD_STATS,
+  CMD_SUMMATOR,
+  CMD_TRANSLATOR,
+  getCmd
+} from "./src/core/commands.ts";
 // @ts-ignore
 import { allModels } from "./src/core/models.ts";
 
@@ -119,7 +138,6 @@ const commands = [
     description: getCmd(CMD_TRANSLATOR).description,
     withSecondaryLanguage: true,
     hasQuery: true,
-    temperature: 0.1
   }),
   makeCommand({
     name: getCmd(CMD_GRAMMAR).id,
@@ -139,79 +157,81 @@ const commands = [
     hasQuery: true,
   }),
   makeCommand({
-    name: "friend",
-    title: "Friendly Text Maker",
-    description: "Make text warmer and friendly",
-  }),
-  makeCommand({
-    name: "professional",
-    title: "Professional Text Maker",
-    description: "Make text formal and professional",
-  }),
-  makeCommand({
-    name: "promptBuilder",
-    title: "Prompt Builder",
-    description: "Create or improve your prompt",
+    name: getCmd(CMD_FRIEND).id,
+    title: getCmd(CMD_FRIEND).name,
+    description: getCmd(CMD_FRIEND).description,
     temperature: 0.6
   }),
   makeCommand({
-    name: "shorter",
-    title: "Shorter Text Maker",
-    description: "Make selected text significantly shorter and more concise.",
+    name: getCmd(CMD_PROFESSIONAL).id,
+    title: getCmd(CMD_PROFESSIONAL).name,
+    description: getCmd(CMD_PROFESSIONAL).description,
+    temperature: 0.6
+  }),
+  makeCommand({
+    name: getCmd(CMD_PROMPT_BUILDER).id,
+    title: getCmd(CMD_PROMPT_BUILDER).name,
+    description: getCmd(CMD_PROMPT_BUILDER).description,
+    temperature: 0.6
+  }),
+  makeCommand({
+    name: getCmd(CMD_SHORTER).id,
+    title: getCmd(CMD_SHORTER).name,
+    description: getCmd(CMD_SHORTER).description,
     temperature: 1.0
   }),
   makeCommand({
-    name: "longer",
-    title: "Longer Text Maker",
-    description: "Make selected text significantly longer.",
+    name: getCmd(CMD_LONGER).id,
+    title: getCmd(CMD_LONGER).name,
+    description: getCmd(CMD_LONGER).description,
     temperature: 1.0
   }),
   makeCommand({
-    name: "rephraser",
-    title: "Rephrase It",
-    description: "Rewrite the provided text using different phrasing while maintaining the original meaning.",
+    name: getCmd(CMD_REPHRASER).id,
+    title: getCmd(CMD_REPHRASER).name,
+    description: getCmd(CMD_REPHRASER).description,
     temperature: 1.0
   }),
   makeCommand({
-    name: "askQuestion",
-    title: "Ask Gem AI any question",
-    description: "Ask AI any question on any topic.",
+    name: getCmd(CMD_ASK).id,
+    title: getCmd(CMD_ASK).name,
+    description: getCmd(CMD_ASK).description,
     promptFile: "AskQuestion.md",
   }),
   makeCommand({
-    name: "screenshotToMarkdown",
-    title: "Screenshot -> Markdown",
-    description: "Take a screenshot and convert it to markdown.",
+    name: getCmd(CMD_SCR_MARKDOWN).id,
+    title: getCmd(CMD_SCR_MARKDOWN).name,
+    description: getCmd(CMD_SCR_MARKDOWN).description,
     mode: "no-view",
     promptFile: "Screenshot-Markdown.md",
   }),
   makeCommand({
-    name: "screenshotToExplain",
-    title: "Screenshot -> Explain",
-    description: "Take a screenshot and analyze it, and answer the user's question (if applicable).",
+    name: getCmd(CMD_SCR_EXPLAIN).id,
+    title: getCmd(CMD_SCR_EXPLAIN).name,
+    description: getCmd(CMD_SCR_EXPLAIN).description,
     mode: "no-view",
     promptFile: "Screenshot-Explain.md",
   }),
   makeCommand({
-    name: "screenshotToTranslate",
-    title: "Screenshot -> Translate",
-    description: "Take a screenshot and translate it.",
+    name: getCmd(CMD_SCR_TRANSLATE).id,
+    title: getCmd(CMD_SCR_TRANSLATE).name,
+    description: getCmd(CMD_SCR_TRANSLATE).description,
     mode: "no-view",
     promptFile: "Screenshot-Translate.md",
     withSecondaryLanguage: "Source language",
   }),
   makeCommand({
-    name: "history",
-    title: "Gem AI history",
-    description: "Take a screenshot and translate it.",
+    name: getCmd(CMD_HISTORY).id,
+    title: getCmd(CMD_HISTORY).name,
+    description: getCmd(CMD_HISTORY).description,
     modelSelector: false,
     temperature: false,
     promptFile: false,
   }),
   makeCommand({
-    name: "stats",
-    title: "Gem AI Stats",
-    description: "Show usage insides",
+    name: getCmd(CMD_STATS).id,
+    title: getCmd(CMD_STATS).name,
+    description: getCmd(CMD_STATS).description,
     modelSelector: false,
     temperature: false,
     promptFile: false,

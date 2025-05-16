@@ -1,4 +1,5 @@
 import { buildGemAIConfig } from "./core/buildGemAIConfig";
+import { CMD_REPHRASER, getCmd } from "./core/commands";
 import GemAI from "./core/gemai";
 import { RaycastProps } from "./core/types";
 
@@ -8,8 +9,8 @@ Rephrase the following text using different words and sentence structures, ensur
 Do not add any new information or external knowledge.
 ALWAYS return ONLY the rephrased text, without any preamble.`;
 
-  const gemAiConfig = buildGemAIConfig("Rephraser", props, fallbackPrompt);
-  gemAiConfig.ui.placeholder = "Enter text to rephrase it";
+  const gemAiConfig = buildGemAIConfig(getCmd(CMD_REPHRASER).id, props, fallbackPrompt);
+  gemAiConfig.ui.placeholder = getCmd(CMD_REPHRASER).ui_placeholder;
   gemAiConfig.model.topP = 0.9;
 
   return GemAI(gemAiConfig);

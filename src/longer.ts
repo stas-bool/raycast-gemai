@@ -1,4 +1,5 @@
 import { buildGemAIConfig } from "./core/buildGemAIConfig";
+import { CMD_LONGER, getCmd } from "./core/commands";
 import GemAI from "./core/gemai";
 import { RaycastProps } from "./core/types";
 
@@ -8,8 +9,9 @@ Expand the provided text by adding substantial yet concise details, examples, or
 Preserve the core meaning, tone, and style, and avoid any irrelevant or false information.
 ALWAYS return ONLY the expanded text itself, without any preamble.`;
 
-  const gemAiConfig = buildGemAIConfig("Longer", props, fallbackPrompt);
-  gemAiConfig.ui.placeholder = "Enter text to make it longer";
+  const gemAiConfig = buildGemAIConfig(getCmd(CMD_LONGER).id, props, fallbackPrompt);
+  gemAiConfig.ui.placeholder = getCmd(CMD_LONGER).ui_placeholder;
+  gemAiConfig.model.topP = 0.9;
 
   return GemAI(gemAiConfig);
 }

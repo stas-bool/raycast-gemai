@@ -1,4 +1,4 @@
-# GemAI
+# GemAI - Raycast Extention
 
 GemAI is a powerful Raycast extension designed to supercharge your productivity by integrating Google's Gemini AI directly into your workflow. Perform a wide range of text manipulations, get insights from images, translate on the fly, and much more – all without leaving Raycast. GemAI operates on a "Bring Your Own Key" (BYOK) basis and features a unique system for managing prompts via local Markdown files.
 

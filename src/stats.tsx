@@ -20,7 +20,7 @@ function formatStatsMarkdown(title: string, stats: GroupStats): string {
     `* **Number of requests:** ${stats.count}\n` +
     `* **Total cost:** $${stats.totalCost.toFixed(4)}\n` +
     `* **Total tokens:** ${stats.totalTokens.toLocaleString()}\n` +
-    `* **Average tokens per request:** ${(parseInt(stats.avgTotalTokens.toFixed(0)).toLocaleString())}\n` +
+    `* **Average tokens per request:** ${parseInt(stats.avgTotalTokens.toFixed(0)).toLocaleString()}\n` +
     `* **Response time:** ~${stats.avgTotalTime.toFixed(2)} sec`
   );
 }

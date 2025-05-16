@@ -75,7 +75,7 @@
           "description": "Lower temperatures yield deterministic responses (0 is fully deterministic), while higher temperatures produce diverse results. Max value is 2.0",
           "type": "textfield",
           "required": false,
-          "default": "0.1"
+          "default": "0.2"
         },
         {
           "name": "promptFile",
@@ -279,7 +279,7 @@
     },
     {
       "name": "friend",
-      "title": "Friendly Text Maker",
+      "title": "Friend Text Maker",
       "description": "Make text warmer and friendly",
       "mode": "view",
       "preferences": [
@@ -323,7 +323,7 @@
           "description": "Lower temperatures yield deterministic responses (0 is fully deterministic), while higher temperatures produce diverse results. Max value is 2.0",
           "type": "textfield",
           "required": false,
-          "default": "0.2"
+          "default": "0.6"
         },
         {
           "name": "promptFile",
@@ -381,7 +381,7 @@
           "description": "Lower temperatures yield deterministic responses (0 is fully deterministic), while higher temperatures produce diverse results. Max value is 2.0",
           "type": "textfield",
           "required": false,
-          "default": "0.2"
+          "default": "0.6"
         },
         {
           "name": "promptFile",
@@ -626,8 +626,8 @@
       ]
     },
     {
-      "name": "askQuestion",
-      "title": "Ask Gem AI any question",
+      "name": "ask",
+      "title": "Ask GemAI",
       "description": "Ask AI any question on any topic.",
       "mode": "view",
       "preferences": [
@@ -867,15 +867,15 @@
     },
     {
       "name": "history",
-      "title": "Gem AI history",
-      "description": "Take a screenshot and translate it.",
+      "title": "GemAI - History",
+      "description": "Show history of chating with AI.",
       "mode": "view",
       "preferences": []
     },
     {
       "name": "stats",
-      "title": "Gem AI Stats",
-      "description": "Show usage insides",
+      "title": "GemAI - Stats",
+      "description": "Show usage insides, stats and costs",
       "mode": "view",
       "preferences": []
     }

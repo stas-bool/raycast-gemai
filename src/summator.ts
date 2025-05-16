@@ -9,7 +9,7 @@ export default function Summator(props: RaycastProps) {
 conveying only the main ideas, facts, and conclusions. If the original text is already brief, return its essence.
 Provide the response objectively and clearly, returning EXCLUSIVELY the summary itself, without any explanations.`;
 
-  const gemAiConfig = buildGemAIConfig(getCmd(CMD_TRANSLATOR).name, props, fallbackPrompt);
+  const gemAiConfig = buildGemAIConfig(getCmd(CMD_TRANSLATOR).id, props, fallbackPrompt);
   gemAiConfig.ui.placeholder = getCmd(CMD_TRANSLATOR).ui_placeholder;
 
   return GemAI(gemAiConfig);

@@ -4,6 +4,7 @@ import * as fs from "fs";
 import mime from "mime-types";
 import * as path from "path";
 import { useEffect, useState } from "react";
+import { getCmd } from "./commands";
 import { useCommandHistory } from "./history";
 import { GemAIConfig, RequestStats } from "./types";
 import { calculateItemCost, renderStats } from "./utils";
@@ -106,7 +107,7 @@ export default function GemAI(gemConfig: GemAIConfig) {
 
     await showToast({
       style: Toast.Style.Animated,
-      title: `Waiting for ${gemConfig.request.actionName} GemAI; ${gemConfig.model.modelNameUser}`,
+      title: `Waiting for GemAI - ${getCmd(gemConfig.request.actionName).name}; ${gemConfig.model.modelNameUser}`,
     });
 
     const startTime = Date.now();
