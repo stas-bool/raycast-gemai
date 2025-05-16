@@ -34,12 +34,13 @@ export interface GemAIConfig {
 
 export interface HistoryItem {
   timestamp: number;
-  actionName?: string;
-  query?: string;
+  actionName: string;
+  model: string;
+  query: string;
   isAttachmentFile?: boolean;
-  response?: string;
+  response: string;
+  requestStats: RequestStats;
   stats?: string;
-  requestStats?: RequestStats;
 }
 
 export interface RequestStats {

@@ -6,7 +6,7 @@ import * as path from "path";
 import { useEffect, useState } from "react";
 import { useCommandHistory } from "./history";
 import { GemAIConfig, RequestStats } from "./types";
-import { dump, renderStats } from "./utils";
+import { calculateItemCost, renderStats } from "./utils";
 
 async function prepareAttachment(ai: GoogleGenAI, actualFilePath?: string): Promise<Part> {
   if (!actualFilePath || !fs.existsSync(actualFilePath) || !fs.lstatSync(actualFilePath).isFile()) {
@@ -50,7 +50,7 @@ async function sendRequestToGemini(ai: GoogleGenAI, gemConfig: GemAIConfig, quer
   }
 
   const requestParams = {
-    model: gemConfig.model.modelName,
+    model: gemConfig.model.modelName.replace("__thinking", ""),
     contents: contents,
     config: {
       maxOutputTokens: gemConfig.model.maxOutputTokens,
@@ -65,21 +65,14 @@ async function sendRequestToGemini(ai: GoogleGenAI, gemConfig: GemAIConfig, quer
     },
   };
 
-  dump(
-    {
-      system: requestParams.config.systemInstruction,
-      model: requestParams.model,
-      contents: requestParams.contents,
-    },
-    "Real request",
-  );
+  // dump({model: requestParams.model, contents: requestParams.contents,}, "Real request");
 
   return await ai.models.generateContentStream(requestParams);
 }
 
 async function getTokenStats(ai, gemConfig, usageMetadata, query, filePart): Promise<RequestStats> {
   const inputTokens = await ai.models.countTokens({
-    model: gemConfig.model.modelName,
+    model: gemConfig.model.modelName.replace("__thinking", ""),
     contents: filePart ? [query, filePart] : [query],
   });
 
@@ -153,19 +146,24 @@ export default function GemAI(gemConfig: GemAIConfig) {
 
       const stats = renderStats(gemConfig.model.modelNameUser, gemConfig.model.temperature, requestStats);
 
-      await addToHistory({
+      const historyItem = {
         timestamp: Date.now(),
         actionName: gemConfig.request.actionName,
+        model: gemConfig.model.modelName,
         query: query,
         isAttachmentFile: !!gemConfig.request.attachmentFile,
         response: markdown,
         stats: stats,
         requestStats: requestStats,
-      });
+      };
+
+      await addToHistory(historyItem);
+
+      const cost = `\$${calculateItemCost(historyItem).toFixed(4)}`;
 
       const historyStatsMessage = await getHistoryStats();
 
-      setRenderedText(`${markdown}\n\n----\n\n*${stats}*\n\n*${historyStatsMessage}*`);
+      setRenderedText(`${markdown}\n\n----\n\n*${stats}; ${cost}*\n\n*${historyStatsMessage}*`);
     } catch (e: any) {
       console.error(e);
       await showToast({ style: Toast.Style.Failure, title: "Response Failed" });
@@ -268,6 +266,11 @@ export default function GemAI(gemConfig: GemAIConfig) {
           <Form.FilePicker id="file" title="" showHiddenFiles={true} allowMultipleSelection={false} />
         </>
       )}
+
+      <Form.Description
+        title=""
+        text={"Model: " + gemConfig.model.modelNameUser + "; " + gemConfig.model.temperature + "°"}
+      />
     </Form>
   );
 }

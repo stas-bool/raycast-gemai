@@ -17,7 +17,7 @@ export default function AskQuestion(props: RaycastProps) {
     "If necessary, present different viewpoints objectively or request clarification." +
     "ALWAYS return only the answer itself, without any explanations, greetings, or unnecessary words.";
 
-  const gemAiConfig = buildGemAIConfig("AskQuestion", props, fallbackPrompt);
+  const gemAiConfig = buildGemAIConfig("Ask Question", props, fallbackPrompt);
   gemAiConfig.ui.placeholder = "Ask any question";
   gemAiConfig.ui.useSelected = false;
 

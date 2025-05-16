@@ -1,7 +1,8 @@
 import * as fs from "fs";
 import * as os from "os";
 import * as path from "path";
-import { RequestStats } from "./types";
+import { allModels } from "./models";
+import { HistoryItem, RequestStats } from "./types"; // Убедитесь, что HistoryItem и RequestStats импортируются из types
 
 export function getSystemPrompt(promptPath: string | undefined, defaultPrompt?: string): string {
   let resolvedPath = promptPath ? promptPath.trim() : "";
@@ -76,4 +77,156 @@ export function dumpLog(variable: unknown, label?: string): void {
 
 export function toMdJson(variable: unknown): string {
   return ["```json", JSON.stringify(variable, null, 2), "```"].join("\n");
+}
+
+// --- Новые функции для статистики ---
+
+export function calculateItemCost(item: HistoryItem): number {
+  const modelName = item.model ?? "gemini-2.5-flash-preview-04-17";
+  return calculatePricePerMillionTokens(modelName, item.requestStats);
+}
+
+// Интерфейс для агрегированной статистики группы элементов
+export interface GroupStats {
+  count: number;
+  totalCost: number;
+  totalTokens: number;
+  avgTotalTokens: number;
+  totalTimeSum: number;
+  avgTotalTime: number;
+}
+
+// Функция для расчета агрегированной статистики для группы элементов истории
+export function calculateAggregatedStatsForGroup(group: HistoryItem[]): GroupStats {
+  if (group.length === 0) {
+    return { count: 0, totalCost: 0, totalTokens: 0, avgTotalTokens: 0, totalTimeSum: 0, avgTotalTime: 0 };
+  }
+
+  let totalCost = 0;
+  let totalTokensSum = 0;
+  let totalTimeSum = 0;
+  let validStatsCount = 0;
+
+  for (const item of group) {
+    totalCost += calculateItemCost(item);
+
+    if (item.requestStats && item.requestStats.total !== undefined && item.requestStats.totalTime !== undefined) {
+      totalTokensSum += item.requestStats.total;
+      totalTimeSum += item.requestStats.totalTime;
+      validStatsCount++;
+    } else {
+      // console.warn("[calculateAggregatedStatsForGroup] Skipping item due to missing requestStats or total/totalTime", item);
+    }
+  }
+
+  const avgTotalTokens = validStatsCount > 0 ? totalTokensSum / validStatsCount : 0;
+  const avgTotalTime = validStatsCount > 0 ? totalTimeSum / validStatsCount : 0;
+
+  return {
+    count: group.length,
+    totalCost: totalCost,
+    totalTokens: totalTokensSum,
+    avgTotalTokens: avgTotalTokens,
+    totalTimeSum: totalTimeSum,
+    avgTotalTime: avgTotalTime,
+  };
+}
+
+// Функция для группировки истории по произвольному ключу из HistoryItem
+export function groupHistoryByKey<K extends keyof HistoryItem>(
+  history: HistoryItem[],
+  key: K,
+): Record<string, HistoryItem[]> {
+  return history.reduce(
+    (acc, item) => {
+      // Используем 'undefined_key' для элементов, у которых указанный ключ отсутствует или равен undefined/null
+      const groupValue = String(item[key] ?? "undefined_key");
+      if (!acc[groupValue]) {
+        acc[groupValue] = [];
+      }
+      acc[groupValue].push(item);
+      return acc;
+    },
+    {} as Record<string, HistoryItem[]>,
+  );
+}
+
+// Вспомогательные функции для определения начала временных периодов
+export function startOfToday(): Date {
+  const now = new Date();
+  return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+}
+
+export function startOfYesterday(): Date {
+  const today = startOfToday();
+  const yesterday = new Date(today);
+  yesterday.setDate(today.getDate() - 1);
+  return yesterday;
+}
+
+// ISO 8601 week date
+export function startOfWeek(): Date {
+  const now = new Date();
+  const dayOfWeek = now.getDay(); // 0 for Sunday, 1 for Monday, ... 6 for Saturday
+  // Adjust date to Monday of the current week
+  const diff = now.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1);
+  const start = new Date(now.getFullYear(), now.getMonth(), diff);
+  start.setHours(0, 0, 0, 0);
+  return start;
+}
+
+export function startOfMonth(): Date {
+  const now = new Date();
+  return new Date(now.getFullYear(), now.getMonth(), 1);
+}
+
+// Функция для получения ключа периода (для getPeriodKey в предыдущем ответе, если нужна)
+// Не используется напрямую в stats.tsx, но может быть полезна для других целей
+export function getPeriodKey(timestamp: number, period: "hour" | "day" | "week" | "month" | "year"): string {
+  const date = new Date(timestamp);
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1; // 1-12
+  const day = date.getDate(); // 1-31
+  const hour = date.getHours(); // 0-23
+
+  switch (period) {
+    case "hour":
+      return `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")} H${String(hour).padStart(2, "0")}`;
+    case "day":
+      return `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+    case "week":
+      // ISO 8601 week calculation
+      const d = new Date(Date.UTC(year, date.getMonth(), day));
+      const dayNum = d.getUTCDay() || 7;
+      d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+      const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+      const weekNumber = Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
+      return `${d.getUTCFullYear()}-W${String(weekNumber).padStart(2, "0")}`;
+    case "month":
+      return `${year}-${String(month).padStart(2, "0")}`;
+    case "year":
+      return String(year);
+    default:
+      const exhaustiveCheck: never = period;
+      throw new Error(`Unknown period: ${exhaustiveCheck}`);
+  }
+}
+
+export function calculatePricePerMillionTokens(modelKey: string, stats: RequestStats): number {
+  const model = allModels[modelKey];
+  if (!model) throw new Error(`Unknown model: ${modelKey}`);
+
+  const input_tokens = (stats?.prompt ?? 0) + (stats?.input ?? 0);
+  const output_tokens = (stats?.thoughts ?? 0) + ((stats?.total ?? 0) - input_tokens);
+
+  const input_price = (input_tokens / 1_000_000) * model.price_input;
+
+  let output_price = 0;
+  if ((stats?.thoughts ?? 0) > 0 && model.price_output_thinking > 0) {
+    output_price = (output_tokens / 1_000_000) * model.price_output_thinking;
+  } else {
+    output_price = (output_tokens / 1_000_000) * model.price_output;
+  }
+
+  return input_price + output_price;
 }

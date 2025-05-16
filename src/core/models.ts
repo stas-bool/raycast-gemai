@@ -1,0 +1,45 @@
+export interface ModelInfo {
+  name: string;
+  price_input: number;
+  price_output: number;
+  price_output_thinking: number;
+  thinking_budget: number;
+}
+
+export const allModels: Record<string, ModelInfo> = {
+  "gemini-2.0-flash-lite": {
+    name: "2.0 Flash-Lite",
+    price_input: 0.075,
+    price_output: 0.3,
+    price_output_thinking: 0.3,
+    thinking_budget: 0,
+  },
+  "gemini-2.0-flash": {
+    name: "2.0 Flash",
+    price_input: 0.1,
+    price_output: 0.4,
+    price_output_thinking: 0.4,
+    thinking_budget: 0,
+  },
+  "gemini-2.5-flash-preview-04-17": {
+    name: "2.5 Flash",
+    price_input: 0.15,
+    price_output: 0.6,
+    price_output_thinking: 3.5,
+    thinking_budget: 0,
+  },
+  "gemini-2.5-flash-preview-04-17__thinking": {
+    name: "2.5 Flash Preview (think)",
+    price_input: 0.15,
+    price_output: 0.6,
+    price_output_thinking: 3.5,
+    thinking_budget: 2000,
+  },
+  "gemini-2.5-pro-preview-05-06": {
+    name: "2.5 Pro Preview",
+    price_input: 1.25,
+    price_output: 10,
+    price_output_thinking: 10,
+    thinking_budget: 4000,
+  },
+};

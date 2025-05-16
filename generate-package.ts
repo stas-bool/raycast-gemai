@@ -1,17 +1,18 @@
 import * as fs from "fs";
+// @ts-ignore
+import { allModels } from "./src/core/models.ts";
 
 function capitalizeFirstLetter(str: string): string {
   if (!str) return "";
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-const models = [
-  {title: "Default", value: "default"},
-  {title: "Gemini 2.0 Flash-Lite", value: "gemini-2.0-flash-lite"},
-  {title: "Gemini 2.0 Flash", value: "gemini-2.0-flash"},
-  {title: "Gemini 2.5 Flash Preview", value: "gemini-2.5-flash-preview-04-17"},
-  {title: "Gemini 2.5 Pro Preview", value: "gemini-2.5-pro-preview-05-06"},
-];
+const models = Object.entries(allModels).map(([key, model]) => ({
+    title: `Gemini ${model.name}`,
+    value: key,
+  }));
+
+models.unshift({title: "Default", value: "default"});
 
 const modelPreferences = [
   {
@@ -112,13 +113,6 @@ function makeCommand({
 
 const commands = [
   makeCommand({
-    name: "translator-thinking",
-    title: "Translator (Thinking)",
-    description: "Translate selected text with deep thinking.",
-    withSecondaryLanguage: true,
-    hasQuery: true,
-  }),
-  makeCommand({
     name: "translator",
     title: "Translator",
     description: "Translate selected text.",
@@ -154,8 +148,8 @@ const commands = [
     description: "Make text formal and professional",
   }),
   makeCommand({
-    name: "prompter",
-    title: "Prompt Generator",
+    name: "promptBuilder",
+    title: "Prompt Builder",
     description: "Create or improve your prompt",
     temperature: 0.6
   }),
@@ -209,6 +203,14 @@ const commands = [
     name: "history",
     title: "Gem AI history",
     description: "Take a screenshot and translate it.",
+    modelSelector: false,
+    temperature: false,
+    promptFile: false,
+  }),
+  makeCommand({
+    name: "stats",
+    title: "Gem AI Stats",
+    description: "Show usage insides",
     modelSelector: false,
     temperature: false,
     promptFile: false,

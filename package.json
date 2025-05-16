@@ -14,76 +14,6 @@
   "license": "MIT",
   "commands": [
     {
-      "name": "translator-thinking",
-      "title": "Translator (Thinking)",
-      "description": "Translate selected text with deep thinking.",
-      "mode": "view",
-      "arguments": [
-        {
-          "name": "query",
-          "placeholder": "Quick query text",
-          "type": "text",
-          "required": false
-        }
-      ],
-      "preferences": [
-        {
-          "name": "commandModel",
-          "title": "Model for the command",
-          "description": "Specifies the model utilized for this command.",
-          "type": "dropdown",
-          "required": false,
-          "default": "default",
-          "data": [
-            {
-              "title": "Default",
-              "value": "default"
-            },
-            {
-              "title": "Gemini 2.0 Flash-Lite",
-              "value": "gemini-2.0-flash-lite"
-            },
-            {
-              "title": "Gemini 2.0 Flash",
-              "value": "gemini-2.0-flash"
-            },
-            {
-              "title": "Gemini 2.5 Flash Preview",
-              "value": "gemini-2.5-flash-preview-04-17"
-            },
-            {
-              "title": "Gemini 2.5 Pro Preview",
-              "value": "gemini-2.5-pro-preview-05-06"
-            }
-          ]
-        },
-        {
-          "name": "secondaryLanguage",
-          "title": "Secondary Language",
-          "description": "Please specify your second language to better configure the assistant's operation.",
-          "type": "textfield",
-          "default": "English",
-          "required": true
-        },
-        {
-          "name": "temperature",
-          "title": "Temperature",
-          "description": "Lower temperatures yield deterministic responses (0 is fully deterministic), while higher temperatures produce diverse results. Max value is 2.0",
-          "type": "textfield",
-          "required": false,
-          "default": "0.2"
-        },
-        {
-          "name": "promptFile",
-          "title": "Markdown file with system prompt",
-          "description": "The system prompt to use for this command.",
-          "type": "textfield",
-          "required": false,
-          "default": "Translator-thinking.md"
-        }
-      ]
-    },
-    {
       "name": "translator",
       "title": "Translator",
       "description": "Translate selected text.",
@@ -118,8 +48,12 @@
               "value": "gemini-2.0-flash"
             },
             {
-              "title": "Gemini 2.5 Flash Preview",
+              "title": "Gemini 2.5 Flash",
               "value": "gemini-2.5-flash-preview-04-17"
+            },
+            {
+              "title": "Gemini 2.5 Flash Preview (think)",
+              "value": "gemini-2.5-flash-preview-04-17__thinking"
             },
             {
               "title": "Gemini 2.5 Pro Preview",
@@ -180,8 +114,12 @@
               "value": "gemini-2.0-flash"
             },
             {
-              "title": "Gemini 2.5 Flash Preview",
+              "title": "Gemini 2.5 Flash",
               "value": "gemini-2.5-flash-preview-04-17"
+            },
+            {
+              "title": "Gemini 2.5 Flash Preview (think)",
+              "value": "gemini-2.5-flash-preview-04-17__thinking"
             },
             {
               "title": "Gemini 2.5 Pro Preview",
@@ -242,8 +180,12 @@
               "value": "gemini-2.0-flash"
             },
             {
-              "title": "Gemini 2.5 Flash Preview",
+              "title": "Gemini 2.5 Flash",
               "value": "gemini-2.5-flash-preview-04-17"
+            },
+            {
+              "title": "Gemini 2.5 Flash Preview (think)",
+              "value": "gemini-2.5-flash-preview-04-17__thinking"
             },
             {
               "title": "Gemini 2.5 Pro Preview",
@@ -304,8 +246,12 @@
               "value": "gemini-2.0-flash"
             },
             {
-              "title": "Gemini 2.5 Flash Preview",
+              "title": "Gemini 2.5 Flash",
               "value": "gemini-2.5-flash-preview-04-17"
+            },
+            {
+              "title": "Gemini 2.5 Flash Preview (think)",
+              "value": "gemini-2.5-flash-preview-04-17__thinking"
             },
             {
               "title": "Gemini 2.5 Pro Preview",
@@ -358,8 +304,12 @@
               "value": "gemini-2.0-flash"
             },
             {
-              "title": "Gemini 2.5 Flash Preview",
+              "title": "Gemini 2.5 Flash",
               "value": "gemini-2.5-flash-preview-04-17"
+            },
+            {
+              "title": "Gemini 2.5 Flash Preview (think)",
+              "value": "gemini-2.5-flash-preview-04-17__thinking"
             },
             {
               "title": "Gemini 2.5 Pro Preview",
@@ -412,8 +362,12 @@
               "value": "gemini-2.0-flash"
             },
             {
-              "title": "Gemini 2.5 Flash Preview",
+              "title": "Gemini 2.5 Flash",
               "value": "gemini-2.5-flash-preview-04-17"
+            },
+            {
+              "title": "Gemini 2.5 Flash Preview (think)",
+              "value": "gemini-2.5-flash-preview-04-17__thinking"
             },
             {
               "title": "Gemini 2.5 Pro Preview",
@@ -440,8 +394,8 @@
       ]
     },
     {
-      "name": "prompter",
-      "title": "Prompt Generator",
+      "name": "promptBuilder",
+      "title": "Prompt Builder",
       "description": "Create or improve your prompt",
       "mode": "view",
       "preferences": [
@@ -466,8 +420,12 @@
               "value": "gemini-2.0-flash"
             },
             {
-              "title": "Gemini 2.5 Flash Preview",
+              "title": "Gemini 2.5 Flash",
               "value": "gemini-2.5-flash-preview-04-17"
+            },
+            {
+              "title": "Gemini 2.5 Flash Preview (think)",
+              "value": "gemini-2.5-flash-preview-04-17__thinking"
             },
             {
               "title": "Gemini 2.5 Pro Preview",
@@ -489,7 +447,7 @@
           "description": "The system prompt to use for this command.",
           "type": "textfield",
           "required": false,
-          "default": "Prompter.md"
+          "default": "PromptBuilder.md"
         }
       ]
     },
@@ -520,8 +478,12 @@
               "value": "gemini-2.0-flash"
             },
             {
-              "title": "Gemini 2.5 Flash Preview",
+              "title": "Gemini 2.5 Flash",
               "value": "gemini-2.5-flash-preview-04-17"
+            },
+            {
+              "title": "Gemini 2.5 Flash Preview (think)",
+              "value": "gemini-2.5-flash-preview-04-17__thinking"
             },
             {
               "title": "Gemini 2.5 Pro Preview",
@@ -574,8 +536,12 @@
               "value": "gemini-2.0-flash"
             },
             {
-              "title": "Gemini 2.5 Flash Preview",
+              "title": "Gemini 2.5 Flash",
               "value": "gemini-2.5-flash-preview-04-17"
+            },
+            {
+              "title": "Gemini 2.5 Flash Preview (think)",
+              "value": "gemini-2.5-flash-preview-04-17__thinking"
             },
             {
               "title": "Gemini 2.5 Pro Preview",
@@ -628,8 +594,12 @@
               "value": "gemini-2.0-flash"
             },
             {
-              "title": "Gemini 2.5 Flash Preview",
+              "title": "Gemini 2.5 Flash",
               "value": "gemini-2.5-flash-preview-04-17"
+            },
+            {
+              "title": "Gemini 2.5 Flash Preview (think)",
+              "value": "gemini-2.5-flash-preview-04-17__thinking"
             },
             {
               "title": "Gemini 2.5 Pro Preview",
@@ -682,8 +652,12 @@
               "value": "gemini-2.0-flash"
             },
             {
-              "title": "Gemini 2.5 Flash Preview",
+              "title": "Gemini 2.5 Flash",
               "value": "gemini-2.5-flash-preview-04-17"
+            },
+            {
+              "title": "Gemini 2.5 Flash Preview (think)",
+              "value": "gemini-2.5-flash-preview-04-17__thinking"
             },
             {
               "title": "Gemini 2.5 Pro Preview",
@@ -736,8 +710,12 @@
               "value": "gemini-2.0-flash"
             },
             {
-              "title": "Gemini 2.5 Flash Preview",
+              "title": "Gemini 2.5 Flash",
               "value": "gemini-2.5-flash-preview-04-17"
+            },
+            {
+              "title": "Gemini 2.5 Flash Preview (think)",
+              "value": "gemini-2.5-flash-preview-04-17__thinking"
             },
             {
               "title": "Gemini 2.5 Pro Preview",
@@ -790,8 +768,12 @@
               "value": "gemini-2.0-flash"
             },
             {
-              "title": "Gemini 2.5 Flash Preview",
+              "title": "Gemini 2.5 Flash",
               "value": "gemini-2.5-flash-preview-04-17"
+            },
+            {
+              "title": "Gemini 2.5 Flash Preview (think)",
+              "value": "gemini-2.5-flash-preview-04-17__thinking"
             },
             {
               "title": "Gemini 2.5 Pro Preview",
@@ -844,8 +826,12 @@
               "value": "gemini-2.0-flash"
             },
             {
-              "title": "Gemini 2.5 Flash Preview",
+              "title": "Gemini 2.5 Flash",
               "value": "gemini-2.5-flash-preview-04-17"
+            },
+            {
+              "title": "Gemini 2.5 Flash Preview (think)",
+              "value": "gemini-2.5-flash-preview-04-17__thinking"
             },
             {
               "title": "Gemini 2.5 Pro Preview",
@@ -885,6 +871,13 @@
       "description": "Take a screenshot and translate it.",
       "mode": "view",
       "preferences": []
+    },
+    {
+      "name": "stats",
+      "title": "Gem AI Stats",
+      "description": "Show usage insides",
+      "mode": "view",
+      "preferences": []
     }
   ],
   "preferences": [
@@ -912,8 +905,12 @@
           "value": "gemini-2.0-flash"
         },
         {
-          "title": "Gemini 2.5 Flash Preview",
+          "title": "Gemini 2.5 Flash",
           "value": "gemini-2.5-flash-preview-04-17"
+        },
+        {
+          "title": "Gemini 2.5 Flash Preview (think)",
+          "value": "gemini-2.5-flash-preview-04-17__thinking"
         },
         {
           "title": "Gemini 2.5 Pro Preview",
