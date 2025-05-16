@@ -2,6 +2,7 @@ import { closeMainWindow, environment, launchCommand, LaunchType, showToast, Toa
 import { exec } from "child_process";
 import * as fs from "fs";
 import * as util from "util";
+import { CMD_ASK } from "./commands";
 import { GemAIConfig, RaycastProps } from "./types";
 
 export default async function makeScreenshot(props: RaycastProps, isSelecting: boolean, gemAiConfig: GemAIConfig) {
@@ -25,11 +26,11 @@ export default async function makeScreenshot(props: RaycastProps, isSelecting: b
     return;
   }
 
-  console.debug(`Screenshot captured at ${screenshotPath}`);
+  // console.debug(`Screenshot captured at ${screenshotPath}`);
 
   try {
     await launchCommand({
-      name: "askQuestion",
+      name: CMD_ASK,
       type: LaunchType.UserInitiated,
       context: {
         props: props,

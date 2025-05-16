@@ -2,7 +2,7 @@ import * as fs from "fs";
 import * as os from "os";
 import * as path from "path";
 import { allModels } from "./models";
-import { HistoryItem, RequestStats } from "./types"; // Убедитесь, что HistoryItem и RequestStats импортируются из types
+import { HistoryItem, RequestStats } from "./types";
 
 export function getSystemPrompt(promptPath: string | undefined, defaultPrompt?: string): string {
   let resolvedPath = promptPath ? promptPath.trim() : "";
@@ -79,14 +79,11 @@ export function toMdJson(variable: unknown): string {
   return ["```json", JSON.stringify(variable, null, 2), "```"].join("\n");
 }
 
-// --- Новые функции для статистики ---
-
 export function calculateItemCost(item: HistoryItem): number {
   const modelName = item.model ?? "gemini-2.5-flash-preview-04-17";
   return calculatePricePerMillionTokens(modelName, item.requestStats);
 }
 
-// Интерфейс для агрегированной статистики группы элементов
 export interface GroupStats {
   count: number;
   totalCost: number;
@@ -96,7 +93,6 @@ export interface GroupStats {
   avgTotalTime: number;
 }
 
-// Функция для расчета агрегированной статистики для группы элементов истории
 export function calculateAggregatedStatsForGroup(group: HistoryItem[]): GroupStats {
   if (group.length === 0) {
     return { count: 0, totalCost: 0, totalTokens: 0, avgTotalTokens: 0, totalTimeSum: 0, avgTotalTime: 0 };
@@ -132,14 +128,12 @@ export function calculateAggregatedStatsForGroup(group: HistoryItem[]): GroupSta
   };
 }
 
-// Функция для группировки истории по произвольному ключу из HistoryItem
 export function groupHistoryByKey<K extends keyof HistoryItem>(
   history: HistoryItem[],
   key: K,
 ): Record<string, HistoryItem[]> {
   return history.reduce(
     (acc, item) => {
-      // Используем 'undefined_key' для элементов, у которых указанный ключ отсутствует или равен undefined/null
       const groupValue = String(item[key] ?? "undefined_key");
       if (!acc[groupValue]) {
         acc[groupValue] = [];
@@ -151,7 +145,6 @@ export function groupHistoryByKey<K extends keyof HistoryItem>(
   );
 }
 
-// Вспомогательные функции для определения начала временных периодов
 export function startOfToday(): Date {
   const now = new Date();
   return new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -180,8 +173,6 @@ export function startOfMonth(): Date {
   return new Date(now.getFullYear(), now.getMonth(), 1);
 }
 
-// Функция для получения ключа периода (для getPeriodKey в предыдущем ответе, если нужна)
-// Не используется напрямую в stats.tsx, но может быть полезна для других целей
 export function getPeriodKey(timestamp: number, period: "hour" | "day" | "week" | "month" | "year"): string {
   const date = new Date(timestamp);
   const year = date.getFullYear();
