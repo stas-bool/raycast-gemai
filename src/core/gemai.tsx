@@ -190,7 +190,7 @@ export default function GemAI(gemConfig: GemAIConfig) {
         const hasUserPrompt = gemConfig.request.userPrompt.trim() !== "";
         const hasSelected = selectedText.trim() !== "";
 
-        if (!hasUserPrompt && !hasSelected) {
+        if (!hasUserPrompt && !hasSelected && !gemConfig.request.attachmentFile) {
           setPage(PageState.Form);
           return;
         }
@@ -199,6 +199,8 @@ export default function GemAI(gemConfig: GemAIConfig) {
           getAiResponse(gemConfig.request.userPrompt);
         } else if (hasSelected) {
           getAiResponse(selectedText);
+        } else if (gemConfig.request.attachmentFile) {
+          getAiResponse(undefined, gemConfig.request.attachmentFile);
         }
       } catch (e: any) {
         console.error("Fatal error in useEffect:", e);

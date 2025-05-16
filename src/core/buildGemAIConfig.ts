@@ -5,7 +5,7 @@ import { GemAIConfig, RaycastProps } from "./types";
 import { getSystemPrompt } from "./utils";
 
 const thinkingModels = ["gemini-2.5-flash-preview-04-17", "gemini-2.5-pro-preview-05-06"];
-const actionsWithPrimaryLanguage = ["askquestion", "explainer", "prompter", "summator", "screenshottoexplain"];
+const actionsWithPrimaryLanguage = ["ask question", "explainer", "prompt builder", "summator", "screenshot -> explain", "screenshot -> translate"];
 
 function buildRealPrompt(actionName: string, prefs: any, fallbackPrompt?: string): [boolean, string] {
   const systemPrompt = getSystemPrompt(prefs.promptDir + "/" + prefs.promptFile, fallbackPrompt);
