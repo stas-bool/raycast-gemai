@@ -1,4 +1,5 @@
 import { buildGemAIConfig } from "./core/buildGemAIConfig";
+import { CMD_TRANSLATOR, getCmd } from "./core/commands";
 import GemAI from "./core/gemai";
 import { RaycastProps } from "./core/types";
 
@@ -8,8 +9,8 @@ export default function Summator(props: RaycastProps) {
 conveying only the main ideas, facts, and conclusions. If the original text is already brief, return its essence.
 Provide the response objectively and clearly, returning EXCLUSIVELY the summary itself, without any explanations.`;
 
-  const gemAiConfig = buildGemAIConfig("Summator", props, fallbackPrompt);
-  gemAiConfig.ui.placeholder = "Enter text to summarize it";
+  const gemAiConfig = buildGemAIConfig(getCmd(CMD_TRANSLATOR).name, props, fallbackPrompt);
+  gemAiConfig.ui.placeholder = getCmd(CMD_TRANSLATOR).ui_placeholder;
 
   return GemAI(gemAiConfig);
 }

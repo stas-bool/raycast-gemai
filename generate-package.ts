@@ -1,5 +1,7 @@
 import * as fs from "fs";
 // @ts-ignore
+import { CMD_EXPLAINER, CMD_GRAMMAR, CMD_SUMMATOR, CMD_TRANSLATOR, getCmd } from "./src/core/commands.ts";
+// @ts-ignore
 import { allModels } from "./src/core/models.ts";
 
 function capitalizeFirstLetter(str: string): string {
@@ -8,9 +10,9 @@ function capitalizeFirstLetter(str: string): string {
 }
 
 const models = Object.entries(allModels).map(([key, model]) => ({
-    title: `Gemini ${model.name}`,
-    value: key,
-  }));
+  title: `Gemini ${model.name}`,
+  value: key,
+}));
 
 models.unshift({title: "Default", value: "default"});
 
@@ -110,31 +112,30 @@ function makeCommand({
   };
 }
 
-
 const commands = [
   makeCommand({
-    name: "translator",
-    title: "Translator",
-    description: "Translate selected text.",
+    name: getCmd(CMD_TRANSLATOR).id,
+    title: getCmd(CMD_TRANSLATOR).name,
+    description: getCmd(CMD_TRANSLATOR).description,
     withSecondaryLanguage: true,
     hasQuery: true,
     temperature: 0.1
   }),
   makeCommand({
-    name: "grammar",
-    title: "Fix Grammar & Spelling",
-    description: "Fix correct grammar, spelling, punctuation for selected text.",
+    name: getCmd(CMD_GRAMMAR).id,
+    title: getCmd(CMD_GRAMMAR).name,
+    description: getCmd(CMD_GRAMMAR).description,
     withSecondaryLanguage: true,
   }),
   makeCommand({
-    name: "summator",
-    title: "Summarize It",
-    description: "Summary selected text.",
+    name: getCmd(CMD_SUMMATOR).id,
+    title: getCmd(CMD_SUMMATOR).name,
+    description: getCmd(CMD_SUMMATOR).description,
   }),
   makeCommand({
-    name: "explainer",
-    title: "Explain It",
-    description: "Explain selected text.",
+    name: getCmd(CMD_EXPLAINER).id,
+    title: getCmd(CMD_EXPLAINER).name,
+    description: getCmd(CMD_EXPLAINER).description,
     hasQuery: true,
   }),
   makeCommand({

@@ -1,5 +1,6 @@
 import { getPreferenceValues } from "@raycast/api";
 import { buildGemAIConfig } from "./core/buildGemAIConfig";
+import { CMD_SUMMATOR, getCmd } from "./core/commands";
 import GemAI from "./core/gemai";
 import { RaycastProps } from "./core/types";
 
@@ -13,8 +14,8 @@ To accomplish this, you may reorder words, but ONLY within their original senten
 If the following text is in ${pimaryLang} then translate it to ${secondLang}, otherwise translate following text to ${pimaryLang}.
 ALSWAYS ONLY return the translated text and nothing else.`;
 
-  const gemAiConfig = buildGemAIConfig("Translator", props, fallbackPrompt);
-  gemAiConfig.ui.placeholder = "Enter text to translate";
+  const gemAiConfig = buildGemAIConfig(getCmd(CMD_SUMMATOR).name, props, fallbackPrompt);
+  gemAiConfig.ui.placeholder = getCmd(CMD_SUMMATOR).ui_placeholder;
 
   return GemAI(gemAiConfig);
 }
