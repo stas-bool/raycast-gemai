@@ -121,7 +121,15 @@ const allCommands: Record<string, GemAiCommand> = {
 
 export function getCmd(commandId: string): GemAiCommand {
   const command = allCommands[commandId];
-  if (!command) throw new Error(`Unknown command: ${commandId}`);
+  if (!command) {
+    return {
+      id: "UNDEFINED_COMMAND",
+      name: "UNDEFINED_COMMAND",
+      description: "UNDEFINED_COMMAND",
+      ui_placeholder: "UNDEFINED_COMMAND",
+    };
+    // throw new Error(`Unknown command: ${commandId}`);
+  }
 
   return command;
 }

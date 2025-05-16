@@ -1,4 +1,5 @@
 import { Action, ActionPanel, List } from "@raycast/api";
+import { getCmd } from "./core/commands";
 import { useCommandHistory } from "./core/history";
 import {
   calculateAggregatedStatsForGroup,
@@ -64,13 +65,13 @@ export default function StatsCommand() {
 
   const categories = [
     { id: "total", title: "Overall statistics", markdownStats: formatStatsMarkdown("Overall statistics", totalStats) },
-    { id: "today", title: "For today", markdownStats: formatStatsMarkdown("For today", todayStats) },
-    { id: "yesterday", title: "Yesterday", markdownStats: formatStatsMarkdown("For yesterday", yesterdayStats) },
-    { id: "week", title: "This week", markdownStats: formatStatsMarkdown("For this week", thisWeekStats) },
-    { id: "month", title: "This month", markdownStats: formatStatsMarkdown("For this month", thisMonthStats) },
+    { id: "period-today", title: "For today", markdownStats: formatStatsMarkdown("For today", todayStats) },
+    { id: "period-yesterday", title: "Yesterday", markdownStats: formatStatsMarkdown("For yesterday", yesterdayStats) },
+    { id: "period-week", title: "This week", markdownStats: formatStatsMarkdown("For this week", thisWeekStats) },
+    { id: "period-month", title: "This month", markdownStats: formatStatsMarkdown("For this month", thisMonthStats) },
     ...statsByActionName.map((item) => ({
-      id: `action-${item.actionName}`, // Unique ID for each command
-      title: `Only "${item.actionName}"`,
+      id: `command-${item.actionName}`, // Unique ID for each command
+      title: `Only "${getCmd(item.actionName).name}"`,
       markdownStats: formatStatsMarkdown(`Statistics for command: "${item.actionName}"`, item.stats),
     })),
   ];

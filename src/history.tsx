@@ -1,4 +1,5 @@
 import { Action, ActionPanel, Color, confirmAlert, Icon, List } from "@raycast/api";
+import { getCmd } from "./core/commands";
 import { useCommandHistory } from "./core/history";
 import { HistoryItem } from "./core/types";
 import { formatDate } from "./core/utils";
@@ -30,7 +31,18 @@ function formatTitle(item: HistoryItem): string {
 }
 
 function getAccessories(item: HistoryItem) {
-  return item.isAttachmentFile ? [{ tag: { value: "File", color: Color.Blue }, tooltip: "File as part of query" }] : [];
+  let accessries = [
+    {
+      tag: { value: getCmd(item.actionName).name, color: Color.SecondaryText },
+      tooltip: "Assistant name",
+    },
+  ];
+
+  if (item.isAttachmentFile) {
+    accessries.push({ tag: { value: "File", color: Color.Blue }, tooltip: "File as part of query" });
+  }
+
+  return accessries;
 }
 
 export default function History() {
