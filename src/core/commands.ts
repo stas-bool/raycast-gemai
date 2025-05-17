@@ -1,19 +1,20 @@
-export const CMD_TRANSLATOR = "translator";
-export const CMD_SUMMATOR = "summator";
-export const CMD_GRAMMAR = "grammar";
+export const CMD_ASK = "ask";
+export const CMD_CHAT = "chat";
 export const CMD_EXPLAINER = "explainer";
 export const CMD_FRIEND = "friend";
+export const CMD_GRAMMAR = "grammar";
+export const CMD_HISTORY = "history";
+export const CMD_LONGER = "longer";
 export const CMD_PROFESSIONAL = "professional";
 export const CMD_PROMPT_BUILDER = "promptBuilder";
-export const CMD_SHORTER = "shorter";
-export const CMD_LONGER = "longer";
 export const CMD_REPHRASER = "rephraser";
-export const CMD_ASK = "ask";
-export const CMD_SCR_MARKDOWN = "screenshotToMarkdown";
 export const CMD_SCR_EXPLAIN = "screenshotToExplain";
+export const CMD_SCR_MARKDOWN = "screenshotToMarkdown";
 export const CMD_SCR_TRANSLATE = "screenshotToTranslate";
-export const CMD_HISTORY = "history";
+export const CMD_SHORTER = "shorter";
 export const CMD_STATS = "stats";
+export const CMD_SUMMATOR = "summator";
+export const CMD_TRANSLATOR = "translator";
 
 export interface GemAiCommand {
   id: string;
@@ -23,99 +24,105 @@ export interface GemAiCommand {
 }
 
 const allCommands: Record<string, GemAiCommand> = {
-  translator: {
-    id: "translator",
-    name: "Translator",
-    description: "Translate selected text.",
-    ui_placeholder: "Enter text to translate.",
+  [CMD_ASK]: {
+    id: CMD_ASK,
+    name: "Ask AI",
+    description: "Ask AI any question on any topic.",
+    ui_placeholder: "Ask me any question",
   },
-  summator: {
-    id: "summator",
-    name: "Summarize It",
-    description: "Summary selected text.",
-    ui_placeholder: "Enter text to summarize it",
+  [CMD_CHAT]: {
+    id: CMD_CHAT,
+    name: "Chat with AI",
+    description: "Have a conversation with GemAI.",
+    ui_placeholder: "Ask GemAI anything, or type '/new' to create a new chat...",
   },
-  grammar: {
-    id: "grammar",
-    name: "Fix Grammar & Spelling",
-    description: "Fix correct grammar, spelling, punctuation for selected text.",
-    ui_placeholder: "Enter text to correcte grammar",
-  },
-  explainer: {
-    id: "explainer",
+  [CMD_EXPLAINER]: {
+    id: CMD_EXPLAINER,
     name: "Explain It",
     description: "Explain selected text.",
     ui_placeholder: "Enter text to explain it",
   },
-  friend: {
-    id: "friend",
+  [CMD_FRIEND]: {
+    id: CMD_FRIEND,
     name: "Friend Text Maker",
     description: "Make text warmer and friendly",
     ui_placeholder: "Enter text to make it warmer",
   },
-  professional: {
-    id: "professional",
-    name: "Professional Text Maker",
-    description: "Make text formal and professional",
-    ui_placeholder: "Enter text to make it formal",
+  [CMD_GRAMMAR]: {
+    id: CMD_GRAMMAR,
+    name: "Fix Grammar & Spelling",
+    description: "Fix correct grammar, spelling, punctuation for selected text.",
+    ui_placeholder: "Enter text to correcte grammar",
   },
-  promptBuilder: {
-    id: "promptBuilder",
-    name: "Prompt Builder",
-    description: "Create or improve your prompt",
-    ui_placeholder: "Enter any idea for new prompt",
+  [CMD_HISTORY]: {
+    id: CMD_HISTORY,
+    name: "History - GemAI",
+    description: "Show history of chating with AI.",
   },
-  shorter: {
-    id: "shorter",
-    name: "Shorter Text Maker",
-    description: "Make selected text significantly shorter and more concise.",
-    ui_placeholder: "Enter text to make it shorter",
-  },
-  longer: {
-    id: "longer",
+  [CMD_LONGER]: {
+    id: CMD_LONGER,
     name: "Longer Text Maker",
     description: "Make selected text significantly longer.",
     ui_placeholder: "Enter text to make it longer",
   },
-  rephraser: {
-    id: "rephraser",
+  [CMD_PROFESSIONAL]: {
+    id: CMD_PROFESSIONAL,
+    name: "Professional Text Maker",
+    description: "Make text formal and professional",
+    ui_placeholder: "Enter text to make it formal",
+  },
+  [CMD_PROMPT_BUILDER]: {
+    id: CMD_PROMPT_BUILDER,
+    name: "Prompt Builder",
+    description: "Create or improve your prompt",
+    ui_placeholder: "Enter any idea for new prompt",
+  },
+  [CMD_REPHRASER]: {
+    id: CMD_REPHRASER,
     name: "Rephrase It",
     description: "Rewrite the provided text using different phrasing while maintaining the original meaning.",
     ui_placeholder: "Enter text to rephrase it",
   },
-  ask: {
-    id: "ask",
-    name: "Ask GemAI",
-    description: "Ask AI any question on any topic.",
-    ui_placeholder: "Ask me any question",
-  },
-  screenshotToMarkdown: {
-    id: "screenshotToMarkdown",
-    name: "Screenshot -> Markdown",
-    description: "Take a screenshot and convert it to markdown.",
-    ui_placeholder: "Additional instructions if any",
-  },
-  screenshotToExplain: {
-    id: "screenshotToExplain",
+  [CMD_SCR_EXPLAIN]: {
+    id: CMD_SCR_EXPLAIN,
     name: "Screenshot -> Explain",
     description: "Take a screenshot and analyze it, and answer the user's question (if applicable).",
     ui_placeholder: "Additional instructions if any",
   },
-  screenshotToTranslate: {
-    id: "screenshotToTranslate",
+  [CMD_SCR_MARKDOWN]: {
+    id: CMD_SCR_MARKDOWN,
+    name: "Screenshot -> Markdown",
+    description: "Take a screenshot and convert it to markdown.",
+    ui_placeholder: "Additional instructions if any",
+  },
+  [CMD_SCR_TRANSLATE]: {
+    id: CMD_SCR_TRANSLATE,
     name: "Screenshot -> Translate",
     description: "Take a screenshot and translate it.",
     ui_placeholder: "Additional instructions if any",
   },
-  history: {
-    id: "history",
-    name: "GemAI - History",
-    description: "Show history of chating with AI.",
+  [CMD_SHORTER]: {
+    id: CMD_SHORTER,
+    name: "Shorter Text Maker",
+    description: "Make selected text significantly shorter and more concise.",
+    ui_placeholder: "Enter text to make it shorter",
   },
-  stats: {
-    id: "stats",
+  [CMD_STATS]: {
+    id: CMD_STATS,
     name: "GemAI - Stats",
     description: "Show usage insides, stats and costs",
+  },
+  [CMD_SUMMATOR]: {
+    id: CMD_SUMMATOR,
+    name: "Summarize It",
+    description: "Summary selected text.",
+    ui_placeholder: "Enter text to summarize it",
+  },
+  [CMD_TRANSLATOR]: {
+    id: CMD_TRANSLATOR,
+    name: "Translator",
+    description: "Translate selected text.",
+    ui_placeholder: "Enter text to translate.",
   },
 };
 

@@ -20,7 +20,6 @@ function formatMarkdown(item: HistoryItem): string {
 function formatTitle(item: HistoryItem): string {
   let result = "";
   let title = item.query?.trim();
-  // денис
   if (title) {
     result += (title.length > 60 ? title.substring(0, 60) + "..." : title).trim();
   } else {

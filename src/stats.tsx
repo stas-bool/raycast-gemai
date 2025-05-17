@@ -77,7 +77,7 @@ export default function StatsCommand() {
   ];
 
   return (
-    <List isShowingDetail isLoading={isLoading} searchBarPlaceholder="Поиск по категориям статистики">
+    <List isShowingDetail isLoading={isLoading} searchBarPlaceholder="Search by statistics categories">
       {categories.map((category) => (
         <List.Item
           key={category.id}

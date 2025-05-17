@@ -2,6 +2,7 @@ import { HarmBlockThreshold, HarmCategory } from "@google/genai";
 import { getPreferenceValues } from "@raycast/api";
 import {
   CMD_ASK,
+  CMD_CHAT,
   CMD_EXPLAINER,
   CMD_PROMPT_BUILDER,
   CMD_SCR_EXPLAIN,
@@ -15,8 +16,8 @@ import { getSystemPrompt } from "./utils";
 
 const thinkingModels = [
   "gemini-2.5-flash-preview-04-17",
-  "gemini-2.5-pro-preview-05-06",
   "gemini-2.5-flash-preview-04-17__thinking",
+  "gemini-2.5-pro-preview-05-06",
 ];
 
 const actionsWithPrimaryLanguage = [
@@ -26,6 +27,7 @@ const actionsWithPrimaryLanguage = [
   getCmd(CMD_SUMMATOR).id,
   getCmd(CMD_SCR_EXPLAIN).id,
   getCmd(CMD_SCR_TRANSLATE).id,
+  getCmd(CMD_CHAT).id,
 ];
 
 function buildRealPrompt(actionName: string, prefs: any, fallbackPrompt?: string): [boolean, string] {
@@ -54,7 +56,7 @@ Otherwise, adhere to the Default Response Language specified above (${primaryLan
     ? `${defaultLanguage}\n\n${systemPrompt}\n\n${noOtherInstructions}`
     : `${autoLanguage}\n\n${systemPrompt}\n\n${noOtherInstructions}`;
 
-  return [systemPrompt.trim() !== fallbackPrompt.trim(), prompt];
+  return [systemPrompt.trim() !== fallbackPrompt?.trim(), prompt];
 }
 
 function getTemperature(prefs: any): number {
@@ -81,7 +83,7 @@ export function buildGemAIConfig(actionName: string, props: RaycastProps, fallba
       geminiApiKey: prefs.geminiApiKey.trim(),
       modelName: currentModelName,
       modelNameUser: (isCustomPrompt ? "💭 " : "") + (allModels[currentModelName].name ?? currentModelName),
-      maxOutputTokens: 64000,
+      maxOutputTokens: 32000,
       ...(thinkingModels.includes(currentModelName) && { thinkingConfig }),
       temperature: getTemperature(prefs),
       topP: 0.95,

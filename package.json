@@ -14,18 +14,10 @@
   "license": "MIT",
   "commands": [
     {
-      "name": "translator",
-      "title": "Translator",
-      "description": "Translate selected text.",
+      "name": "ask",
+      "title": "Ask AI",
+      "description": "Ask AI any question on any topic.",
       "mode": "view",
-      "arguments": [
-        {
-          "name": "query",
-          "placeholder": "Quick query text",
-          "type": "text",
-          "required": false
-        }
-      ],
       "preferences": [
         {
           "name": "commandModel",
@@ -62,20 +54,12 @@
           ]
         },
         {
-          "name": "secondaryLanguage",
-          "title": "Secondary Language",
-          "description": "Please specify your second language to better configure the assistant's operation.",
-          "type": "textfield",
-          "default": "English",
-          "required": true
-        },
-        {
           "name": "temperature",
           "title": "Temperature",
           "description": "Lower temperatures yield deterministic responses (0 is fully deterministic), while higher temperatures produce diverse results. Max value is 2.0",
           "type": "textfield",
           "required": false,
-          "default": "0.2"
+          "default": "0.3"
         },
         {
           "name": "promptFile",
@@ -83,80 +67,14 @@
           "description": "The system prompt to use for this command.",
           "type": "textfield",
           "required": false,
-          "default": "Translator.md"
+          "default": "AskQuestion.md"
         }
       ]
     },
     {
-      "name": "grammar",
-      "title": "Fix Grammar & Spelling",
-      "description": "Fix correct grammar, spelling, punctuation for selected text.",
-      "mode": "view",
-      "preferences": [
-        {
-          "name": "commandModel",
-          "title": "Model for the command",
-          "description": "Specifies the model utilized for this command.",
-          "type": "dropdown",
-          "required": false,
-          "default": "default",
-          "data": [
-            {
-              "title": "Default",
-              "value": "default"
-            },
-            {
-              "title": "Gemini 2.0 Flash-Lite",
-              "value": "gemini-2.0-flash-lite"
-            },
-            {
-              "title": "Gemini 2.0 Flash",
-              "value": "gemini-2.0-flash"
-            },
-            {
-              "title": "Gemini 2.5 Flash",
-              "value": "gemini-2.5-flash-preview-04-17"
-            },
-            {
-              "title": "Gemini 2.5 Flash Thinking",
-              "value": "gemini-2.5-flash-preview-04-17__thinking"
-            },
-            {
-              "title": "Gemini 2.5 Pro",
-              "value": "gemini-2.5-pro-preview-05-06"
-            }
-          ]
-        },
-        {
-          "name": "secondaryLanguage",
-          "title": "Secondary Language",
-          "description": "Please specify your second language to better configure the assistant's operation.",
-          "type": "textfield",
-          "default": "English",
-          "required": true
-        },
-        {
-          "name": "temperature",
-          "title": "Temperature",
-          "description": "Lower temperatures yield deterministic responses (0 is fully deterministic), while higher temperatures produce diverse results. Max value is 2.0",
-          "type": "textfield",
-          "required": false,
-          "default": "0.2"
-        },
-        {
-          "name": "promptFile",
-          "title": "Markdown file with system prompt",
-          "description": "The system prompt to use for this command.",
-          "type": "textfield",
-          "required": false,
-          "default": "Grammar.md"
-        }
-      ]
-    },
-    {
-      "name": "summator",
-      "title": "Summarize It",
-      "description": "Summary selected text.",
+      "name": "chat",
+      "title": "Chat with AI",
+      "description": "Have a conversation with GemAI.",
       "mode": "view",
       "preferences": [
         {
@@ -199,7 +117,7 @@
           "description": "Lower temperatures yield deterministic responses (0 is fully deterministic), while higher temperatures produce diverse results. Max value is 2.0",
           "type": "textfield",
           "required": false,
-          "default": "0.2"
+          "default": "0.3"
         },
         {
           "name": "promptFile",
@@ -207,7 +125,7 @@
           "description": "The system prompt to use for this command.",
           "type": "textfield",
           "required": false,
-          "default": "Summator.md"
+          "default": "Chat.md"
         }
       ]
     },
@@ -265,7 +183,7 @@
           "description": "Lower temperatures yield deterministic responses (0 is fully deterministic), while higher temperatures produce diverse results. Max value is 2.0",
           "type": "textfield",
           "required": false,
-          "default": "0.2"
+          "default": "0.3"
         },
         {
           "name": "promptFile",
@@ -274,6 +192,72 @@
           "type": "textfield",
           "required": false,
           "default": "Explainer.md"
+        }
+      ]
+    },
+    {
+      "name": "grammar",
+      "title": "Fix Grammar & Spelling",
+      "description": "Fix correct grammar, spelling, punctuation for selected text.",
+      "mode": "view",
+      "preferences": [
+        {
+          "name": "commandModel",
+          "title": "Model for the command",
+          "description": "Specifies the model utilized for this command.",
+          "type": "dropdown",
+          "required": false,
+          "default": "default",
+          "data": [
+            {
+              "title": "Default",
+              "value": "default"
+            },
+            {
+              "title": "Gemini 2.0 Flash-Lite",
+              "value": "gemini-2.0-flash-lite"
+            },
+            {
+              "title": "Gemini 2.0 Flash",
+              "value": "gemini-2.0-flash"
+            },
+            {
+              "title": "Gemini 2.5 Flash",
+              "value": "gemini-2.5-flash-preview-04-17"
+            },
+            {
+              "title": "Gemini 2.5 Flash Thinking",
+              "value": "gemini-2.5-flash-preview-04-17__thinking"
+            },
+            {
+              "title": "Gemini 2.5 Pro",
+              "value": "gemini-2.5-pro-preview-05-06"
+            }
+          ]
+        },
+        {
+          "name": "secondaryLanguage",
+          "title": "Secondary Language",
+          "description": "Please specify your second language to better configure the assistant's operation.",
+          "type": "textfield",
+          "default": "English",
+          "required": true
+        },
+        {
+          "name": "temperature",
+          "title": "Temperature",
+          "description": "Lower temperatures yield deterministic responses (0 is fully deterministic), while higher temperatures produce diverse results. Max value is 2.0",
+          "type": "textfield",
+          "required": false,
+          "default": "0.3"
+        },
+        {
+          "name": "promptFile",
+          "title": "Markdown file with system prompt",
+          "description": "The system prompt to use for this command.",
+          "type": "textfield",
+          "required": false,
+          "default": "Grammar.md"
         }
       ]
     },
@@ -332,6 +316,71 @@
           "type": "textfield",
           "required": false,
           "default": "Friend.md"
+        }
+      ]
+    },
+    {
+      "name": "history",
+      "title": "History - GemAI",
+      "description": "Show history of chating with AI.",
+      "mode": "view",
+      "preferences": []
+    },
+    {
+      "name": "longer",
+      "title": "Longer Text Maker",
+      "description": "Make selected text significantly longer.",
+      "mode": "view",
+      "preferences": [
+        {
+          "name": "commandModel",
+          "title": "Model for the command",
+          "description": "Specifies the model utilized for this command.",
+          "type": "dropdown",
+          "required": false,
+          "default": "default",
+          "data": [
+            {
+              "title": "Default",
+              "value": "default"
+            },
+            {
+              "title": "Gemini 2.0 Flash-Lite",
+              "value": "gemini-2.0-flash-lite"
+            },
+            {
+              "title": "Gemini 2.0 Flash",
+              "value": "gemini-2.0-flash"
+            },
+            {
+              "title": "Gemini 2.5 Flash",
+              "value": "gemini-2.5-flash-preview-04-17"
+            },
+            {
+              "title": "Gemini 2.5 Flash Thinking",
+              "value": "gemini-2.5-flash-preview-04-17__thinking"
+            },
+            {
+              "title": "Gemini 2.5 Pro",
+              "value": "gemini-2.5-pro-preview-05-06"
+            }
+          ]
+        },
+        {
+          "name": "temperature",
+          "title": "Temperature",
+          "description": "Lower temperatures yield deterministic responses (0 is fully deterministic), while higher temperatures produce diverse results. Max value is 2.0",
+          "type": "textfield",
+          "required": false,
+          "default": "1"
+        },
+        {
+          "name": "promptFile",
+          "title": "Markdown file with system prompt",
+          "description": "The system prompt to use for this command.",
+          "type": "textfield",
+          "required": false,
+          "default": "Longer.md"
         }
       ]
     },
@@ -452,122 +501,6 @@
       ]
     },
     {
-      "name": "shorter",
-      "title": "Shorter Text Maker",
-      "description": "Make selected text significantly shorter and more concise.",
-      "mode": "view",
-      "preferences": [
-        {
-          "name": "commandModel",
-          "title": "Model for the command",
-          "description": "Specifies the model utilized for this command.",
-          "type": "dropdown",
-          "required": false,
-          "default": "default",
-          "data": [
-            {
-              "title": "Default",
-              "value": "default"
-            },
-            {
-              "title": "Gemini 2.0 Flash-Lite",
-              "value": "gemini-2.0-flash-lite"
-            },
-            {
-              "title": "Gemini 2.0 Flash",
-              "value": "gemini-2.0-flash"
-            },
-            {
-              "title": "Gemini 2.5 Flash",
-              "value": "gemini-2.5-flash-preview-04-17"
-            },
-            {
-              "title": "Gemini 2.5 Flash Thinking",
-              "value": "gemini-2.5-flash-preview-04-17__thinking"
-            },
-            {
-              "title": "Gemini 2.5 Pro",
-              "value": "gemini-2.5-pro-preview-05-06"
-            }
-          ]
-        },
-        {
-          "name": "temperature",
-          "title": "Temperature",
-          "description": "Lower temperatures yield deterministic responses (0 is fully deterministic), while higher temperatures produce diverse results. Max value is 2.0",
-          "type": "textfield",
-          "required": false,
-          "default": "1"
-        },
-        {
-          "name": "promptFile",
-          "title": "Markdown file with system prompt",
-          "description": "The system prompt to use for this command.",
-          "type": "textfield",
-          "required": false,
-          "default": "Shorter.md"
-        }
-      ]
-    },
-    {
-      "name": "longer",
-      "title": "Longer Text Maker",
-      "description": "Make selected text significantly longer.",
-      "mode": "view",
-      "preferences": [
-        {
-          "name": "commandModel",
-          "title": "Model for the command",
-          "description": "Specifies the model utilized for this command.",
-          "type": "dropdown",
-          "required": false,
-          "default": "default",
-          "data": [
-            {
-              "title": "Default",
-              "value": "default"
-            },
-            {
-              "title": "Gemini 2.0 Flash-Lite",
-              "value": "gemini-2.0-flash-lite"
-            },
-            {
-              "title": "Gemini 2.0 Flash",
-              "value": "gemini-2.0-flash"
-            },
-            {
-              "title": "Gemini 2.5 Flash",
-              "value": "gemini-2.5-flash-preview-04-17"
-            },
-            {
-              "title": "Gemini 2.5 Flash Thinking",
-              "value": "gemini-2.5-flash-preview-04-17__thinking"
-            },
-            {
-              "title": "Gemini 2.5 Pro",
-              "value": "gemini-2.5-pro-preview-05-06"
-            }
-          ]
-        },
-        {
-          "name": "temperature",
-          "title": "Temperature",
-          "description": "Lower temperatures yield deterministic responses (0 is fully deterministic), while higher temperatures produce diverse results. Max value is 2.0",
-          "type": "textfield",
-          "required": false,
-          "default": "1"
-        },
-        {
-          "name": "promptFile",
-          "title": "Markdown file with system prompt",
-          "description": "The system prompt to use for this command.",
-          "type": "textfield",
-          "required": false,
-          "default": "Longer.md"
-        }
-      ]
-    },
-    {
       "name": "rephraser",
       "title": "Rephrase It",
       "description": "Rewrite the provided text using different phrasing while maintaining the original meaning.",
@@ -626,64 +559,6 @@
       ]
     },
     {
-      "name": "ask",
-      "title": "Ask GemAI",
-      "description": "Ask AI any question on any topic.",
-      "mode": "view",
-      "preferences": [
-        {
-          "name": "commandModel",
-          "title": "Model for the command",
-          "description": "Specifies the model utilized for this command.",
-          "type": "dropdown",
-          "required": false,
-          "default": "default",
-          "data": [
-            {
-              "title": "Default",
-              "value": "default"
-            },
-            {
-              "title": "Gemini 2.0 Flash-Lite",
-              "value": "gemini-2.0-flash-lite"
-            },
-            {
-              "title": "Gemini 2.0 Flash",
-              "value": "gemini-2.0-flash"
-            },
-            {
-              "title": "Gemini 2.5 Flash",
-              "value": "gemini-2.5-flash-preview-04-17"
-            },
-            {
-              "title": "Gemini 2.5 Flash Thinking",
-              "value": "gemini-2.5-flash-preview-04-17__thinking"
-            },
-            {
-              "title": "Gemini 2.5 Pro",
-              "value": "gemini-2.5-pro-preview-05-06"
-            }
-          ]
-        },
-        {
-          "name": "temperature",
-          "title": "Temperature",
-          "description": "Lower temperatures yield deterministic responses (0 is fully deterministic), while higher temperatures produce diverse results. Max value is 2.0",
-          "type": "textfield",
-          "required": false,
-          "default": "0.2"
-        },
-        {
-          "name": "promptFile",
-          "title": "Markdown file with system prompt",
-          "description": "The system prompt to use for this command.",
-          "type": "textfield",
-          "required": false,
-          "default": "AskQuestion.md"
-        }
-      ]
-    },
-    {
       "name": "screenshotToMarkdown",
       "title": "Screenshot -> Markdown",
       "description": "Take a screenshot and convert it to markdown.",
@@ -729,7 +604,7 @@
           "description": "Lower temperatures yield deterministic responses (0 is fully deterministic), while higher temperatures produce diverse results. Max value is 2.0",
           "type": "textfield",
           "required": false,
-          "default": "0.2"
+          "default": "0.3"
         },
         {
           "name": "promptFile",
@@ -787,7 +662,7 @@
           "description": "Lower temperatures yield deterministic responses (0 is fully deterministic), while higher temperatures produce diverse results. Max value is 2.0",
           "type": "textfield",
           "required": false,
-          "default": "0.2"
+          "default": "0.3"
         },
         {
           "name": "promptFile",
@@ -853,7 +728,7 @@
           "description": "Lower temperatures yield deterministic responses (0 is fully deterministic), while higher temperatures produce diverse results. Max value is 2.0",
           "type": "textfield",
           "required": false,
-          "default": "0.2"
+          "default": "0.3"
         },
         {
           "name": "promptFile",
@@ -866,11 +741,62 @@
       ]
     },
     {
-      "name": "history",
-      "title": "GemAI - History",
-      "description": "Show history of chating with AI.",
+      "name": "shorter",
+      "title": "Shorter Text Maker",
+      "description": "Make selected text significantly shorter and more concise.",
       "mode": "view",
-      "preferences": []
+      "preferences": [
+        {
+          "name": "commandModel",
+          "title": "Model for the command",
+          "description": "Specifies the model utilized for this command.",
+          "type": "dropdown",
+          "required": false,
+          "default": "default",
+          "data": [
+            {
+              "title": "Default",
+              "value": "default"
+            },
+            {
+              "title": "Gemini 2.0 Flash-Lite",
+              "value": "gemini-2.0-flash-lite"
+            },
+            {
+              "title": "Gemini 2.0 Flash",
+              "value": "gemini-2.0-flash"
+            },
+            {
+              "title": "Gemini 2.5 Flash",
+              "value": "gemini-2.5-flash-preview-04-17"
+            },
+            {
+              "title": "Gemini 2.5 Flash Thinking",
+              "value": "gemini-2.5-flash-preview-04-17__thinking"
+            },
+            {
+              "title": "Gemini 2.5 Pro",
+              "value": "gemini-2.5-pro-preview-05-06"
+            }
+          ]
+        },
+        {
+          "name": "temperature",
+          "title": "Temperature",
+          "description": "Lower temperatures yield deterministic responses (0 is fully deterministic), while higher temperatures produce diverse results. Max value is 2.0",
+          "type": "textfield",
+          "required": false,
+          "default": "1"
+        },
+        {
+          "name": "promptFile",
+          "title": "Markdown file with system prompt",
+          "description": "The system prompt to use for this command.",
+          "type": "textfield",
+          "required": false,
+          "default": "Shorter.md"
+        }
+      ]
     },
     {
       "name": "stats",
@@ -878,6 +804,138 @@
       "description": "Show usage insides, stats and costs",
       "mode": "view",
       "preferences": []
+    },
+    {
+      "name": "summator",
+      "title": "Summarize It",
+      "description": "Summary selected text.",
+      "mode": "view",
+      "preferences": [
+        {
+          "name": "commandModel",
+          "title": "Model for the command",
+          "description": "Specifies the model utilized for this command.",
+          "type": "dropdown",
+          "required": false,
+          "default": "default",
+          "data": [
+            {
+              "title": "Default",
+              "value": "default"
+            },
+            {
+              "title": "Gemini 2.0 Flash-Lite",
+              "value": "gemini-2.0-flash-lite"
+            },
+            {
+              "title": "Gemini 2.0 Flash",
+              "value": "gemini-2.0-flash"
+            },
+            {
+              "title": "Gemini 2.5 Flash",
+              "value": "gemini-2.5-flash-preview-04-17"
+            },
+            {
+              "title": "Gemini 2.5 Flash Thinking",
+              "value": "gemini-2.5-flash-preview-04-17__thinking"
+            },
+            {
+              "title": "Gemini 2.5 Pro",
+              "value": "gemini-2.5-pro-preview-05-06"
+            }
+          ]
+        },
+        {
+          "name": "temperature",
+          "title": "Temperature",
+          "description": "Lower temperatures yield deterministic responses (0 is fully deterministic), while higher temperatures produce diverse results. Max value is 2.0",
+          "type": "textfield",
+          "required": false,
+          "default": "0.3"
+        },
+        {
+          "name": "promptFile",
+          "title": "Markdown file with system prompt",
+          "description": "The system prompt to use for this command.",
+          "type": "textfield",
+          "required": false,
+          "default": "Summator.md"
+        }
+      ]
+    },
+    {
+      "name": "translator",
+      "title": "Translator",
+      "description": "Translate selected text.",
+      "mode": "view",
+      "arguments": [
+        {
+          "name": "query",
+          "placeholder": "Quick query text",
+          "type": "text",
+          "required": false
+        }
+      ],
+      "preferences": [
+        {
+          "name": "commandModel",
+          "title": "Model for the command",
+          "description": "Specifies the model utilized for this command.",
+          "type": "dropdown",
+          "required": false,
+          "default": "default",
+          "data": [
+            {
+              "title": "Default",
+              "value": "default"
+            },
+            {
+              "title": "Gemini 2.0 Flash-Lite",
+              "value": "gemini-2.0-flash-lite"
+            },
+            {
+              "title": "Gemini 2.0 Flash",
+              "value": "gemini-2.0-flash"
+            },
+            {
+              "title": "Gemini 2.5 Flash",
+              "value": "gemini-2.5-flash-preview-04-17"
+            },
+            {
+              "title": "Gemini 2.5 Flash Thinking",
+              "value": "gemini-2.5-flash-preview-04-17__thinking"
+            },
+            {
+              "title": "Gemini 2.5 Pro",
+              "value": "gemini-2.5-pro-preview-05-06"
+            }
+          ]
+        },
+        {
+          "name": "secondaryLanguage",
+          "title": "Secondary Language",
+          "description": "Please specify your second language to better configure the assistant's operation.",
+          "type": "textfield",
+          "default": "English",
+          "required": true
+        },
+        {
+          "name": "temperature",
+          "title": "Temperature",
+          "description": "Lower temperatures yield deterministic responses (0 is fully deterministic), while higher temperatures produce diverse results. Max value is 2.0",
+          "type": "textfield",
+          "required": false,
+          "default": "0.3"
+        },
+        {
+          "name": "promptFile",
+          "title": "Markdown file with system prompt",
+          "description": "The system prompt to use for this command.",
+          "type": "textfield",
+          "required": false,
+          "default": "Translator.md"
+        }
+      ]
     }
   ],
   "preferences": [

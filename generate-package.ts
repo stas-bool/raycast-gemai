@@ -3,6 +3,7 @@ import * as fs from "fs";
 // @ts-ignore
 import {
   CMD_ASK,
+  CMD_CHAT,
   CMD_EXPLAINER,
   CMD_FRIEND,
   CMD_GRAMMAR,
@@ -21,7 +22,13 @@ import {
   getCmd
 } from "./src/core/commands.ts";
 // @ts-ignore
-import { allModels } from "./src/core/models.ts";
+import {
+  allModels,
+  DEFAULT_MODEL,
+  DEFAULT_TEMP,
+  DEFAULT_TEMP_ARTIST,
+  DEFAULT_TEMP_CREATIVE
+} from "./src/core/models.ts";
 
 function capitalizeFirstLetter(str: string): string {
   if (!str) return "";
@@ -66,7 +73,7 @@ function makeCommand({
                        withSecondaryLanguage = false,
                        promptFile,
                        mode = "view",
-                       temperature = 0.2,
+                       temperature = DEFAULT_TEMP,
                        modelSelector = true,
                      }: {
   name: string;
@@ -97,7 +104,7 @@ function makeCommand({
           "while higher temperatures produce diverse results. Max value is 2.0",
         type: "textfield",
         required: false,
-        default: typeof temperature === "number" ? "" + temperature : "0.3",
+        default: "" + (typeof temperature === "number" ? temperature : DEFAULT_TEMP),
       }]
       : []),
     ...(promptFile !== false
@@ -160,37 +167,37 @@ const commands = [
     name: getCmd(CMD_FRIEND).id,
     title: getCmd(CMD_FRIEND).name,
     description: getCmd(CMD_FRIEND).description,
-    temperature: 0.6
+    temperature: DEFAULT_TEMP_CREATIVE
   }),
   makeCommand({
     name: getCmd(CMD_PROFESSIONAL).id,
     title: getCmd(CMD_PROFESSIONAL).name,
     description: getCmd(CMD_PROFESSIONAL).description,
-    temperature: 0.6
+    temperature: DEFAULT_TEMP_CREATIVE
   }),
   makeCommand({
     name: getCmd(CMD_PROMPT_BUILDER).id,
     title: getCmd(CMD_PROMPT_BUILDER).name,
     description: getCmd(CMD_PROMPT_BUILDER).description,
-    temperature: 0.6
+    temperature: DEFAULT_TEMP_CREATIVE
   }),
   makeCommand({
     name: getCmd(CMD_SHORTER).id,
     title: getCmd(CMD_SHORTER).name,
     description: getCmd(CMD_SHORTER).description,
-    temperature: 1.0
+    temperature: DEFAULT_TEMP_ARTIST
   }),
   makeCommand({
     name: getCmd(CMD_LONGER).id,
     title: getCmd(CMD_LONGER).name,
     description: getCmd(CMD_LONGER).description,
-    temperature: 1.0
+    temperature: DEFAULT_TEMP_ARTIST
   }),
   makeCommand({
     name: getCmd(CMD_REPHRASER).id,
     title: getCmd(CMD_REPHRASER).name,
     description: getCmd(CMD_REPHRASER).description,
-    temperature: 1.0
+    temperature: DEFAULT_TEMP_ARTIST
   }),
   makeCommand({
     name: getCmd(CMD_ASK).id,
@@ -236,7 +243,12 @@ const commands = [
     temperature: false,
     promptFile: false,
   }),
-];
+  makeCommand({
+    name: getCmd(CMD_CHAT).id,
+    title: getCmd(CMD_CHAT).name,
+    description: getCmd(CMD_CHAT).description,
+  }),
+].sort((a, b) => a.name.localeCompare(b.title));
 
 const rootPreferences = [
   {
@@ -252,7 +264,7 @@ const rootPreferences = [
     title: "Model",
     type: "dropdown",
     required: true,
-    default: "gemini-2.5-flash-preview-04-17",
+    default: DEFAULT_MODEL,
     data: models.slice(1), // без "Default"
   },
   {

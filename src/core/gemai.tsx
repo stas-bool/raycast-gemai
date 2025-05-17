@@ -96,6 +96,7 @@ export default function GemAI(gemConfig: GemAIConfig) {
   const [page, setPage] = useState(PageState.Response);
   const [isLoading, setIsLoading] = useState(true);
   const [textarea, setTextarea] = useState("");
+  const [navigationTitle, setNavigationTitle] = useState("GemAI -> " + getCmd(gemConfig.request.actionName).name);
   const [renderedText, setRenderedText] = useState("");
   const [latestQuery, setLatestQuery] = useState({ query: undefined, attachmentFile: undefined });
   const { addToHistory, getHistoryStats } = useCommandHistory();
@@ -234,7 +235,7 @@ export default function GemAI(gemConfig: GemAIConfig) {
       }
       isLoading={isLoading}
       markdown={renderedText}
-      navigationTitle={getCmd(gemConfig.request.actionName).name}
+      navigationTitle={navigationTitle}
     />
   ) : (
     <Form
