@@ -140,22 +140,15 @@ function makeCommand({
 
 const commands = [
   makeCommand({
-    name: getCmd(CMD_TRANSLATOR).id,
-    title: getCmd(CMD_TRANSLATOR).name,
-    description: getCmd(CMD_TRANSLATOR).description,
-    withSecondaryLanguage: true,
-    hasQuery: true,
+    name: getCmd(CMD_ASK).id,
+    title: getCmd(CMD_ASK).name,
+    description: getCmd(CMD_ASK).description,
+    promptFile: "AskQuestion.md",
   }),
   makeCommand({
-    name: getCmd(CMD_GRAMMAR).id,
-    title: getCmd(CMD_GRAMMAR).name,
-    description: getCmd(CMD_GRAMMAR).description,
-    withSecondaryLanguage: true,
-  }),
-  makeCommand({
-    name: getCmd(CMD_SUMMATOR).id,
-    title: getCmd(CMD_SUMMATOR).name,
-    description: getCmd(CMD_SUMMATOR).description,
+    name: getCmd(CMD_CHAT).id,
+    title: getCmd(CMD_CHAT).name,
+    description: getCmd(CMD_CHAT).description,
   }),
   makeCommand({
     name: getCmd(CMD_EXPLAINER).id,
@@ -170,6 +163,27 @@ const commands = [
     temperature: DEFAULT_TEMP_CREATIVE
   }),
   makeCommand({
+    name: getCmd(CMD_GRAMMAR).id,
+    title: getCmd(CMD_GRAMMAR).name,
+    description: getCmd(CMD_GRAMMAR).description,
+    withSecondaryLanguage: true,
+    temperature: DEFAULT_TEMP_CREATIVE
+  }),
+  makeCommand({
+    name: getCmd(CMD_HISTORY).id,
+    title: getCmd(CMD_HISTORY).name,
+    description: getCmd(CMD_HISTORY).description,
+    modelSelector: false,
+    temperature: false,
+    promptFile: false,
+  }),
+  makeCommand({
+    name: getCmd(CMD_LONGER).id,
+    title: getCmd(CMD_LONGER).name,
+    description: getCmd(CMD_LONGER).description,
+    temperature: DEFAULT_TEMP_ARTIST
+  }),
+  makeCommand({
     name: getCmd(CMD_PROFESSIONAL).id,
     title: getCmd(CMD_PROFESSIONAL).name,
     description: getCmd(CMD_PROFESSIONAL).description,
@@ -182,35 +196,10 @@ const commands = [
     temperature: DEFAULT_TEMP_CREATIVE
   }),
   makeCommand({
-    name: getCmd(CMD_SHORTER).id,
-    title: getCmd(CMD_SHORTER).name,
-    description: getCmd(CMD_SHORTER).description,
-    temperature: DEFAULT_TEMP_ARTIST
-  }),
-  makeCommand({
-    name: getCmd(CMD_LONGER).id,
-    title: getCmd(CMD_LONGER).name,
-    description: getCmd(CMD_LONGER).description,
-    temperature: DEFAULT_TEMP_ARTIST
-  }),
-  makeCommand({
     name: getCmd(CMD_REPHRASER).id,
     title: getCmd(CMD_REPHRASER).name,
     description: getCmd(CMD_REPHRASER).description,
     temperature: DEFAULT_TEMP_ARTIST
-  }),
-  makeCommand({
-    name: getCmd(CMD_ASK).id,
-    title: getCmd(CMD_ASK).name,
-    description: getCmd(CMD_ASK).description,
-    promptFile: "AskQuestion.md",
-  }),
-  makeCommand({
-    name: getCmd(CMD_SCR_MARKDOWN).id,
-    title: getCmd(CMD_SCR_MARKDOWN).name,
-    description: getCmd(CMD_SCR_MARKDOWN).description,
-    mode: "no-view",
-    promptFile: "Screenshot-Markdown.md",
   }),
   makeCommand({
     name: getCmd(CMD_SCR_EXPLAIN).id,
@@ -218,6 +207,13 @@ const commands = [
     description: getCmd(CMD_SCR_EXPLAIN).description,
     mode: "no-view",
     promptFile: "Screenshot-Explain.md",
+  }),
+  makeCommand({
+    name: getCmd(CMD_SCR_MARKDOWN).id,
+    title: getCmd(CMD_SCR_MARKDOWN).name,
+    description: getCmd(CMD_SCR_MARKDOWN).description,
+    mode: "no-view",
+    promptFile: "Screenshot-Markdown.md",
   }),
   makeCommand({
     name: getCmd(CMD_SCR_TRANSLATE).id,
@@ -228,12 +224,10 @@ const commands = [
     withSecondaryLanguage: "Source language",
   }),
   makeCommand({
-    name: getCmd(CMD_HISTORY).id,
-    title: getCmd(CMD_HISTORY).name,
-    description: getCmd(CMD_HISTORY).description,
-    modelSelector: false,
-    temperature: false,
-    promptFile: false,
+    name: getCmd(CMD_SHORTER).id,
+    title: getCmd(CMD_SHORTER).name,
+    description: getCmd(CMD_SHORTER).description,
+    temperature: DEFAULT_TEMP_ARTIST
   }),
   makeCommand({
     name: getCmd(CMD_STATS).id,
@@ -244,11 +238,18 @@ const commands = [
     promptFile: false,
   }),
   makeCommand({
-    name: getCmd(CMD_CHAT).id,
-    title: getCmd(CMD_CHAT).name,
-    description: getCmd(CMD_CHAT).description,
+    name: getCmd(CMD_SUMMATOR).id,
+    title: getCmd(CMD_SUMMATOR).name,
+    description: getCmd(CMD_SUMMATOR).description,
   }),
-].sort((a, b) => a.name.localeCompare(b.title));
+  makeCommand({
+    name: getCmd(CMD_TRANSLATOR).id,
+    title: getCmd(CMD_TRANSLATOR).name,
+    description: getCmd(CMD_TRANSLATOR).description,
+    withSecondaryLanguage: true,
+    hasQuery: true,
+  }),
+].sort((a, b) => a.name.localeCompare(b.name));
 
 const rootPreferences = [
   {
