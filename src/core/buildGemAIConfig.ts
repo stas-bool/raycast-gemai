@@ -28,9 +28,9 @@ const actionsWithPrimaryLanguage = [
   getCmd(CMD_SCR_TRANSLATE).id,
 ];
 
-function buildRealPrompt(actionName: string, prefs: any, fallbackPrompt?: string): [boolean, string] {
-  const systemPrompt = getSystemPrompt(prefs.promptDir + "/" + prefs.promptFile, fallbackPrompt);
-  const primaryLanguage = prefs.primaryLanguage.trim().toUpperCase();
+function buildRealPrompt(actionName: string, preferences: any, fallbackPrompt?: string): [boolean, string] {
+  const systemPrompt = getSystemPrompt(preferences.promptDir + "/" + preferences.promptFile, fallbackPrompt);
+  const primaryLanguage = preferences.primaryLanguage.trim().toUpperCase();
 
   const defaultLanguage = `# Language Policy
 **CRITICAL: ADHERE STRICTLY TO THIS LANGUAGE POLICY FOR YOUR RESPONSE.**

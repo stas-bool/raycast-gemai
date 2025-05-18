@@ -1,6 +1,5 @@
 import * as fs from "fs";
 
-// @ts-ignore
 import {
   CMD_ASK,
   CMD_EXPLAINER,
@@ -19,15 +18,14 @@ import {
   CMD_SUMMATOR,
   CMD_TRANSLATOR,
   getCmd
-} from "./src/core/commands.ts";
-// @ts-ignore
+} from "./src/core/commands";
 import {
   allModels,
   DEFAULT_MODEL,
   DEFAULT_TEMP,
   DEFAULT_TEMP_ARTIST,
   DEFAULT_TEMP_CREATIVE
-} from "./src/core/models.ts";
+} from "./src/core/models";
 
 function capitalizeFirstLetter(str: string): string {
   if (!str) return "";
