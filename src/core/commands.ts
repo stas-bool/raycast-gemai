@@ -50,7 +50,7 @@ const allCommands: Record<string, GemAiCommand> = {
   },
   [CMD_HISTORY]: {
     id: CMD_HISTORY,
-    name: "History - GemAI",
+    name: "GemAI - History",
     description: "Show history of chating with AI.",
   },
   [CMD_LONGER]: {

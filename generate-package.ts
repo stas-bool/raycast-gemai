@@ -2,6 +2,7 @@ import * as fs from "fs";
 
 import {
   CMD_ASK,
+  CMD_COUNT_TOKENS,
   CMD_EXPLAINER,
   CMD_FRIEND,
   CMD_GRAMMAR,
@@ -17,7 +18,6 @@ import {
   CMD_STATS,
   CMD_SUMMATOR,
   CMD_TRANSLATOR,
-  CMD_COUNT_TOKENS,
   getCmd
 } from "./src/core/commands.ts";
 import {
@@ -246,7 +246,8 @@ const commands = [
     name: getCmd(CMD_COUNT_TOKENS).id,
     title: getCmd(CMD_COUNT_TOKENS).name,
     description: getCmd(CMD_COUNT_TOKENS).description,
-    mode: "view",
+    temperature: false,
+    promptFile: false,
   }),
 ].sort((a, b) => a.name.localeCompare(b.name));
 
