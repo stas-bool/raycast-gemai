@@ -281,7 +281,7 @@ const rootPreferences = [
     name: "promptDir",
     title: "Prompt Directory",
     description: "The full path to the directory containing Prompts in markdown format.",
-    type: "textfield",
+    type: "directory",
     required: false,
     default: "~/Documents/Prompts/Raycast",
   },
@@ -290,7 +290,7 @@ const rootPreferences = [
 const pkg = {
   $schema: "https://www.raycast.com/schemas/extension.json",
   name: "gemai",
-  title: "Gem AI",
+  title: "GemAI",
   description: "Gemini Toolbox for quick text editing, BYOK.",
   icon: "gemai-icon.png",
   type: "module",
@@ -301,9 +301,9 @@ const pkg = {
   commands,
   preferences: rootPreferences,
   dependencies: {
-    "@google/genai": "^0.13.0",
-    "@raycast/api": "^1.98.2",
-    "@raycast/utils": "^1.17.0",
+    "@google/genai": "^0.14.1",
+    "@raycast/api": "^1.98.5",
+    "@raycast/utils": "^1.19.1",
     "mime-types": "^3.0.1",
   },
   devDependencies: {
