@@ -145,6 +145,12 @@ export function groupHistoryByKey<K extends keyof HistoryItem>(
   );
 }
 
+export function oneHourAgo(): Date {
+  const now = new Date();
+  now.setHours(now.getHours() - 1);
+  return now;
+}
+
 export function startOfToday(): Date {
   const now = new Date();
   return new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -219,5 +225,5 @@ export function calculatePricePerMillionTokens(modelKey: string, stats: RequestS
     output_price = (output_tokens / 1_000_000) * model.price_output;
   }
 
-  return input_price + output_price;
+  return Math.abs(input_price + output_price);
 }
