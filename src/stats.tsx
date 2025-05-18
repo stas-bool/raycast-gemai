@@ -2,12 +2,11 @@ import { Action, ActionPanel, List } from "@raycast/api";
 import { getCmd } from "./core/commands";
 import { useCommandHistory } from "./core/history";
 import { allModels } from "./core/models";
-import { HistoryItem } from "./core/types"; // Keep import for type reference
+import { GroupStats, HistoryItem } from "./core/types"; // Keep import for type reference
 import {
   calculateAggregatedStatsForGroup,
   DetailedSubGroupStatItem,
   getDetailedSubGroupStats,
-  GroupStats,
   MS_PER_DAY,
   MS_PER_HOUR,
   MS_PER_MONTH,

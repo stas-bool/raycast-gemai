@@ -74,3 +74,12 @@ export interface RaycastProps {
     [key: string]: unknown;
   };
 }
+
+export interface GroupStats {
+  count: number;
+  totalCost: number;
+  totalTokens: number; // Sum of tokens
+  avgTotalTokens: number; // Average tokens per request
+  totalTimeSum: number; // Sum of total time in seconds
+  avgTotalTime: number; // Average total time per request in seconds
+}
