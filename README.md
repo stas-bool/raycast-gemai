@@ -6,12 +6,6 @@
 
 GemAI offers a comprehensive suite of tools, leveraging the capabilities of Gemini AI:
 
-**💬 Advanced AI Chat:**
-- **Persistent Chat Sessions:** Engage in ongoing conversations with AI. Create, name, switch, and delete chat sessions.
-- **Per-Chat Configuration:** Customize the AI model and system instructions for each chat session.
-- **Streaming Responses:** Get real-time feedback as the AI generates its response.
-- **Contextual History:** The AI remembers previous messages within a session for coherent dialogue.
-
 **📝 Powerful Text Tools:**
 - **Ask AI:** Get answers to your questions on any topic.
 - **Summarize It:** Condense long texts into concise summaries, capturing main ideas, facts, and conclusions.
@@ -38,7 +32,7 @@ GemAI offers a comprehensive suite of tools, leveraging the capabilities of Gemi
     - Detailed stats per command and per AI model used.
 - **Highly Configurable:**
     - **Gemini API Key:** Securely store your API key.
-    - **Model Selection:** Choose from various Gemini models globally, per-command, or even per-chat session (e.g., Flash for speed, Pro for complexity).
+    - **Model Selection:** Choose from various Gemini models globally, per-command (e.g., Flash for speed, Pro for complexity).
     - **Custom System Prompts:** Define your own system prompts for each command by placing text files in a specified directory, tailoring the AI's behavior to your exact needs.
     - **Language Preferences:** Set primary and secondary languages for translation and other language-sensitive commands.
     - **Temperature Control:** Adjust the AI's creativity/predictability.
@@ -74,7 +68,6 @@ Here's a list of the primary commands provided by GemAI (you can find these by s
 | Command Name                 | Description                                                                          | Default Input      |
 | ---------------------------- | ------------------------------------------------------------------------------------ | ------------------ |
 | **Ask AI**                   | Ask AI any question on any topic.                                                    | Typed/Selected Text |
-| **Chat with AI**             | Have a persistent, configurable conversation with GemAI.                             | Typed Text         |
 | **Explain It**               | Explain selected text or a concept you type.                                         | Selected Text      |
 | **Friend Text Maker**        | Make text warmer and friendlier.                                                     | Selected Text      |
 | **Fix Grammar**              | Correct grammar, spelling, and punctuation.                                          | Selected Text      |
@@ -98,7 +91,6 @@ Here's a list of the primary commands provided by GemAI (you can find these by s
 - **Draft an email:** Select a few bullet points, run "Professional Text Maker," then refine.
 - **Understand code:** Select a code snippet, run "Explain It."
 - **Quick summary:** Select a news article, run "Summarize It."
-- **Brainstorm ideas:** Use "Chat with AI" to explore concepts.
 - **Document UI:** Use "Screenshot -> Markdown" to quickly grab UI elements for documentation.
 - **Improve your writing:** Paste your text into "Fix Grammar" or "Rephrase It."
 
