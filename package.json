@@ -72,64 +72,6 @@
       ]
     },
     {
-      "name": "chat",
-      "title": "Chat with AI",
-      "description": "Have a conversation with GemAI.",
-      "mode": "view",
-      "preferences": [
-        {
-          "name": "commandModel",
-          "title": "Model for the command",
-          "description": "Specifies the model utilized for this command.",
-          "type": "dropdown",
-          "required": false,
-          "default": "default",
-          "data": [
-            {
-              "title": "Default",
-              "value": "default"
-            },
-            {
-              "title": "Gemini 2.0 Flash-Lite",
-              "value": "gemini-2.0-flash-lite"
-            },
-            {
-              "title": "Gemini 2.0 Flash",
-              "value": "gemini-2.0-flash"
-            },
-            {
-              "title": "Gemini 2.5 Flash",
-              "value": "gemini-2.5-flash-preview-04-17"
-            },
-            {
-              "title": "Gemini 2.5 Flash Thinking",
-              "value": "gemini-2.5-flash-preview-04-17__thinking"
-            },
-            {
-              "title": "Gemini 2.5 Pro",
-              "value": "gemini-2.5-pro-preview-05-06"
-            }
-          ]
-        },
-        {
-          "name": "temperature",
-          "title": "Temperature",
-          "description": "Lower temperatures yield deterministic responses (0 is fully deterministic), while higher temperatures produce diverse results. Max value is 2.0",
-          "type": "textfield",
-          "required": false,
-          "default": "0.1"
-        },
-        {
-          "name": "promptFile",
-          "title": "Markdown file with system prompt",
-          "description": "The system prompt to use for this command.",
-          "type": "textfield",
-          "required": false,
-          "default": "Chat.md"
-        }
-      ]
-    },
-    {
       "name": "explainer",
       "title": "Explain It",
       "description": "Explain selected text.",

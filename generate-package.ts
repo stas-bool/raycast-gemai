@@ -3,7 +3,6 @@ import * as fs from "fs";
 // @ts-ignore
 import {
   CMD_ASK,
-  CMD_CHAT,
   CMD_EXPLAINER,
   CMD_FRIEND,
   CMD_GRAMMAR,
@@ -144,11 +143,6 @@ const commands = [
     title: getCmd(CMD_ASK).name,
     description: getCmd(CMD_ASK).description,
     promptFile: "AskQuestion.md",
-  }),
-  makeCommand({
-    name: getCmd(CMD_CHAT).id,
-    title: getCmd(CMD_CHAT).name,
-    description: getCmd(CMD_CHAT).description,
   }),
   makeCommand({
     name: getCmd(CMD_EXPLAINER).id,

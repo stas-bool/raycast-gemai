@@ -2,7 +2,6 @@ import { HarmBlockThreshold, HarmCategory } from "@google/genai";
 import { getPreferenceValues } from "@raycast/api";
 import {
   CMD_ASK,
-  CMD_CHAT,
   CMD_EXPLAINER,
   CMD_PROMPT_BUILDER,
   CMD_SCR_EXPLAIN,
@@ -27,7 +26,6 @@ const actionsWithPrimaryLanguage = [
   getCmd(CMD_SUMMATOR).id,
   getCmd(CMD_SCR_EXPLAIN).id,
   getCmd(CMD_SCR_TRANSLATE).id,
-  getCmd(CMD_CHAT).id,
 ];
 
 function buildRealPrompt(actionName: string, prefs: any, fallbackPrompt?: string): [boolean, string] {
