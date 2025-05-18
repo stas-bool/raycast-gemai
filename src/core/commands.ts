@@ -14,6 +14,7 @@ export const CMD_SHORTER = "shorter";
 export const CMD_STATS = "stats";
 export const CMD_SUMMATOR = "summator";
 export const CMD_TRANSLATOR = "translator";
+export const CMD_COUNT_TOKENS = "countTokens";
 
 export interface GemAiCommand {
   id: string;
@@ -116,6 +117,11 @@ const allCommands: Record<string, GemAiCommand> = {
     name: "Translator",
     description: "Translate selected text.",
     ui_placeholder: "Enter text to translate.",
+  },
+  [CMD_COUNT_TOKENS]: {
+    id: CMD_COUNT_TOKENS,
+    name: "Count Tokens",
+    description: "Count the tokens in the selected text.",
   },
 };
 

@@ -17,6 +17,7 @@ import {
   CMD_STATS,
   CMD_SUMMATOR,
   CMD_TRANSLATOR,
+  CMD_COUNT_TOKENS,
   getCmd
 } from "./src/core/commands.ts";
 import {
@@ -240,6 +241,12 @@ const commands = [
     description: getCmd(CMD_TRANSLATOR).description,
     withSecondaryLanguage: true,
     hasQuery: true,
+  }),
+  makeCommand({
+    name: getCmd(CMD_COUNT_TOKENS).id,
+    title: getCmd(CMD_COUNT_TOKENS).name,
+    description: getCmd(CMD_COUNT_TOKENS).description,
+    mode: "view",
   }),
 ].sort((a, b) => a.name.localeCompare(b.name));
 
