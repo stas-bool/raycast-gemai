@@ -59,7 +59,7 @@
           "description": "Lower temperatures yield deterministic responses (0 is fully deterministic), while higher temperatures produce diverse results. Max value is 2.0",
           "type": "textfield",
           "required": false,
-          "default": "0.2"
+          "default": "0.1"
         },
         {
           "name": "promptFile",
@@ -117,7 +117,7 @@
           "description": "Lower temperatures yield deterministic responses (0 is fully deterministic), while higher temperatures produce diverse results. Max value is 2.0",
           "type": "textfield",
           "required": false,
-          "default": "0.2"
+          "default": "0.1"
         },
         {
           "name": "promptFile",
@@ -183,7 +183,7 @@
           "description": "Lower temperatures yield deterministic responses (0 is fully deterministic), while higher temperatures produce diverse results. Max value is 2.0",
           "type": "textfield",
           "required": false,
-          "default": "0.2"
+          "default": "0.1"
         },
         {
           "name": "promptFile",
@@ -604,7 +604,7 @@
           "description": "Lower temperatures yield deterministic responses (0 is fully deterministic), while higher temperatures produce diverse results. Max value is 2.0",
           "type": "textfield",
           "required": false,
-          "default": "0.2"
+          "default": "0.1"
         },
         {
           "name": "promptFile",
@@ -662,7 +662,7 @@
           "description": "Lower temperatures yield deterministic responses (0 is fully deterministic), while higher temperatures produce diverse results. Max value is 2.0",
           "type": "textfield",
           "required": false,
-          "default": "0.2"
+          "default": "0.1"
         },
         {
           "name": "promptFile",
@@ -728,7 +728,7 @@
           "description": "Lower temperatures yield deterministic responses (0 is fully deterministic), while higher temperatures produce diverse results. Max value is 2.0",
           "type": "textfield",
           "required": false,
-          "default": "0.2"
+          "default": "0.1"
         },
         {
           "name": "promptFile",
@@ -851,7 +851,7 @@
           "description": "Lower temperatures yield deterministic responses (0 is fully deterministic), while higher temperatures produce diverse results. Max value is 2.0",
           "type": "textfield",
           "required": false,
-          "default": "0.2"
+          "default": "0.1"
         },
         {
           "name": "promptFile",
