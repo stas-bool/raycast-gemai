@@ -7,11 +7,12 @@ import { formatDate } from "./core/utils";
 function formatMarkdown(item: HistoryItem): string {
   const date = formatDate(new Date(item.timestamp));
   return (
-    `### Query at ${date}:\n\n` +
-    `${item.query}\n\n` +
-    `---\n\n` +
-    `### Response:\n\n` +
+    `# ${date}\n\n` +
+    `## Response\n\n` +
     `${item.response}\n\n` +
+    `---\n\n` +
+    `# Request\n\n` +
+    `${item.query}\n\n` +
     `---\n\n` +
     `*${item.stats}*`
   );

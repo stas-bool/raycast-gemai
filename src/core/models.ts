@@ -4,8 +4,8 @@ export const DEFAULT_MODEL = "gemini-2.5-flash-preview-04-17";
 export const DEFAULT_MODEL_SMART = "gemini-2.5-flash-preview-04-17__thinking";
 export const DEFAULT_MODEL_SUPER = "gemini-2.5-pro-preview-05-06";
 
-export const DEFAULT_TEMP = 0.3;
-export const DEFAULT_TEMP_CREATIVE = 0.6;
+export const DEFAULT_TEMP = 0.2;
+export const DEFAULT_TEMP_CREATIVE = 0.5;
 export const DEFAULT_TEMP_ARTIST = 1.0;
 
 export interface ModelInfo {

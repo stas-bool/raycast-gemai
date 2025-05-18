@@ -246,6 +246,7 @@ const commands = [
     name: getCmd(CMD_TRANSLATOR).id,
     title: getCmd(CMD_TRANSLATOR).name,
     description: getCmd(CMD_TRANSLATOR).description,
+    temperature: 0.1,
     withSecondaryLanguage: true,
     hasQuery: true,
   }),

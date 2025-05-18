@@ -50,7 +50,7 @@ const allCommands: Record<string, GemAiCommand> = {
   },
   [CMD_GRAMMAR]: {
     id: CMD_GRAMMAR,
-    name: "Fix Grammar & Spelling",
+    name: "Fix Grammar",
     description: "Fix correct grammar, spelling, punctuation for selected text.",
     ui_placeholder: "Enter text to correcte grammar",
   },
