@@ -18,14 +18,14 @@ import {
   CMD_SUMMATOR,
   CMD_TRANSLATOR,
   getCmd
-} from "./src/core/commands";
+} from "./src/core/commands.ts";
 import {
   allModels,
   DEFAULT_MODEL,
   DEFAULT_TEMP,
   DEFAULT_TEMP_ARTIST,
   DEFAULT_TEMP_CREATIVE
-} from "./src/core/models";
+} from "./src/core/models.ts";
 
 function capitalizeFirstLetter(str: string): string {
   if (!str) return "";
