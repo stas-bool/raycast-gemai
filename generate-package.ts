@@ -167,7 +167,7 @@ const commands = [
     title: getCmd(CMD_GRAMMAR).name,
     description: getCmd(CMD_GRAMMAR).description,
     withSecondaryLanguage: true,
-    temperature: DEFAULT_TEMP_CREATIVE
+    temperature: DEFAULT_TEMP
   }),
   makeCommand({
     name: getCmd(CMD_HISTORY).id,
@@ -193,7 +193,7 @@ const commands = [
     name: getCmd(CMD_PROMPT_BUILDER).id,
     title: getCmd(CMD_PROMPT_BUILDER).name,
     description: getCmd(CMD_PROMPT_BUILDER).description,
-    temperature: DEFAULT_TEMP_CREATIVE
+    temperature: DEFAULT_TEMP
   }),
   makeCommand({
     name: getCmd(CMD_REPHRASER).id,
