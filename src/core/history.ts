@@ -3,7 +3,7 @@ import { showFailureToast } from "@raycast/utils";
 import { useEffect, useState } from "react";
 import { HistoryItem } from "./types";
 
-var storageKeyName = "gemai_history";
+const storageKeyName = "gemai_history";
 
 export async function loadHistoryFromStorage(): Promise<HistoryItem[]> {
   try {

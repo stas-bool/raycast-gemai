@@ -230,36 +230,29 @@ export function calculatePricePerMillionTokens(modelKey: string, stats: RequestS
   const model = allModels[modelKey];
   if (!model) {
     // console.warn(`[calculatePricePerMillionTokens] Unknown model key: ${modelKey}. Using default price 0.`);
-    // Fallback to a default or return 0 if model info is missing
-    return 0;
+    return 0; // Cannot calculate cost if model info is missing
   }
 
-  // Ensure stats are valid before calculating price
-  if (!stats || stats.prompt === undefined || stats.input === undefined || stats.thoughts === undefined || stats.total === undefined) {
-    // console.warn(`[calculatePricePerMillionTokens] Invalid stats provided for model ${modelKey}:`, stats);
-    return 0;
-  }
+  // Ensure stats are valid before calculating price, default to 0 if null/undefined
+  const inputTokens = stats?.prompt ?? 0; // Use stats.prompt as the total input tokens (from usageMetadata.promptTokenCount)
+  const thoughtTokens = stats?.thoughts ?? 0; // Use stats.thoughts for thinking tokens (from usageMetadata.thoughtsTokenCount)
+  const totalTokensReported = stats?.total ?? 0; // Total tokens reported by API (from usageMetadata.totalTokenCount)
 
-  const input_tokens = (stats?.prompt ?? 0) + (stats?.input ?? 0);
-  // Output tokens = total tokens - input tokens. Thoughts are part of output tokens if thinking is enabled.
-  // Note: This calculation assumes `stats.total` includes input, thoughts, and final output.
-  // If the API provides separate output tokens, this logic might need adjustment.
-  const output_tokens = (stats?.total ?? 0) - input_tokens;
+  // Calculate final response tokens: Total - Input - Thoughts
+  // This assumes total = input + final_response + thoughts
+  // Clamp at 0 in case of inconsistent stats reporting from the API or mapping issues
+  const finalResponseTokens = Math.max(0, totalTokensReported - inputTokens - thoughtTokens);
 
-  const input_price = (input_tokens / 1_000_000) * model.price_input;
+  // Calculate costs for each component based on their specific prices
+  const inputCost = (inputTokens / 1_000_000) * (model?.price_input ?? 0);
+  const thoughtCost = (thoughtTokens / 1_000_000) * (model?.price_output_thinking ?? 0); // Use price_output_thinking for thought tokens
+  const finalResponseCost = (finalResponseTokens / 1_000_000) * (model?.price_output ?? 0); // Use price_output for final response tokens
 
-  let output_price = 0;
-  // Check if thoughts tokens are present AND if a specific thinking output price exists and is > 0
-  if ((stats?.thoughts ?? 0) > 0 && model.price_output_thinking !== undefined && model.price_output_thinking > 0) {
-    // If thinking tokens are present and a thinking price exists, apply thinking price to total output tokens
-    output_price = (output_tokens / 1_000_000) * model.price_output_thinking;
-  } else {
-    // Otherwise, use standard output price for total output tokens
-    output_price = (output_tokens / 1_000_000) * model.price_output;
-  }
+  // Total cost is the sum of all components
+  const totalCost = inputCost + thoughtCost + finalResponseCost;
 
-  // Return absolute value in case of any floating point weirdness resulting in tiny negatives
-  return Math.abs(input_price + output_price);
+  // Return absolute value (should be non-negative with clamping)
+  return Math.abs(totalCost);
 }
 
 // Define the new interface for detailed sub-group stats
