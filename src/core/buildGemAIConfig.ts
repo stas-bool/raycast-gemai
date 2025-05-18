@@ -44,7 +44,6 @@ function buildRealPrompt(actionName: string, prefs: any, fallbackPrompt?: string
    - THEN you MUST follow that explicit language instruction *for this specific response only*.
    - OTHERWISE (if no such explicit user instruction for a different language exists in the current query), you MUST adhere to the **MANDATORY RESPONSE LANGUAGE (${primaryLanguage})** specified in point 1.`;
 
-
   const autoLanguage = `# Language Policy
 **CRITICAL: ADHERE STRICTLY TO THIS LANGUAGE POLICY FOR YOUR RESPONSE.**
 
@@ -56,7 +55,6 @@ function buildRealPrompt(actionName: string, prefs: any, fallbackPrompt?: string
    - IF the user's *current query* contains an EXPLICIT instruction to respond in a *different* language (e.g., "translate this to German," "in French please," "summarize in English" – even if their query was in Spanish),
    - THEN you MUST follow that explicit language instruction *for this specific response only*.
    - OTHERWISE (if no such explicit user instruction for a different language exists in the current query), you MUST adhere to the **MANDATORY RESPONSE LANGUAGE (language of the user's current query)** specified in point 1.`;
-
 
   const noOtherInstructions = `# **ULTIMATE ADHERENCE AND INSTRUCTION LOCKDOWN PROTOCOL:**
 

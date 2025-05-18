@@ -25,7 +25,7 @@ function formatDetailedStatsMarkdown(
   subGroup1Title?: string, // Title for the first sub-group list (e.g., "Commands Executed:")
   subGroup1Items?: DetailedSubGroupStatItem[], // Detailed stats for items in the first sub-group
   subGroup2Title?: string, // Title for the second sub-group list (e.g., "Models Used:")
-  subGroup2Items?: DetailedSubGroupStatItem[] // Detailed stats for items in the second sub-group
+  subGroup2Items?: DetailedSubGroupStatItem[], // Detailed stats for items in the second sub-group
 ): string {
   // If main stats count is 0, display a simple message indicating no data
   if (mainStats.count === 0) {
@@ -43,9 +43,7 @@ function formatDetailedStatsMarkdown(
 
   // Helper to format a single detailed sub-group item into a nested markdown list
   const formatSubItem = (item: DetailedSubGroupStatItem) => {
-    return (
-      `* **${item.name}**: ${item.count.toLocaleString()}; $${item.totalCost.toFixed(2)}; ~${item.avgTotalTime.toFixed(2)} sec.\n`
-    );
+    return `* **${item.name}**: ${item.count.toLocaleString()}; $${item.totalCost.toFixed(2)}; ~${item.avgTotalTime.toFixed(2)} sec.\n`;
   };
 
   // Handle the first sub-group if title and items are provided and items list is not empty
@@ -63,7 +61,10 @@ function formatDetailedStatsMarkdown(
   if (subGroup2Title && subGroup2Items && subGroup2Items.length > 0) {
     // Add a newline before the second sub-group for spacing, unless it's the very first section after main stats
     // This ensures there's a blank line between the first and second sub-group lists if both exist.
-    if ((subGroup1Title && (subGroup1Items?.length ?? 0) > 0) || (!subGroup1Title && (subGroup1Items?.length ?? 0) === 0 && mainStats.count > 0)) {
+    if (
+      (subGroup1Title && (subGroup1Items?.length ?? 0) > 0) ||
+      (!subGroup1Title && (subGroup1Items?.length ?? 0) === 0 && mainStats.count > 0)
+    ) {
       markdown += `\n`; // Add extra space between the two lists or after main stats if no first list
     }
 
@@ -78,7 +79,6 @@ function formatDetailedStatsMarkdown(
 
   return markdown;
 }
-
 
 export default function StatsCommand() {
   const { history, isLoading } = useCommandHistory();
@@ -104,7 +104,6 @@ export default function StatsCommand() {
   const thisMonth = startOfMonth();
   const thisMonthHistory = history.filter((item) => new Date(item.timestamp) >= thisMonth);
 
-
   // --- Calculate main aggregated stats for each period and overall ---
   const totalStats = calculateAggregatedStatsForGroup(history);
   const hourStats = calculateAggregatedStatsForGroup(hourHistory);
@@ -116,36 +115,34 @@ export default function StatsCommand() {
   const thisWeekStats = calculateAggregatedStatsForGroup(thisWeekHistory);
   const thisMonthStats = calculateAggregatedStatsForGroup(thisMonthHistory);
 
-
   // --- Calculate detailed sub-group stats (commands and models) for each period ---
   // Use the helper function getDetailedSubGroupStats to get sorted lists of commands/models with their stats within each period's history subset.
-  const totalCommands = getDetailedSubGroupStats(history, 'actionName');
-  const totalModels = getDetailedSubGroupStats(history, 'model');
+  const totalCommands = getDetailedSubGroupStats(history, "actionName");
+  const totalModels = getDetailedSubGroupStats(history, "model");
 
-  const hourCommands = getDetailedSubGroupStats(hourHistory, 'actionName');
-  const hourModels = getDetailedSubGroupStats(hourHistory, 'model');
+  const hourCommands = getDetailedSubGroupStats(hourHistory, "actionName");
+  const hourModels = getDetailedSubGroupStats(hourHistory, "model");
 
-  const last24HoursCommands = getDetailedSubGroupStats(last24HoursHistory, 'actionName');
-  const last24HoursModels = getDetailedSubGroupStats(last24HoursHistory, 'model');
+  const last24HoursCommands = getDetailedSubGroupStats(last24HoursHistory, "actionName");
+  const last24HoursModels = getDetailedSubGroupStats(last24HoursHistory, "model");
 
-  const last7DaysCommands = getDetailedSubGroupStats(last7DaysHistory, 'actionName');
-  const last7DaysModels = getDetailedSubGroupStats(last7DaysHistory, 'model');
+  const last7DaysCommands = getDetailedSubGroupStats(last7DaysHistory, "actionName");
+  const last7DaysModels = getDetailedSubGroupStats(last7DaysHistory, "model");
 
-  const last30DaysCommands = getDetailedSubGroupStats(last30DaysHistory, 'actionName');
-  const last30DaysModels = getDetailedSubGroupStats(last30DaysHistory, 'model');
+  const last30DaysCommands = getDetailedSubGroupStats(last30DaysHistory, "actionName");
+  const last30DaysModels = getDetailedSubGroupStats(last30DaysHistory, "model");
 
-  const todayCommands = getDetailedSubGroupStats(todayHistory, 'actionName');
-  const todayModels = getDetailedSubGroupStats(todayHistory, 'model');
+  const todayCommands = getDetailedSubGroupStats(todayHistory, "actionName");
+  const todayModels = getDetailedSubGroupStats(todayHistory, "model");
 
-  const yesterdayCommands = getDetailedSubGroupStats(yesterdayHistory, 'actionName');
-  const yesterdayModels = getDetailedSubGroupStats(yesterdayHistory, 'model');
+  const yesterdayCommands = getDetailedSubGroupStats(yesterdayHistory, "actionName");
+  const yesterdayModels = getDetailedSubGroupStats(yesterdayHistory, "model");
 
-  const thisWeekCommands = getDetailedSubGroupStats(thisWeekHistory, 'actionName');
-  const thisWeekModels = getDetailedSubGroupStats(thisWeekHistory, 'model');
+  const thisWeekCommands = getDetailedSubGroupStats(thisWeekHistory, "actionName");
+  const thisWeekModels = getDetailedSubGroupStats(thisWeekHistory, "model");
 
-  const thisMonthCommands = getDetailedSubGroupStats(thisMonthHistory, 'actionName');
-  const thisMonthModels = getDetailedSubGroupStats(thisMonthHistory, 'model');
-
+  const thisMonthCommands = getDetailedSubGroupStats(thisMonthHistory, "actionName");
+  const thisMonthModels = getDetailedSubGroupStats(thisMonthHistory, "model");
 
   // --- Calculate stats grouped by Action Name with detailed model breakdown ---
   // Group the entire history by actionName, then for each command's history subset, get detailed model stats within that subset.
@@ -170,7 +167,7 @@ export default function StatsCommand() {
       const commandHistoryItems: HistoryItem[] = groupedByAction[actionName]; // Get all history items for this command
       const commandMainStats = calculateAggregatedStatsForGroup(commandHistoryItems); // Calculate main stats for this command
       // Get detailed stats for models used *within* this command's history items using the helper
-      const modelSubGroupItems = getDetailedSubGroupStats(commandHistoryItems, 'model');
+      const modelSubGroupItems = getDetailedSubGroupStats(commandHistoryItems, "model");
       statsByActionNameDetailed.push({
         actionName,
         mainStats: commandMainStats,
@@ -180,7 +177,6 @@ export default function StatsCommand() {
   }
   // Sort commands by overall usage count descending for display
   statsByActionNameDetailed.sort((a, b) => b.mainStats.count - a.mainStats.count);
-
 
   // --- Calculate stats grouped by Model with detailed command breakdown ---
   // Group the entire history by model, then for each model's history subset, get detailed command stats within that subset.
@@ -207,7 +203,7 @@ export default function StatsCommand() {
       const modelMainStats = calculateAggregatedStatsForGroup(modelHistoryItems); // Calculate main stats for this model
       const modelName = allModels[modelId]?.name || modelId; // Get friendly model name or use ID
       // Get detailed stats for commands used *with* this model's history items using the helper
-      const commandSubGroupItems = getDetailedSubGroupStats(modelHistoryItems, 'actionName');
+      const commandSubGroupItems = getDetailedSubGroupStats(modelHistoryItems, "actionName");
       statsByModelDetailed.push({
         modelId,
         modelName,
@@ -219,20 +215,118 @@ export default function StatsCommand() {
   // Sort models by overall usage count descending for display
   statsByModelDetailed.sort((a, b) => b.mainStats.count - a.mainStats.count);
 
-
   // --- Construct categories array for the List view ---
   // Each object in this array represents a list item/category in the stats view.
   const categories = [
     // Overall stats - Include breakdown by Commands and Models
-    { id: "total", title: "Overall statistics", markdownStats: formatDetailedStatsMarkdown("Overall statistics", totalStats, "Commands Executed:", totalCommands, "Models Used:", totalModels) },
-    { id: "period-hour", title: "Last 1 hour", markdownStats: formatDetailedStatsMarkdown("Last 1 hour", hourStats, "Commands Executed:", hourCommands, "Models Used:", hourModels) },
-    { id: "period-last24hours", title: "Last 24 hours", markdownStats: formatDetailedStatsMarkdown("Last 24 hours", last24HoursStats, "Commands Executed:", last24HoursCommands, "Models Used:", last24HoursModels) },
-    { id: "period-today", title: "For today (since midnight)", markdownStats: formatDetailedStatsMarkdown("For today (since midnight)", todayStats, "Commands Executed:", todayCommands, "Models Used:", todayModels) },
-    { id: "period-yesterday", title: "Yesterday (midnight to midnight)", markdownStats: formatDetailedStatsMarkdown("Yesterday (midnight to midnight)", yesterdayStats, "Commands Executed:", yesterdayCommands, "Models Used:", yesterdayModels) },
-    { id: "period-last7days", title: "Last 7 days", markdownStats: formatDetailedStatsMarkdown("Last 7 days", last7DaysStats, "Commands Executed:", last7DaysCommands, "Models Used:", last7DaysModels) },
-    { id: "period-week", title: "This week (since Monday)", markdownStats: formatDetailedStatsMarkdown("This week (since Monday)", thisWeekStats, "Commands Executed:", thisWeekCommands, "Models Used:", thisWeekModels) },
-    { id: "period-last30days", title: "Last 30 days", markdownStats: formatDetailedStatsMarkdown("Last 30 days", last30DaysStats, "Commands Executed:", last30DaysCommands, "Models Used:", last30DaysModels) },
-    { id: "period-month", title: "This month (since 1st)", markdownStats: formatDetailedStatsMarkdown("This month (since 1st)", thisMonthStats, "Commands Executed:", thisMonthCommands, "Models Used:", thisMonthModels) },
+    {
+      id: "total",
+      title: "Overall statistics",
+      markdownStats: formatDetailedStatsMarkdown(
+        "Overall statistics",
+        totalStats,
+        "Commands Executed:",
+        totalCommands,
+        "Models Used:",
+        totalModels,
+      ),
+    },
+    {
+      id: "period-hour",
+      title: "Last 1 hour",
+      markdownStats: formatDetailedStatsMarkdown(
+        "Last 1 hour",
+        hourStats,
+        "Commands Executed:",
+        hourCommands,
+        "Models Used:",
+        hourModels,
+      ),
+    },
+    {
+      id: "period-last24hours",
+      title: "Last 24 hours",
+      markdownStats: formatDetailedStatsMarkdown(
+        "Last 24 hours",
+        last24HoursStats,
+        "Commands Executed:",
+        last24HoursCommands,
+        "Models Used:",
+        last24HoursModels,
+      ),
+    },
+    {
+      id: "period-today",
+      title: "For today (since midnight)",
+      markdownStats: formatDetailedStatsMarkdown(
+        "For today (since midnight)",
+        todayStats,
+        "Commands Executed:",
+        todayCommands,
+        "Models Used:",
+        todayModels,
+      ),
+    },
+    {
+      id: "period-yesterday",
+      title: "Yesterday (midnight to midnight)",
+      markdownStats: formatDetailedStatsMarkdown(
+        "Yesterday (midnight to midnight)",
+        yesterdayStats,
+        "Commands Executed:",
+        yesterdayCommands,
+        "Models Used:",
+        yesterdayModels,
+      ),
+    },
+    {
+      id: "period-last7days",
+      title: "Last 7 days",
+      markdownStats: formatDetailedStatsMarkdown(
+        "Last 7 days",
+        last7DaysStats,
+        "Commands Executed:",
+        last7DaysCommands,
+        "Models Used:",
+        last7DaysModels,
+      ),
+    },
+    {
+      id: "period-week",
+      title: "This week (since Monday)",
+      markdownStats: formatDetailedStatsMarkdown(
+        "This week (since Monday)",
+        thisWeekStats,
+        "Commands Executed:",
+        thisWeekCommands,
+        "Models Used:",
+        thisWeekModels,
+      ),
+    },
+    {
+      id: "period-last30days",
+      title: "Last 30 days",
+      markdownStats: formatDetailedStatsMarkdown(
+        "Last 30 days",
+        last30DaysStats,
+        "Commands Executed:",
+        last30DaysCommands,
+        "Models Used:",
+        last30DaysModels,
+      ),
+    },
+    {
+      id: "period-month",
+      title: "This month (since 1st)",
+      markdownStats: formatDetailedStatsMarkdown(
+        "This month (since 1st)",
+        thisMonthStats,
+        "Commands Executed:",
+        thisMonthCommands,
+        "Models Used:",
+        thisMonthModels,
+      ),
+    },
 
     // Stats grouped by Command - Include detailed breakdown by Models used within each command
     ...statsByActionNameDetailed.map((item) => ({

@@ -267,7 +267,10 @@ export interface DetailedSubGroupStatItem extends GroupStats {
 
 // Helper function to group history items by a key ('actionName' or 'model')
 // and calculate detailed aggregated stats (count, cost, tokens, avg time) for each resulting sub-group.
-export function getDetailedSubGroupStats(historyItems: HistoryItem[], groupByKey: 'actionName' | 'model'): DetailedSubGroupStatItem[] {
+export function getDetailedSubGroupStats(
+  historyItems: HistoryItem[],
+  groupByKey: "actionName" | "model",
+): DetailedSubGroupStatItem[] {
   const grouped = groupHistoryByKey(historyItems, groupByKey);
   const detailedStats: DetailedSubGroupStatItem[] = [];
 
@@ -278,10 +281,11 @@ export function getDetailedSubGroupStats(historyItems: HistoryItem[], groupByKey
       const mainStats = calculateAggregatedStatsForGroup(groupItems);
 
       let name: string;
-      if (groupByKey === 'actionName') {
+      if (groupByKey === "actionName") {
         // Get friendly command name using the key (which is the actionName ID)
         name = getCmd(key).name;
-      } else { // groupByKey === 'model'
+      } else {
+        // groupByKey === 'model'
         // Get friendly model name using the key (which is the model ID) or use key if not found
         name = allModels[key]?.name || key;
       }
