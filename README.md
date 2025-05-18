@@ -118,7 +118,7 @@ Please adhere to standard coding practices and ensure your contributions are wel
 
 ## 📜 License
 
-This project is licensed under the **[MIT License](LICENSE)**. (Replace with your actual license if different).
+This project is licensed under the **[MIT License](LICENSE)**.
 
 ---
 
