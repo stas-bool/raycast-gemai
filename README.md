@@ -1,8 +1,6 @@
-# GemAI - Your Intelligent Raycast Assistant powered by Gemini
+# GemAI - Intelligent Raycast Assistant with Gemini AI
 
 **GemAI** is a powerful Raycast extension that brings Google's Gemini AI directly into your workflow. Perform a wide array of tasks – from drafting emails and summarizing articles to translating languages and analyzing screenshots – all without leaving Raycast. GemAI is designed to be your versatile and quick assistant for numerous office and daily routine tasks.
-
-*(Suggestion: Replace the placeholder above with a GIF showcasing GemAI in action!)*
 
 ## ✨ Key Features
 
