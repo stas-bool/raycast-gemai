@@ -120,7 +120,7 @@ const allCommands: Record<string, GemAiCommand> = {
   },
   [CMD_COUNT_TOKENS]: {
     id: CMD_COUNT_TOKENS,
-    name: "Count Tokens",
+    name: "GemAI - Count Tokens",
     description: "Count the tokens in the selected text.",
   },
 };

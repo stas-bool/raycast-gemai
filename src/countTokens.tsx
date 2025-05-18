@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-import { Detail, getSelectedText, getPreferenceValues, showToast, Toast } from "@raycast/api";
 import { GoogleGenAI } from "@google/genai";
+import { Detail, getPreferenceValues, getSelectedText, showToast, Toast } from "@raycast/api";
+import { useEffect, useState } from "react";
 
 export default function CountTokens() {
   const [markdown, setMarkdown] = useState<string>("Counting tokens...");
