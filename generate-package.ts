@@ -33,10 +33,13 @@ function capitalizeFirstLetter(str: string): string {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-const models = Object.entries(allModels).map(([key, model]) => ({
-  title: `Gemini ${model.name}`,
-  value: key,
-}));
+const models = Object.entries(allModels).map(([key, model]) => {
+  const providerPrefix = model.provider === 'openai' ? 'OpenAI' : 'Gemini';
+  return {
+    title: `${providerPrefix} ${model.name}`,
+    value: key,
+  };
+});
 
 models.unshift({title: "Default", value: "default"});
 
