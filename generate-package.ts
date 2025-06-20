@@ -23,6 +23,7 @@ import {
 import {
   allModels,
   DEFAULT_MODEL,
+  DEFAULT_OPENAI_MODEL,
   DEFAULT_TEMP,
   DEFAULT_TEMP_ARTIST,
   DEFAULT_TEMP_CREATIVE
@@ -258,14 +259,29 @@ const rootPreferences = [
   {
     name: "geminiApiKey",
     title: "Gemini API Key",
-    description: "Find it at your Google AI Studio.",
+    description: "Find it at your Google AI Studio. Required for Gemini models.",
     type: "password",
-    required: true,
+    required: false,
   },
   {
-    description: "Which model Gemini for Raycast uses by default (unless overriden by individual commands).",
+    name: "openaiApiKey",
+    title: "OpenAI API Key",
+    description: "Find it at platform.openai.com. Required for OpenAI models.",
+    type: "password",
+    required: false,
+  },
+  {
+    name: "openaiBaseUrl",
+    title: "OpenAI Base URL (Optional)",
+    description: "Custom OpenAI API base URL. Leave blank to use default OpenAI endpoint. Useful for Azure OpenAI, proxies, or alternative providers.",
+    type: "textfield",
+    required: false,
+    default: "",
+  },
+  {
+    description: "Which model for Raycast uses by default (unless overriden by individual commands).",
     name: "defaultModel",
-    title: "Model",
+    title: "Default Model",
     type: "dropdown",
     required: true,
     default: DEFAULT_MODEL,
@@ -300,7 +316,7 @@ const pkg = {
   $schema: "https://www.raycast.com/schemas/extension.json",
   name: "gemai",
   title: "GemAI",
-  description: "Gemini Toolbox for quick text editing, BYOK.",
+  description: "AI Toolbox for quick text editing with Gemini & OpenAI support, BYOK.",
   icon: "gemai-icon.png",
   type: "module",
   author: "SmetDenis",
@@ -314,6 +330,7 @@ const pkg = {
     "@raycast/api": "^1.98.5",
     "@raycast/utils": "^1.19.1",
     "mime-types": "^3.0.1",
+    "openai": "^4.73.0",
   },
   devDependencies: {
     "@raycast/eslint-config": "^2.0.4",
