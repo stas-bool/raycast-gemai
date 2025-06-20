@@ -1,5 +1,5 @@
 import { getPreferenceValues } from "@raycast/api";
-import { buildGemAIConfig } from "./core/buildGemAIConfig";
+import { buildAIConfig } from "./core/buildAIConfig";
 import { CMD_SCR_TRANSLATE, getCmd } from "./core/commands";
 import makeScreenshot from "./core/makeScreenshot";
 import { RaycastProps } from "./core/types";
@@ -15,8 +15,8 @@ export default async function ScreenshotToTranslate(props: RaycastProps) {
     `Adapt punctuation to ${pimaryLang} norms and keep proper nouns/brands in original script unless a common ${pimaryLang} version exists. ` +
     `ALWAYS return ONLY the processed text.`;
 
-  const gemAiConfig = buildGemAIConfig(getCmd(CMD_SCR_TRANSLATE).id, props, fallbackPrompt);
-  gemAiConfig.ui.placeholder = getCmd(CMD_SCR_TRANSLATE).ui_placeholder;
+  const aiConfig = buildAIConfig(getCmd(CMD_SCR_TRANSLATE).id, props, fallbackPrompt);
+  aiConfig.ui.placeholder = getCmd(CMD_SCR_TRANSLATE).ui_placeholder || "Translate text in screenshot...";
 
-  return await makeScreenshot(props, true, gemAiConfig);
+  return await makeScreenshot(props, true, aiConfig);
 }

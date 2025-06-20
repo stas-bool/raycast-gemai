@@ -1,4 +1,4 @@
-import { buildGemAIConfig } from "./core/buildGemAIConfig";
+import { buildAIConfig } from "./core/buildAIConfig";
 import { CMD_PROFESSIONAL, getCmd } from "./core/commands";
 import GemAI from "./core/gemai";
 import { RaycastProps } from "./core/types";
@@ -9,8 +9,8 @@ export default function Professional(props: RaycastProps) {
     "adopting a conversational tone and approachable language while preserving the original core message and key information; " +
     "ALSWAYS return ONLY the modified text and nothing else.";
 
-  const gemAiConfig = buildGemAIConfig(getCmd(CMD_PROFESSIONAL).id, props, fallbackPrompt);
-  gemAiConfig.ui.placeholder = getCmd(CMD_PROFESSIONAL).ui_placeholder;
+  const aiConfig = buildAIConfig(getCmd(CMD_PROFESSIONAL).id, props, fallbackPrompt);
+  aiConfig.ui.placeholder = getCmd(CMD_PROFESSIONAL).ui_placeholder || "Enter text to make professional...";
 
-  return GemAI(gemAiConfig);
+  return GemAI(aiConfig);
 }

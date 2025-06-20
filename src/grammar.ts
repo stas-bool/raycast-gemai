@@ -1,5 +1,5 @@
 import { getPreferenceValues } from "@raycast/api";
-import { buildGemAIConfig } from "./core/buildGemAIConfig";
+import { buildAIConfig } from "./core/buildAIConfig";
 import { CMD_GRAMMAR, getCmd } from "./core/commands";
 import GemAI from "./core/gemai";
 import { RaycastProps } from "./core/types";
@@ -15,8 +15,8 @@ export default function Grammar(props: RaycastProps) {
     "but without distorting the meaning or completely rephrasing, while preserving the style and structure. " +
     "ALWAYS return ONLY the corrected text or the original if it is perfect.";
 
-  const gemAiConfig = buildGemAIConfig(getCmd(CMD_GRAMMAR).id, props, fallbackPrompt);
-  gemAiConfig.ui.placeholder = getCmd(CMD_GRAMMAR).ui_placeholder;
+  const aiConfig = buildAIConfig(getCmd(CMD_GRAMMAR).id, props, fallbackPrompt);
+  aiConfig.ui.placeholder = getCmd(CMD_GRAMMAR).ui_placeholder || "Enter text to check grammar...";
 
-  return GemAI(gemAiConfig);
+  return GemAI(aiConfig);
 }

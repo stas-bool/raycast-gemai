@@ -1,0 +1,69 @@
+# Raycast GemAI - Legacy Rules (use .cursor/rules for modern format)
+
+You are an expert TypeScript developer working on **raycast-gemai** - a Raycast extension providing AI-powered text processing with universal Gemini/OpenAI support.
+
+## CRITICAL ARCHITECTURE POINTS
+
+### Universal Provider System
+- Use `buildAIConfig()` instead of `buildGemAIConfig()` for new code
+- `AIConfig` is universal interface, `GemAIConfig` is for backward compatibility
+- Provider auto-detection based on model selection in `buildAIConfig.ts`
+- Factory pattern: `createAIProvider(config)` returns appropriate provider
+
+### Reasoning Models (o1-series)
+- NEVER send system prompts as separate messages to o1-preview/o1-mini
+- ALWAYS include system prompt in user message for reasoning models
+- Use `max_completion_tokens` instead of `max_tokens` for o1-series
+- Fixed temperature = 1 for reasoning models (OpenAI requirement)
+
+### Vision API Auto-switching  
+- Reasoning models don't support vision - auto-switch to GPT-4o when image detected
+- Show user notification about model auto-switching
+- Preserve original config settings when switching
+
+### Token Counting
+- Use real API usage data (`usageMetadata`) whenever available
+- OpenAI: `prompt_tokens` includes system + user, calculate user tokens by subtraction
+- Gemini: `promptTokenCount` = all input, `candidatesTokenCount` = output tokens
+- Include thinking tokens for reasoning models in statistics
+
+### Current Pricing (verify regularly)
+- GPT-4o: $2.50/$10.00 (input/output per 1M tokens)
+- GPT-4o-mini: $0.15/$0.60
+- o1-preview: $15.00/$60.00
+- o1-mini: $3.00/$12.00
+
+### Timing Measurement
+- First Response Time: Measure from request start to first content chunk
+- NEVER measure timing before streaming starts - that's just initialization
+- Total Time: Full streaming duration including final processing
+
+### Debug Logging
+- Production: All debug `console.log()` should be commented out
+- Keep error handling: `console.error()` for genuine errors should remain
+- Comment Format: Use `// console.log(...)` to preserve debugging code
+
+### File Structure
+```
+src/core/
+  ├── aiProvider.ts          # Universal AI provider implementations
+  ├── buildAIConfig.ts       # Universal config router
+  ├── buildGemAIConfig.ts    # Legacy Gemini config (maintain compatibility)
+  ├── buildOpenAIConfig.ts   # OpenAI config builder
+  ├── types.ts               # Universal types and interfaces
+  ├── models.ts              # Model definitions with pricing/capabilities
+  └── gemai.tsx              # Main UI component (universal)
+```
+
+### Backward Compatibility
+- GemAIConfig interface must remain functional for existing code
+- Legacy commands should work without modification
+- Type safety: Ensure AIConfig can be cast to GemAIConfig when appropriate
+
+### Critical Test Scenarios
+1. Screenshot + OpenAI: Verify screenshotToMarkdown works with GPT-4o
+2. Reasoning + Vision: Test auto-switching from o1-mini to GPT-4o with images  
+3. Token Statistics: Verify accurate token counting for both providers
+4. Model Pricing: Ensure cost calculations match official API pricing
+
+Remember: This is a production Raycast extension used by real users. Prioritize stability, clear user feedback, and smooth operation across all supported AI models. 

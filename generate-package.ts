@@ -36,8 +36,9 @@ function capitalizeFirstLetter(str: string): string {
 
 const models = Object.entries(allModels).map(([key, model]) => {
   const providerPrefix = model.provider === 'openai' ? 'OpenAI' : 'Gemini';
+  const visionSuffix = model.supportsVision === false ? ' (Text-only)' : '';
   return {
-    title: `${providerPrefix} ${model.name}`,
+    title: `${providerPrefix} ${model.name}${visionSuffix}`,
     value: key,
   };
 });
@@ -334,6 +335,7 @@ const pkg = {
   },
   devDependencies: {
     "@raycast/eslint-config": "^2.0.4",
+    "@types/mime-types": "^3.0.1",
     "@types/node": "22.13.10",
     "@types/react": "19.0.10",
     eslint: "^9.22.0",

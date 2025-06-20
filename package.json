@@ -52,12 +52,20 @@
               "value": "gemini-2.5-pro-preview-05-06"
             },
             {
-              "title": "OpenAI GPT-4.1 (Latest)",
-              "value": "gpt-4.1"
+              "title": "OpenAI GPT-4o",
+              "value": "gpt-4o"
             },
             {
-              "title": "OpenAI o4-mini (Reasoning)",
-              "value": "o4-mini"
+              "title": "OpenAI GPT-4o-mini",
+              "value": "gpt-4o-mini"
+            },
+            {
+              "title": "OpenAI o1-preview (Reasoning) (Text-only)",
+              "value": "o1-preview"
+            },
+            {
+              "title": "OpenAI o1-mini (Reasoning) (Text-only)",
+              "value": "o1-mini"
             }
           ]
         },
@@ -118,12 +126,20 @@
               "value": "gemini-2.5-pro-preview-05-06"
             },
             {
-              "title": "OpenAI GPT-4.1 (Latest)",
-              "value": "gpt-4.1"
+              "title": "OpenAI GPT-4o",
+              "value": "gpt-4o"
             },
             {
-              "title": "OpenAI o4-mini (Reasoning)",
-              "value": "o4-mini"
+              "title": "OpenAI GPT-4o-mini",
+              "value": "gpt-4o-mini"
+            },
+            {
+              "title": "OpenAI o1-preview (Reasoning) (Text-only)",
+              "value": "o1-preview"
+            },
+            {
+              "title": "OpenAI o1-mini (Reasoning) (Text-only)",
+              "value": "o1-mini"
             }
           ]
         }
@@ -176,12 +192,20 @@
               "value": "gemini-2.5-pro-preview-05-06"
             },
             {
-              "title": "OpenAI GPT-4.1 (Latest)",
-              "value": "gpt-4.1"
+              "title": "OpenAI GPT-4o",
+              "value": "gpt-4o"
             },
             {
-              "title": "OpenAI o4-mini (Reasoning)",
-              "value": "o4-mini"
+              "title": "OpenAI GPT-4o-mini",
+              "value": "gpt-4o-mini"
+            },
+            {
+              "title": "OpenAI o1-preview (Reasoning) (Text-only)",
+              "value": "o1-preview"
+            },
+            {
+              "title": "OpenAI o1-mini (Reasoning) (Text-only)",
+              "value": "o1-mini"
             }
           ]
         },
@@ -242,12 +266,20 @@
               "value": "gemini-2.5-pro-preview-05-06"
             },
             {
-              "title": "OpenAI GPT-4.1 (Latest)",
-              "value": "gpt-4.1"
+              "title": "OpenAI GPT-4o",
+              "value": "gpt-4o"
             },
             {
-              "title": "OpenAI o4-mini (Reasoning)",
-              "value": "o4-mini"
+              "title": "OpenAI GPT-4o-mini",
+              "value": "gpt-4o-mini"
+            },
+            {
+              "title": "OpenAI o1-preview (Reasoning) (Text-only)",
+              "value": "o1-preview"
+            },
+            {
+              "title": "OpenAI o1-mini (Reasoning) (Text-only)",
+              "value": "o1-mini"
             }
           ]
         },
@@ -308,12 +340,20 @@
               "value": "gemini-2.5-pro-preview-05-06"
             },
             {
-              "title": "OpenAI GPT-4.1 (Latest)",
-              "value": "gpt-4.1"
+              "title": "OpenAI GPT-4o",
+              "value": "gpt-4o"
             },
             {
-              "title": "OpenAI o4-mini (Reasoning)",
-              "value": "o4-mini"
+              "title": "OpenAI GPT-4o-mini",
+              "value": "gpt-4o-mini"
+            },
+            {
+              "title": "OpenAI o1-preview (Reasoning) (Text-only)",
+              "value": "o1-preview"
+            },
+            {
+              "title": "OpenAI o1-mini (Reasoning) (Text-only)",
+              "value": "o1-mini"
             }
           ]
         },
@@ -389,12 +429,20 @@
               "value": "gemini-2.5-pro-preview-05-06"
             },
             {
-              "title": "OpenAI GPT-4.1 (Latest)",
-              "value": "gpt-4.1"
+              "title": "OpenAI GPT-4o",
+              "value": "gpt-4o"
             },
             {
-              "title": "OpenAI o4-mini (Reasoning)",
-              "value": "o4-mini"
+              "title": "OpenAI GPT-4o-mini",
+              "value": "gpt-4o-mini"
+            },
+            {
+              "title": "OpenAI o1-preview (Reasoning) (Text-only)",
+              "value": "o1-preview"
+            },
+            {
+              "title": "OpenAI o1-mini (Reasoning) (Text-only)",
+              "value": "o1-mini"
             }
           ]
         },
@@ -455,12 +503,20 @@
               "value": "gemini-2.5-pro-preview-05-06"
             },
             {
-              "title": "OpenAI GPT-4.1 (Latest)",
-              "value": "gpt-4.1"
+              "title": "OpenAI GPT-4o",
+              "value": "gpt-4o"
             },
             {
-              "title": "OpenAI o4-mini (Reasoning)",
-              "value": "o4-mini"
+              "title": "OpenAI GPT-4o-mini",
+              "value": "gpt-4o-mini"
+            },
+            {
+              "title": "OpenAI o1-preview (Reasoning) (Text-only)",
+              "value": "o1-preview"
+            },
+            {
+              "title": "OpenAI o1-mini (Reasoning) (Text-only)",
+              "value": "o1-mini"
             }
           ]
         },
@@ -521,12 +577,20 @@
               "value": "gemini-2.5-pro-preview-05-06"
             },
             {
-              "title": "OpenAI GPT-4.1 (Latest)",
-              "value": "gpt-4.1"
+              "title": "OpenAI GPT-4o",
+              "value": "gpt-4o"
             },
             {
-              "title": "OpenAI o4-mini (Reasoning)",
-              "value": "o4-mini"
+              "title": "OpenAI GPT-4o-mini",
+              "value": "gpt-4o-mini"
+            },
+            {
+              "title": "OpenAI o1-preview (Reasoning) (Text-only)",
+              "value": "o1-preview"
+            },
+            {
+              "title": "OpenAI o1-mini (Reasoning) (Text-only)",
+              "value": "o1-mini"
             }
           ]
         },
@@ -587,12 +651,20 @@
               "value": "gemini-2.5-pro-preview-05-06"
             },
             {
-              "title": "OpenAI GPT-4.1 (Latest)",
-              "value": "gpt-4.1"
+              "title": "OpenAI GPT-4o",
+              "value": "gpt-4o"
             },
             {
-              "title": "OpenAI o4-mini (Reasoning)",
-              "value": "o4-mini"
+              "title": "OpenAI GPT-4o-mini",
+              "value": "gpt-4o-mini"
+            },
+            {
+              "title": "OpenAI o1-preview (Reasoning) (Text-only)",
+              "value": "o1-preview"
+            },
+            {
+              "title": "OpenAI o1-mini (Reasoning) (Text-only)",
+              "value": "o1-mini"
             }
           ]
         },
@@ -653,12 +725,20 @@
               "value": "gemini-2.5-pro-preview-05-06"
             },
             {
-              "title": "OpenAI GPT-4.1 (Latest)",
-              "value": "gpt-4.1"
+              "title": "OpenAI GPT-4o",
+              "value": "gpt-4o"
             },
             {
-              "title": "OpenAI o4-mini (Reasoning)",
-              "value": "o4-mini"
+              "title": "OpenAI GPT-4o-mini",
+              "value": "gpt-4o-mini"
+            },
+            {
+              "title": "OpenAI o1-preview (Reasoning) (Text-only)",
+              "value": "o1-preview"
+            },
+            {
+              "title": "OpenAI o1-mini (Reasoning) (Text-only)",
+              "value": "o1-mini"
             }
           ]
         },
@@ -719,12 +799,20 @@
               "value": "gemini-2.5-pro-preview-05-06"
             },
             {
-              "title": "OpenAI GPT-4.1 (Latest)",
-              "value": "gpt-4.1"
+              "title": "OpenAI GPT-4o",
+              "value": "gpt-4o"
             },
             {
-              "title": "OpenAI o4-mini (Reasoning)",
-              "value": "o4-mini"
+              "title": "OpenAI GPT-4o-mini",
+              "value": "gpt-4o-mini"
+            },
+            {
+              "title": "OpenAI o1-preview (Reasoning) (Text-only)",
+              "value": "o1-preview"
+            },
+            {
+              "title": "OpenAI o1-mini (Reasoning) (Text-only)",
+              "value": "o1-mini"
             }
           ]
         },
@@ -785,12 +873,20 @@
               "value": "gemini-2.5-pro-preview-05-06"
             },
             {
-              "title": "OpenAI GPT-4.1 (Latest)",
-              "value": "gpt-4.1"
+              "title": "OpenAI GPT-4o",
+              "value": "gpt-4o"
             },
             {
-              "title": "OpenAI o4-mini (Reasoning)",
-              "value": "o4-mini"
+              "title": "OpenAI GPT-4o-mini",
+              "value": "gpt-4o-mini"
+            },
+            {
+              "title": "OpenAI o1-preview (Reasoning) (Text-only)",
+              "value": "o1-preview"
+            },
+            {
+              "title": "OpenAI o1-mini (Reasoning) (Text-only)",
+              "value": "o1-mini"
             }
           ]
         },
@@ -859,12 +955,20 @@
               "value": "gemini-2.5-pro-preview-05-06"
             },
             {
-              "title": "OpenAI GPT-4.1 (Latest)",
-              "value": "gpt-4.1"
+              "title": "OpenAI GPT-4o",
+              "value": "gpt-4o"
             },
             {
-              "title": "OpenAI o4-mini (Reasoning)",
-              "value": "o4-mini"
+              "title": "OpenAI GPT-4o-mini",
+              "value": "gpt-4o-mini"
+            },
+            {
+              "title": "OpenAI o1-preview (Reasoning) (Text-only)",
+              "value": "o1-preview"
+            },
+            {
+              "title": "OpenAI o1-mini (Reasoning) (Text-only)",
+              "value": "o1-mini"
             }
           ]
         },
@@ -932,12 +1036,20 @@
               "value": "gemini-2.5-pro-preview-05-06"
             },
             {
-              "title": "OpenAI GPT-4.1 (Latest)",
-              "value": "gpt-4.1"
+              "title": "OpenAI GPT-4o",
+              "value": "gpt-4o"
             },
             {
-              "title": "OpenAI o4-mini (Reasoning)",
-              "value": "o4-mini"
+              "title": "OpenAI GPT-4o-mini",
+              "value": "gpt-4o-mini"
+            },
+            {
+              "title": "OpenAI o1-preview (Reasoning) (Text-only)",
+              "value": "o1-preview"
+            },
+            {
+              "title": "OpenAI o1-mini (Reasoning) (Text-only)",
+              "value": "o1-mini"
             }
           ]
         },
@@ -1006,12 +1118,20 @@
               "value": "gemini-2.5-pro-preview-05-06"
             },
             {
-              "title": "OpenAI GPT-4.1 (Latest)",
-              "value": "gpt-4.1"
+              "title": "OpenAI GPT-4o",
+              "value": "gpt-4o"
             },
             {
-              "title": "OpenAI o4-mini (Reasoning)",
-              "value": "o4-mini"
+              "title": "OpenAI GPT-4o-mini",
+              "value": "gpt-4o-mini"
+            },
+            {
+              "title": "OpenAI o1-preview (Reasoning) (Text-only)",
+              "value": "o1-preview"
+            },
+            {
+              "title": "OpenAI o1-mini (Reasoning) (Text-only)",
+              "value": "o1-mini"
             }
           ]
         },
@@ -1094,12 +1214,20 @@
           "value": "gemini-2.5-pro-preview-05-06"
         },
         {
-          "title": "OpenAI GPT-4.1 (Latest)",
-          "value": "gpt-4.1"
+          "title": "OpenAI GPT-4o",
+          "value": "gpt-4o"
         },
         {
-          "title": "OpenAI o4-mini (Reasoning)",
-          "value": "o4-mini"
+          "title": "OpenAI GPT-4o-mini",
+          "value": "gpt-4o-mini"
+        },
+        {
+          "title": "OpenAI o1-preview (Reasoning) (Text-only)",
+          "value": "o1-preview"
+        },
+        {
+          "title": "OpenAI o1-mini (Reasoning) (Text-only)",
+          "value": "o1-mini"
         }
       ]
     },
@@ -1136,6 +1264,7 @@
   },
   "devDependencies": {
     "@raycast/eslint-config": "^2.0.4",
+    "@types/mime-types": "^3.0.1",
     "@types/node": "22.13.10",
     "@types/react": "19.0.10",
     "eslint": "^9.22.0",

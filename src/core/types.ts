@@ -1,6 +1,8 @@
 import { SafetySetting } from "@google/genai";
 
-export interface GemAIConfig {
+// Universal AI configuration interface
+export interface AIConfig {
+  provider: 'gemini' | 'openai';
   request: {
     actionName: string;
     origProps: object;
@@ -9,26 +11,50 @@ export interface GemAIConfig {
     attachmentFile?: string;
   };
   model: {
-    geminiApiKey: string;
+    // Universal fields
     systemPrompt: string;
     modelName: string;
     modelNameUser: string;
     maxOutputTokens: number;
     temperature: number;
-    topK: number;
-    topP: number;
-    frequencyPenalty: number;
-    presencePenalty: number;
+    
+    // Provider-specific fields
+    geminiApiKey?: string;
+    openaiApiKey?: string;
+    openaiBaseUrl?: string;
+    
+    // Common generation parameters
+    topK?: number;
+    topP?: number;
+    frequencyPenalty?: number;
+    presencePenalty?: number;
+    
+    // Thinking/reasoning config
     thinkingConfig?: {
       includeThoughts?: boolean;
       thinkingBudget?: number;
     };
-    safetySettings: SafetySetting[];
+    
+    // Gemini-specific safety settings
+    safetySettings?: SafetySetting[];
   };
   ui: {
     placeholder: string;
     allowPaste: boolean;
     useSelected: boolean;
+  };
+}
+
+// Legacy interface for backward compatibility
+export interface GemAIConfig extends AIConfig {
+  provider: 'gemini';
+  model: AIConfig['model'] & {
+    geminiApiKey: string;
+    topK: number;
+    topP: number;
+    frequencyPenalty: number;
+    presencePenalty: number;
+    safetySettings: SafetySetting[];
   };
 }
 

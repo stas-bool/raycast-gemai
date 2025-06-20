@@ -3,9 +3,9 @@ import { exec } from "child_process";
 import * as fs from "fs";
 import * as util from "util";
 import { CMD_ASK } from "./commands";
-import { GemAIConfig, RaycastProps } from "./types";
+import { AIConfig, RaycastProps } from "./types";
 
-export default async function makeScreenshot(props: RaycastProps, isSelecting: boolean, gemAiConfig: GemAIConfig) {
+export default async function makeScreenshot(props: RaycastProps, isSelecting: boolean, aiConfig: AIConfig) {
   await closeMainWindow();
 
   const execPromise = util.promisify(exec);
@@ -17,11 +17,11 @@ export default async function makeScreenshot(props: RaycastProps, isSelecting: b
     if (!fs.existsSync(screenshotPath)) {
       throw new Error("Screenshot file was not created");
     }
-  } catch (error) {
+  } catch (error: any) {
     await showToast({
       style: Toast.Style.Failure,
       title: "Failed to get screenshot",
-      message: error.message,
+      message: error?.message || "Unknown error",
     });
     return;
   }
@@ -34,16 +34,16 @@ export default async function makeScreenshot(props: RaycastProps, isSelecting: b
       type: LaunchType.UserInitiated,
       context: {
         props: props,
-        gemAiConfig: gemAiConfig,
+        gemAiConfig: aiConfig,
         attachmentFile: screenshotPath,
       },
     });
-  } catch (error) {
-    console.error(error.message);
+  } catch (error: any) {
+    console.error(error?.message || "Unknown error");
     await showToast({
       style: Toast.Style.Failure,
       title: "Failed to launch askQuestion command",
-      message: error.message,
+      message: error?.message || "Unknown error",
     });
   }
 }

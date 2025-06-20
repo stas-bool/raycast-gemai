@@ -1,4 +1,4 @@
-import { buildGemAIConfig } from "./core/buildGemAIConfig";
+import { buildAIConfig } from "./core/buildAIConfig";
 import { CMD_FRIEND, getCmd } from "./core/commands";
 import GemAI from "./core/gemai";
 import { RaycastProps } from "./core/types";
@@ -10,8 +10,8 @@ export default function Friend(props: RaycastProps) {
     "language while preserving the original core message and key information; " +
     "ALSWAYS return ONLY the modified text and nothing else.";
 
-  const gemAiConfig = buildGemAIConfig(getCmd(CMD_FRIEND).id, props, fallbackPrompt);
-  gemAiConfig.ui.placeholder = getCmd(CMD_FRIEND).ui_placeholder;
+  const aiConfig = buildAIConfig(getCmd(CMD_FRIEND).id, props, fallbackPrompt);
+  aiConfig.ui.placeholder = getCmd(CMD_FRIEND).ui_placeholder || "Enter text to make friendly...";
 
-  return GemAI(gemAiConfig);
+  return GemAI(aiConfig);
 }

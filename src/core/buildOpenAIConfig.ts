@@ -1,4 +1,3 @@
-import { HarmBlockThreshold, HarmCategory } from "@google/genai";
 import { getPreferenceValues } from "@raycast/api";
 import {
   CMD_ASK,
@@ -10,13 +9,13 @@ import {
   getCmd,
 } from "./commands";
 import { allModels } from "./models";
-import { GemAIConfig, RaycastProps } from "./types";
+import { AIConfig, RaycastProps } from "./types";
 import { getSystemPrompt } from "./utils";
 
-const thinkingModels = [
-  "gemini-2.5-flash-preview-04-17",
-  "gemini-2.5-flash-preview-04-17__thinking",
-  "gemini-2.5-pro-preview-05-06",
+// OpenAI reasoning models (o-series)
+const reasoningModels = [
+  "o1-preview",
+  "o1-mini",
 ];
 
 const actionsWithPrimaryLanguage = [
@@ -92,34 +91,41 @@ function getCurrentModel(prefs: any): string {
   return prefs.commandModel === "default" ? globalModelName : prefs.commandModel;
 }
 
-export function buildGemAIConfig(actionName: string, props: RaycastProps, fallbackPrompt?: string): GemAIConfig {
+export function buildOpenAIConfig(actionName: string, props: RaycastProps, fallbackPrompt?: string): AIConfig {
   const prefs = getPreferenceValues();
 
   const currentModelName = getCurrentModel(prefs);
   const [isCustomPrompt, realSystemPrompt] = buildRealPrompt(actionName, prefs, fallbackPrompt);
+  
+  // Configure reasoning for o-series models
+  const isReasoningModel = reasoningModels.includes(currentModelName) || currentModelName.startsWith('o1');
   const modelInfo = allModels[currentModelName];
-  const thinkingConfig = modelInfo ? { includeThoughts: false, thinkingBudget: modelInfo.thinking_budget } : undefined;
+  const thinkingConfig = isReasoningModel && modelInfo ? { 
+    includeThoughts: false, 
+    thinkingBudget: modelInfo.thinking_budget 
+  } : undefined;
 
   return {
-    provider: 'gemini',
+    provider: 'openai',
     model: {
-      geminiApiKey: prefs.geminiApiKey.trim(),
+      // OpenAI-specific fields
+      openaiApiKey: prefs.openaiApiKey?.trim(),
+      openaiBaseUrl: prefs.openaiBaseUrl?.trim() || undefined,
+      
+      // Universal fields
       modelName: currentModelName,
       modelNameUser: (isCustomPrompt ? "💭 " : "") + (modelInfo?.name ?? currentModelName),
-      maxOutputTokens: 32000,
-      ...(thinkingModels.includes(currentModelName) && thinkingConfig && { thinkingConfig }),
-      temperature: getTemperature(prefs),
-      topP: 0.95,
-      topK: 0,
-      frequencyPenalty: 0,
-      presencePenalty: 0,
+      maxOutputTokens: isReasoningModel ? 16000 : 4000, // Reasoning models need more tokens due to thinking process
+      temperature: isReasoningModel ? 1 : getTemperature(prefs), // Reasoning models require temperature = 1
       systemPrompt: realSystemPrompt,
-      safetySettings: [
-        { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_NONE },
-        { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_NONE },
-        { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_NONE },
-        { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_NONE },
-      ],
+      
+      // OpenAI generation parameters (only for non-reasoning models)
+      topP: isReasoningModel ? undefined : 0.95,
+      frequencyPenalty: isReasoningModel ? undefined : 0,
+      presencePenalty: isReasoningModel ? undefined : 0,
+      
+      // Reasoning configuration for o-series models
+      ...(thinkingConfig && { thinkingConfig }),
     },
 
     request: {
@@ -135,4 +141,4 @@ export function buildGemAIConfig(actionName: string, props: RaycastProps, fallba
       useSelected: true,
     },
   };
-}
+} 

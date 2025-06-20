@@ -1,4 +1,4 @@
-import { buildGemAIConfig } from "./core/buildGemAIConfig";
+import { buildAIConfig } from "./core/buildAIConfig";
 import { CMD_SCR_MARKDOWN, getCmd } from "./core/commands";
 import makeScreenshot from "./core/makeScreenshot";
 import { RaycastProps } from "./core/types";
@@ -22,9 +22,9 @@ Your task:
 5.  Output *only* the resulting GFM. Do not add any introductions, explanations, or comments before or after the Markdown code.
 `;
 
-  const gemAiConfig = buildGemAIConfig(getCmd(CMD_SCR_MARKDOWN).id, props, fallbackPrompt);
-  gemAiConfig.ui.placeholder = getCmd(CMD_SCR_MARKDOWN).ui_placeholder;
-  gemAiConfig.ui.useSelected = false;
+  const aiConfig = buildAIConfig(getCmd(CMD_SCR_MARKDOWN).id, props, fallbackPrompt);
+  aiConfig.ui.placeholder = getCmd(CMD_SCR_MARKDOWN).ui_placeholder || "Convert screenshot to markdown...";
+  aiConfig.ui.useSelected = false;
 
-  return await makeScreenshot(props, true, gemAiConfig);
+  return await makeScreenshot(props, true, aiConfig);
 }

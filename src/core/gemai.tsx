@@ -1,94 +1,16 @@
-import { createPartFromUri, GoogleGenAI, Part } from "@google/genai";
 import { Action, ActionPanel, Detail, Form, getSelectedText, Icon, Keyboard, showToast, Toast } from "@raycast/api";
 import * as fs from "fs";
-import mime from "mime-types";
 import * as path from "path";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { buildAIConfig } from "./buildAIConfig";
+import { createAIProvider } from "./aiProvider";
 import { getCmd } from "./commands";
 import { useCommandHistory } from "./history";
-import { GemAIConfig, RequestStats } from "./types";
+import { AIConfig, RequestStats } from "./types";
 import { calculateItemCost, renderStats } from "./utils";
 
-async function prepareAttachment(ai: GoogleGenAI, actualFilePath?: string): Promise<Part> {
-  if (!actualFilePath || !fs.existsSync(actualFilePath) || !fs.lstatSync(actualFilePath).isFile()) {
-    return null;
-  }
-
-  try {
-    const fileName = path.basename(actualFilePath);
-    const mimeType = mime.lookup(fileName) || "application/octet-stream";
-    const fileBuffer = fs.readFileSync(actualFilePath);
-    const blob = new Blob([fileBuffer], { type: mimeType });
-    const file = await ai.files.upload({ file: blob, config: { displayName: fileName, mimeType: mimeType } });
-
-    let getFile = await ai.files.get({ name: file.name });
-    while (getFile.state === "PROCESSING") {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      getFile = await ai.files.get({ name: file.name });
-    }
-
-    if (getFile.state === "FAILED") {
-      throw new Error("File processing failed");
-    }
-
-    if (file.uri && file.mimeType) {
-      return createPartFromUri(file.uri, file.mimeType);
-    }
-
-    return null;
-  } catch (fileError: any) {
-    console.error("Error processing file:", fileError);
-    await showToast({ style: Toast.Style.Failure, title: "File processing failed", message: fileError.message });
-    return null;
-  }
-}
-
-async function sendRequestToGemini(ai: GoogleGenAI, gemConfig: GemAIConfig, query?: string, filePart?: Part) {
-  const contents = [query];
-  if (filePart) {
-    // @ts-ignore
-    contents.push(filePart);
-  }
-
-  const requestParams = {
-    model: gemConfig.model.modelName.replace("__thinking", ""),
-    contents: contents,
-    config: {
-      maxOutputTokens: gemConfig.model.maxOutputTokens,
-      temperature: gemConfig.model.temperature,
-      thinkingConfig: gemConfig.model.thinkingConfig,
-      systemInstruction: gemConfig.model.systemPrompt,
-      frequencyPenalty: gemConfig.model.frequencyPenalty,
-      presencePenalty: gemConfig.model.presencePenalty,
-      topK: gemConfig.model.topK,
-      topP: gemConfig.model.topP,
-      safetySettings: gemConfig.model.safetySettings,
-    },
-  };
-
-  // dump({model: requestParams.model, contents: requestParams.contents,}, "Real request");
-
-  return await ai.models.generateContentStream(requestParams);
-}
-
-async function getTokenStats(ai, gemConfig, usageMetadata, query, filePart): Promise<RequestStats> {
-  const inputTokens = await ai.models.countTokens({
-    model: gemConfig.model.modelName.replace("__thinking", ""),
-    contents: filePart ? [query, filePart] : [query],
-  });
-
-  return {
-    prompt: usageMetadata?.promptTokenCount ?? 0,
-    input: inputTokens?.totalTokens ?? 0,
-    thoughts: usageMetadata?.thoughtsTokenCount ?? 0,
-    total: usageMetadata?.totalTokenCount ?? 0,
-    firstRespTime: 0,
-    totalTime: 0,
-  };
-}
-
 // --- Main component ---
-export default function GemAI(gemConfig: GemAIConfig) {
+export default function GemAI(aiConfig: AIConfig) {
   const PageState = { Form: 0, Response: 1 };
 
   // Init states
@@ -96,64 +18,104 @@ export default function GemAI(gemConfig: GemAIConfig) {
   const [page, setPage] = useState(PageState.Response);
   const [isLoading, setIsLoading] = useState(true);
   const [textarea, setTextarea] = useState("");
-  const [navigationTitle, setNavigationTitle] = useState("GemAI -> " + getCmd(gemConfig.request.actionName).name);
+  const [navigationTitle, setNavigationTitle] = useState("GemAI -> " + getCmd(aiConfig.request.actionName).name);
   const [renderedText, setRenderedText] = useState("");
-  const [latestQuery, setLatestQuery] = useState({ query: undefined, attachmentFile: undefined });
+  const [latestQuery, setLatestQuery] = useState<{ query?: string; attachmentFile?: string }>({ query: undefined, attachmentFile: undefined });
   const { addToHistory, getHistoryStats } = useCommandHistory();
 
   const getAiResponse = async (query?: string, attachmentFile?: string) => {
     setPage(PageState.Response);
     setLatestQuery({ query: query, attachmentFile: attachmentFile });
-    // dumpLog({ query, attachmentFile }, "getAiResponse");
 
     await showToast({
       style: Toast.Style.Animated,
-      title: `Waiting for GemAI - ${getCmd(gemConfig.request.actionName).name}; ${gemConfig.model.modelNameUser}`,
+      title: `Waiting for ${aiConfig.model.modelNameUser}...`,
     });
 
     const startTime = Date.now();
-    const ai = new GoogleGenAI({ apiKey: gemConfig.model.geminiApiKey });
+    // console.log(`Starting request at ${new Date(startTime).toISOString()}`);
 
     try {
-      const actualFilePath = attachmentFile || gemConfig.request.attachmentFile;
-      const filePart = await prepareAttachment(ai, actualFilePath);
-      const response = await sendRequestToGemini(ai, gemConfig, query, filePart);
-      const firstRespTime = (Date.now() - startTime) / 1000;
+      const provider = createAIProvider(aiConfig);
+      const actualFilePath = attachmentFile || aiConfig.request.attachmentFile;
+      
+      const attachmentPrepStart = Date.now();
+      const attachment = await provider.prepareAttachment(actualFilePath);
+      const attachmentPrepTime = (Date.now() - attachmentPrepStart) / 1000;
+      // console.log(`Attachment preparation took ${attachmentPrepTime.toFixed(3)}s`);
+      
+      const requestStart = Date.now();
+      const response = provider.sendRequest(aiConfig, query, attachment);
+      const requestInitTime = (Date.now() - requestStart) / 1000;
+      // console.log(`Request initialization took ${requestInitTime.toFixed(3)}s`);
 
       let markdown = "";
-      let usageMetadata = undefined;
-      let totalTime = 0;
+      let usageMetadata: any = undefined;
+      let firstRespTime: number | null = null; // Will be set on first chunk
+      let requestStats: RequestStats = {
+        prompt: 0,
+        input: 0,
+        thoughts: 0,
+        total: 0,
+        firstRespTime: 0,
+        totalTime: 0,
+      };
 
       for await (const chunk of response) {
-        if (typeof chunk.text === "string") {
-          markdown += chunk.text; // Add only if chunk.text is defined. Without 'undefined'.
+        // Measure first response time on first chunk with content
+        if (firstRespTime === null && chunk.text) {
+          firstRespTime = (Date.now() - startTime) / 1000;
+          // console.log(`First response received after ${firstRespTime.toFixed(3)}s`);
         }
-        setRenderedText(markdown);
-        usageMetadata = chunk.usageMetadata;
-        totalTime = (Date.now() - startTime) / 1000;
+        
+        if (chunk.text) {
+          markdown += chunk.text;
+          setRenderedText(markdown);
+        }
+        
+        if (chunk.usageMetadata) {
+          // console.log('UI: Received usageMetadata:', chunk.usageMetadata);
+          usageMetadata = chunk.usageMetadata;
+        }
+        
+        const totalTime = (Date.now() - startTime) / 1000;
+        requestStats.totalTime = totalTime;
+        
         showToast({ style: Toast.Style.Success, title: `Typing...` });
       }
+
+      const streamEndTime = Date.now();
+      const totalStreamTime = (streamEndTime - startTime) / 1000;
+      // console.log(`Streaming completed after ${totalStreamTime.toFixed(3)}s`);
+
+      // Get final token stats - always call this, not just when query exists
+      // console.log('UI: Calling getTokenStats with usageMetadata:', usageMetadata);
+      requestStats = await provider.getTokenStats(aiConfig, usageMetadata, query || "", attachment);
+      requestStats.firstRespTime = firstRespTime || 0; // Use 0 if no content chunks received
+      requestStats.totalTime = (Date.now() - startTime) / 1000;
+      
+      // console.log(`Timing breakdown:
+      //   - First response: ${requestStats.firstRespTime.toFixed(3)}s
+      //   - Stream duration: ${totalStreamTime.toFixed(3)}s  
+      //   - Total time: ${requestStats.totalTime.toFixed(3)}s`);
+      // console.log('UI: Final requestStats:', requestStats);
 
       setMarkdown(markdown);
 
       await showToast({
         style: Toast.Style.Success,
         title: "OK",
-        message: `Total time: ${totalTime} sec; Tokens: ${usageMetadata?.totalTokenCount}`,
+        message: `Total time: ${requestStats.totalTime.toFixed(1)}s; Tokens: ${requestStats.total}`,
       });
 
-      const requestStats = await getTokenStats(ai, gemConfig, usageMetadata, query, filePart);
-      requestStats.firstRespTime = firstRespTime;
-      requestStats.totalTime = totalTime;
-
-      const stats = renderStats(gemConfig.model.modelNameUser, gemConfig.model.temperature, requestStats);
+      const stats = renderStats(aiConfig.model.modelNameUser, aiConfig.model.temperature, requestStats);
 
       const historyItem = {
         timestamp: Date.now(),
-        actionName: gemConfig.request.actionName,
-        model: gemConfig.model.modelName,
-        query: query,
-        isAttachmentFile: !!gemConfig.request.attachmentFile,
+        actionName: aiConfig.request.actionName,
+        model: aiConfig.model.modelName,
+        query: query || "",
+        isAttachmentFile: !!actualFilePath,
         response: markdown,
         stats: stats,
         requestStats: requestStats,
@@ -162,7 +124,6 @@ export default function GemAI(gemConfig: GemAIConfig) {
       await addToHistory(historyItem);
 
       const cost = `\$${calculateItemCost(historyItem).toFixed(4)}`;
-
       const historyStatsMessage = await getHistoryStats();
 
       setRenderedText(`${markdown}\n\n----\n\n*${stats}; ${cost}*\n\n*${historyStatsMessage}*`);
@@ -180,7 +141,7 @@ export default function GemAI(gemConfig: GemAIConfig) {
       try {
         let selectedText = "";
 
-        if (gemConfig.ui.useSelected) {
+        if (aiConfig.ui.useSelected) {
           try {
             selectedText = await getSelectedText();
           } catch (e) {
@@ -189,7 +150,7 @@ export default function GemAI(gemConfig: GemAIConfig) {
           }
         }
 
-        const hasUserPrompt = gemConfig.request.userPrompt.trim() !== "";
+        const hasUserPrompt = aiConfig.request.userPrompt.trim() !== "";
         const hasSelected = selectedText.trim() !== "";
 
         if (!hasUserPrompt && !hasSelected) {
@@ -198,11 +159,9 @@ export default function GemAI(gemConfig: GemAIConfig) {
         }
 
         if (hasUserPrompt) {
-          getAiResponse(gemConfig.request.userPrompt);
+          getAiResponse(aiConfig.request.userPrompt);
         } else if (hasSelected) {
           getAiResponse(selectedText);
-          // } else if (gemConfig.request.attachmentFile) {
-          //   getAiResponse(undefined, gemConfig.request.attachmentFile);
         }
       } catch (e: any) {
         console.error("Fatal error in useEffect:", e);
@@ -218,7 +177,7 @@ export default function GemAI(gemConfig: GemAIConfig) {
       actions={
         !isLoading && (
           <ActionPanel>
-            {gemConfig.ui.allowPaste && <Action.Paste content={markdown} />}
+            {aiConfig.ui.allowPaste && <Action.Paste content={markdown} />}
             <Action.CopyToClipboard shortcut={Keyboard.Shortcut.Common.Copy} content={markdown} />
             <Action
               title="Submit Again"
@@ -261,10 +220,10 @@ export default function GemAI(gemConfig: GemAIConfig) {
         title="User Prompt"
         value={textarea}
         onChange={(value) => setTextarea(value)}
-        placeholder={gemConfig.ui.placeholder}
+        placeholder={aiConfig.ui.placeholder}
         autoFocus={true}
       />
-      {!gemConfig.request.attachmentFile && (
+      {!aiConfig.request.attachmentFile && (
         <>
           <Form.Description title="Attachment" text="You can attach image or file to analyze it." />
           <Form.FilePicker id="file" title="" showHiddenFiles={true} allowMultipleSelection={false} />
@@ -273,7 +232,7 @@ export default function GemAI(gemConfig: GemAIConfig) {
 
       <Form.Description
         title=""
-        text={"Model: " + gemConfig.model.modelNameUser + "; " + gemConfig.model.temperature + "°"}
+        text={"Model: " + aiConfig.model.modelNameUser + "; " + aiConfig.model.temperature + "°"}
       />
     </Form>
   );
