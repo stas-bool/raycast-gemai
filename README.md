@@ -174,9 +174,6 @@ For creating effective custom prompts, refer to these resources:
 - [Prompt Engineering Patterns](https://www.promptingguide.ai/)
 - [Learn Prompting](https://learnprompting.org/)
 
-**Russian Resources:**
-- [Хабр: Лучшие практики промпт-инжиниринга](https://habr.com/ru/articles/750000/)
-
 ### Example Custom Prompts
 
 **Technical Code Review:**

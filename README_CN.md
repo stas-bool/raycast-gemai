@@ -153,10 +153,6 @@ GemAI 允许您使用自己的 Markdown 文件，其中包含覆盖内置提示�
 - [Prompt Engineering Patterns](https://www.promptingguide.ai/)
 - [Learn Prompting](https://learnprompting.org/)
 
-**中文资源：**
-- [知乎：如何写好 AI 提示词](https://www.zhihu.com/question/583123456)
-- [CSDN：Prompt Engineering 最佳实践](https://blog.csdn.net/ai/article/details/123456789)
-
 ### 自定义提示示例
 
 **技术代码审查：**

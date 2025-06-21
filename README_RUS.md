@@ -153,10 +153,6 @@ GemAI позволяет использовать собственные Markdow
 - [Prompt Engineering Patterns](https://www.promptingguide.ai/)
 - [Learn Prompting](https://learnprompting.org/)
 
-**Русские ресурсы:**
-- [Хабр: Лучшие практики промпт-инжиниринга](https://habr.com/ru/articles/750000/)
-- [VC.ru: Как писать промпты для ChatGPT](https://vc.ru/ai/750000-kak-pisat-prompty-dlya-chatgpt)
-
 ### Примеры кастомных промптов
 
 **Технический код-ревью:**
