@@ -20,7 +20,7 @@ interface ChatRoomProps {
 }
 
 export default function ChatRoom({ aiConfig }: ChatRoomProps) {
-  const { messages, isLoading, addMessage, updateMessage, clearMessages } = useChatMessages();
+  const { messages, isLoading, addMessage, updateMessage, clearMessages, historySettings, updateHistorySettings } = useChatMessages();
   const [isGenerating, setIsGenerating] = useState(false);
   const [localMessages, setLocalMessages] = useState<ChatMessage[]>([]);
   const [searchText, setSearchText] = useState("");
@@ -30,6 +30,14 @@ export default function ChatRoom({ aiConfig }: ChatRoomProps) {
   useEffect(() => {
     setLocalMessages(messages);
   }, [messages]);
+
+  // Update history settings when aiConfig changes
+  useEffect(() => {
+    const newHistoryCount = aiConfig.chat?.historyMessagesCount || 10;
+    if (newHistoryCount !== historySettings.historyMessagesCount) {
+      updateHistorySettings({ historyMessagesCount: newHistoryCount });
+    }
+  }, [aiConfig.chat?.historyMessagesCount, historySettings.historyMessagesCount, updateHistorySettings]);
 
   // Group messages into conversation pairs
   const getConversationPairs = () => {
@@ -100,7 +108,7 @@ export default function ChatRoom({ aiConfig }: ChatRoomProps) {
       // Get last messages for context (excluding the assistant placeholder we just added)
       // We need to manually add the user message since state might not be updated yet
       const currentMessages = [...messages, userMessage];
-      const historyCount = aiConfig.chat?.historyMessagesCount || 10;
+      const historyCount = historySettings.historyMessagesCount;
       const contextMessages = currentMessages.slice(-historyCount).filter(msg => msg.id !== assistantMessageId);
       
       // Build conversation context
@@ -153,7 +161,7 @@ export default function ChatRoom({ aiConfig }: ChatRoomProps) {
       requestStats.totalTime = (Date.now() - startTime) / 1000;
 
       // Update the assistant message with final content and stats
-      await updateMessage(assistantMessageId, responseText, false);
+      await updateMessage(assistantMessageId, responseText, false, requestStats);
       
       // Auto-select the conversation pair (using assistant message ID)
       setSelectedMessageId(assistantMessageId);
@@ -196,31 +204,13 @@ export default function ChatRoom({ aiConfig }: ChatRoomProps) {
     }
 
     if (message.requestStats && message.role === "assistant") {
-      const cost = calculateItemCost({
-        model: message.model || "unknown",
-        requestStats: message.requestStats,
-        timestamp: message.timestamp,
-        actionName: "chat",
-        query: "",
-        response: message.content,
-        isAttachmentFile: false,
-      });
-
-      // Add model name
+      // Только модель в аксессуарах
       accessories.push({
         tag: {
           value: aiConfig.model.modelNameUser || message.model || "AI",
           color: Color.Blue,
         },
         tooltip: `Model: ${aiConfig.model.modelNameUser || message.model}`,
-      });
-
-      accessories.push({
-        tag: {
-          value: `$${cost.toFixed(4)}`,
-          color: Color.SecondaryText,
-        },
-        tooltip: `Cost: $${cost.toFixed(4)}, Tokens: ${message.requestStats.total}`,
       });
     }
 
@@ -318,9 +308,27 @@ export default function ChatRoom({ aiConfig }: ChatRoomProps) {
             ? `🤖 ${aiConfig.model.modelNameUser || pair.assistant.model}`
             : `🤖 ${aiConfig.model.modelNameUser}`;
           
-          const combinedMarkdown = `## 👤 You\n\n${pair.user.content}\n\n---\n\n## ${assistantName}\n\n${
-            pair.assistant?.content || (isGeneratingPair ? "*Generating...*" : "*Waiting for response...*")
-          }`;
+          // Add provider info to assistant name
+          const providerName = aiConfig.provider === 'openai' ? 'OpenAI' : 'Gemini';
+          const assistantNameWithProvider = `${assistantName} (${providerName})`;
+          
+          // Add token information to assistant response if available
+          let assistantContent = pair.assistant?.content || (isGeneratingPair ? "*Generating...*" : "*Waiting for response...*");
+          if (pair.assistant?.requestStats && pair.assistant.role === "assistant") {
+            const cost = calculateItemCost({
+              model: pair.assistant.model || "unknown",
+              requestStats: pair.assistant.requestStats,
+              timestamp: pair.assistant.timestamp,
+              actionName: "chat",
+              query: "",
+              response: pair.assistant.content,
+              isAttachmentFile: false,
+            });
+            
+            assistantContent += `\n\n---\n\n*💡 **Stats:** ${pair.assistant.requestStats.total} tokens • $${cost.toFixed(4)} • ${pair.assistant.requestStats.totalTime.toFixed(1)}s*`;
+          }
+          
+          const combinedMarkdown = `## 👤 You\n\n${pair.user.content}\n\n---\n\n## ${assistantNameWithProvider}\n\n${assistantContent}`;
           
           return (
             <List.Item
