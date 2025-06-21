@@ -1,8 +1,10 @@
-# Raycast GemAI - Universal AI Assistant with Gemini & OpenAI Support
+# Raycast GemAI - Universal AI Assistant
 
 **Raycast GemAI** is a powerful Raycast extension that brings both **Google Gemini** and **OpenAI GPT** models directly into your workflow. Perform a wide array of tasks – from drafting emails and complex reasoning to analyzing screenshots and translating languages – all without leaving Raycast. With universal AI provider support, advanced reasoning capabilities, and intelligent model switching, GemAI is your versatile assistant for any task.
 
 > 🇷🇺 **Русская версия:** [README_RUS.md](README_RUS.md) - Полное описание функций на русском языке с инструкциями по установке
+> 
+> 🇨🇳 **中文版本:** [README_CN.md](README_CN.md) - 中文功能说明和安装指南
 
 ## ✨ Key Features
 
@@ -121,6 +123,91 @@ Access all settings via **Raycast Preferences → Extensions → GemAI**:
 - **Usage Tracking:** Monitor token usage and costs across all models
 - **Token Counting:** Estimate costs before processing with Count Tokens command
 - **Model Optimization:** Recommendations for cost-effective model selection
+
+## 🎨 Custom System Prompts
+
+GemAI allows you to use your own Markdown files with custom system prompts that override the built-in ones. This gives you complete control over AI behavior for each command.
+
+### How to Use Custom Prompts
+
+1. **Create a prompts directory:**
+   ```bash
+   mkdir ~/Documents/Prompts/Raycast
+   ```
+
+2. **Create custom prompt files** (e.g., `AskQuestion.md`):
+   ```markdown
+   # Custom Ask AI Prompt
+   
+   You are a specialized technical consultant with expertise in software development.
+   Always provide practical, actionable advice with code examples when relevant.
+   Focus on modern best practices and current industry standards.
+   ```
+
+3. **Configure in Raycast:**
+   - Go to **Raycast Preferences → Extensions → GemAI**
+   - Set **Prompt Directory** to `~/Documents/Prompts/Raycast`
+   - For individual commands, set **Markdown file with system prompt** to your custom file name
+
+### Available Prompt Files
+
+Each command can use a custom prompt file. Common file names:
+- `AskQuestion.md` - For Ask AI command
+- `ChatRoom.md` - For Chat Room conversations
+- `Explainer.md` - For Explain It command
+- `Grammar.md` - For Fix Grammar command
+- `Professional.md` - For Professional Tone
+- `Friend.md` - For Friendly Tone
+- `Translator.md` - For translation tasks
+- `Screenshot-Explain.md` - For screenshot analysis
+- `Screenshot-Markdown.md` - For screenshot to markdown conversion
+
+### Prompt Engineering Best Practices
+
+For creating effective custom prompts, refer to these resources:
+
+**Official Guides:**
+- [OpenAI Prompt Engineering Guide](https://platform.openai.com/docs/guides/prompt-engineering)
+- [Google AI Studio Prompt Design](https://ai.google.dev/docs/prompt_design)
+
+**Community Resources:**
+- [Prompt Engineering Patterns](https://www.promptingguide.ai/)
+- [Learn Prompting](https://learnprompting.org/)
+
+**Russian Resources:**
+- [Хабр: Лучшие практики промпт-инжиниринга](https://habr.com/ru/articles/750000/)
+
+### Example Custom Prompts
+
+**Technical Code Review:**
+```markdown
+# Code Review Assistant
+
+You are an expert software engineer conducting code reviews.
+Focus on:
+- Code quality and best practices
+- Security vulnerabilities
+- Performance optimizations
+- Maintainability and readability
+- Testing coverage
+
+Always provide specific, actionable feedback with examples.
+```
+
+**Creative Writing:**
+```markdown
+# Creative Writing Assistant
+
+You are a creative writing coach specializing in storytelling.
+Help users develop:
+- Engaging narratives
+- Character development
+- Dialogue and pacing
+- Genre-specific techniques
+- Voice and style
+
+Provide constructive feedback and writing exercises.
+```
 
 ## 📋 Available Commands
 
