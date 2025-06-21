@@ -1,7 +1,7 @@
 import { HarmBlockThreshold, HarmCategory } from "@google/genai";
 import { allModels } from "./models";
 import { GemAIConfig, RaycastProps } from "./types";
-import { buildRealPrompt, getCurrentModel, getTemperature, getConfigPreferences } from "./configUtils";
+import { buildRealPrompt, getCurrentModel, getTemperature, getConfigPreferences, getHistoryMessagesCount } from "./configUtils";
 
 const thinkingModels = [
   "gemini-2.5-flash-preview-04-17",
@@ -17,7 +17,7 @@ export function buildGemAIConfig(actionName: string, props: RaycastProps, fallba
   const modelInfo = allModels[currentModelName];
   const thinkingConfig = modelInfo ? { includeThoughts: false, thinkingBudget: modelInfo.thinking_budget } : undefined;
 
-  return {
+  const config: GemAIConfig = {
     provider: "gemini",
     model: {
       geminiApiKey: prefs.geminiApiKey.trim(),
@@ -52,4 +52,13 @@ export function buildGemAIConfig(actionName: string, props: RaycastProps, fallba
       useSelected: true,
     },
   };
+
+  // Add chat-specific settings for chat command
+  if (actionName === "chat") {
+    config.chat = {
+      historyMessagesCount: getHistoryMessagesCount(prefs),
+    };
+  }
+
+  return config;
 }

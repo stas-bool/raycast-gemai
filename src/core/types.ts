@@ -43,6 +43,10 @@ export interface AIConfig {
     allowPaste: boolean;
     useSelected: boolean;
   };
+  // Chat-specific settings
+  chat?: {
+    historyMessagesCount?: number;
+  };
 }
 
 // Legacy interface for backward compatibility

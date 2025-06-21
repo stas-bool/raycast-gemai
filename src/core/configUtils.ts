@@ -104,3 +104,15 @@ export function getCurrentModel(prefs: any): string {
 export function getConfigPreferences() {
   return getPreferenceValues();
 }
+
+/**
+ * Gets the number of history messages to include in conversation context
+ */
+export function getHistoryMessagesCount(prefs: any): number {
+  if (!prefs.historyMessagesCount) {
+    return 10; // Default value
+  }
+  const count = prefs.historyMessagesCount.trim();
+  const parsed = parseInt(count === "" ? "10" : count, 10);
+  return isNaN(parsed) || parsed < 1 ? 10 : Math.min(parsed, 50); // Limit to reasonable range
+}

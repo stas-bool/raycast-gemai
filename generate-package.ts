@@ -79,6 +79,7 @@ function makeCommand({
                        mode = "view",
                        temperature = DEFAULT_TEMP,
                        modelSelector = true,
+                       historyMessagesCount = false,
                      }: {
   name: string;
   title: string;
@@ -89,6 +90,7 @@ function makeCommand({
   withSecondaryLanguage?: boolean | string;
   temperature?: number | boolean;
   modelSelector?: boolean;
+  historyMessagesCount?: boolean | number;
 }) {
   const preferences = [
     ...(modelSelector ? modelPreferences : []),
@@ -119,6 +121,16 @@ function makeCommand({
         type: "textfield",
         required: false,
         default: typeof promptFile === "string" ? promptFile : `${capitalizeFirstLetter(name)}.md`,
+      }]
+      : []),
+    ...(historyMessagesCount !== false
+      ? [{
+        name: "historyMessagesCount",
+        title: "History Messages Count",
+        description: "Number of recent messages to include in conversation context (affects memory and cost).",
+        type: "textfield",
+        required: false,
+        default: typeof historyMessagesCount === "number" ? "" + historyMessagesCount : "10",
       }]
       : []),
   ];
@@ -154,6 +166,7 @@ const commands = [
     title: getCmd(CMD_CHAT).name,
     description: getCmd(CMD_CHAT).description,
     promptFile: "ChatRoom.md",
+    historyMessagesCount: true,
   }),
   makeCommand({
     name: getCmd(CMD_EXPLAINER).id,

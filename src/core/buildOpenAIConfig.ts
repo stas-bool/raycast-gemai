@@ -1,6 +1,6 @@
 import { allModels } from "./models";
 import { AIConfig, RaycastProps } from "./types";
-import { buildRealPrompt, getCurrentModel, getTemperature, getConfigPreferences } from "./configUtils";
+import { buildRealPrompt, getCurrentModel, getTemperature, getConfigPreferences, getHistoryMessagesCount } from "./configUtils";
 
 // OpenAI reasoning models (o-series)
 const reasoningModels = ["o1-preview", "o1-mini"];
@@ -22,7 +22,7 @@ export function buildOpenAIConfig(actionName: string, props: RaycastProps, fallb
         }
       : undefined;
 
-  return {
+  const config: AIConfig = {
     provider: "openai",
     model: {
       // OpenAI-specific fields
@@ -58,4 +58,13 @@ export function buildOpenAIConfig(actionName: string, props: RaycastProps, fallb
       useSelected: true,
     },
   };
+
+  // Add chat-specific settings for chat command
+  if (actionName === "chat") {
+    config.chat = {
+      historyMessagesCount: getHistoryMessagesCount(prefs),
+    };
+  }
+
+  return config;
 }

@@ -3,7 +3,7 @@ import { buildGemAIConfig } from "./buildGemAIConfig";
 import { buildOpenAIConfig } from "./buildOpenAIConfig";
 import { allModels } from "./models";
 import { AIConfig, GemAIConfig, RaycastProps } from "./types";
-import { getCurrentModel, getConfigPreferences, getTemperature } from "./configUtils";
+import { getCurrentModel, getConfigPreferences, getTemperature, getHistoryMessagesCount } from "./configUtils";
 import { CMD_COUNT_TOKENS, CMD_HISTORY, CMD_STATS } from "./commands";
 
 /**
@@ -43,7 +43,7 @@ function buildUtilityConfig(actionName: string, props: RaycastProps, provider: "
   const currentModelName = getCurrentModel(prefs);
   const modelInfo = allModels[currentModelName];
 
-  return {
+  const config: AIConfig = {
     provider: provider,
     request: {
       actionName: actionName,
@@ -77,6 +77,15 @@ function buildUtilityConfig(actionName: string, props: RaycastProps, provider: "
       useSelected: true,
     },
   };
+
+  // Add chat-specific settings for chat command
+  if (actionName === "chat") {
+    config.chat = {
+      historyMessagesCount: getHistoryMessagesCount(prefs),
+    };
+  }
+
+  return config;
 }
 
 /**

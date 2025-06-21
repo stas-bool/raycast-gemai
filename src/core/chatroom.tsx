@@ -100,7 +100,8 @@ export default function ChatRoom({ aiConfig }: ChatRoomProps) {
       // Get last messages for context (excluding the assistant placeholder we just added)
       // We need to manually add the user message since state might not be updated yet
       const currentMessages = [...messages, userMessage];
-      const contextMessages = currentMessages.slice(-10).filter(msg => msg.id !== assistantMessageId);
+      const historyCount = aiConfig.chat?.historyMessagesCount || 10;
+      const contextMessages = currentMessages.slice(-historyCount).filter(msg => msg.id !== assistantMessageId);
       
       // Build conversation context
       let conversationContext = "";
