@@ -15,6 +15,8 @@ export default function CountTokens() {
   const [navigationTitle] = useState("GemAI -> Count Tokens");
 
   const countTokens = async (text?: string, attachmentFile?: string) => {
+    console.log("[CountTokens] Starting with:", { text: text?.substring(0, 100), attachmentFile });
+    
     setPage(PageState.Response);
     setIsLoading(true);
     setMarkdown("Counting tokens...");
@@ -39,10 +41,33 @@ export default function CountTokens() {
       let contentInfo = "";
 
       if (attachmentFile && fs.existsSync(attachmentFile) && fs.lstatSync(attachmentFile).isFile()) {
-        // Count tokens with file attachment
-        const attachment = await provider.prepareAttachment(attachmentFile);
-        tokenCount = await provider.countTokens(config, text || "", attachment);
-        contentInfo = `**Content:** Text + File (${attachmentFile.split('/').pop()})\n\n`;
+        console.log("[CountTokens] Processing file:", attachmentFile);
+        
+        // For token counting, we can read file content as text instead of using API upload
+        // This works for text files, code files, etc.
+        try {
+          const fileContent = fs.readFileSync(attachmentFile, 'utf8');
+          const combinedText = text ? `${text}\n\n--- File Content ---\n${fileContent}` : fileContent;
+          tokenCount = await provider.countTokens(config, combinedText);
+          
+          const fileName = attachmentFile.split('/').pop();
+          const fileSize = fs.statSync(attachmentFile).size;
+          contentInfo = `**Content:** Text + File (${fileName}, ${fileSize} bytes)\n\n`;
+          
+          console.log("[CountTokens] File read as text, counting tokens for combined content");
+        } catch (fileError: any) {
+          console.log("[CountTokens] Failed to read as text, trying attachment method:", fileError.message);
+          
+          // Fallback: try to use provider's attachment method (for images, etc.)
+          try {
+            const attachment = await provider.prepareAttachment(attachmentFile);
+            tokenCount = await provider.countTokens(config, text || "", attachment);
+            contentInfo = `**Content:** Text + File (${attachmentFile.split('/').pop()})\n\n`;
+          } catch (attachmentError: any) {
+            console.error("[CountTokens] Both file reading methods failed:", attachmentError.message);
+            throw new Error(`Cannot process file: ${attachmentError.message}`);
+          }
+        }
       } else {
         // Count tokens for text only
         tokenCount = await provider.countTokens(config, text || "");

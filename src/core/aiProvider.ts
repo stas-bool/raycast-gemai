@@ -131,7 +131,9 @@ export class GeminiProvider implements AIProvider {
     } catch (error: any) {
       // Fallback to character-based estimation
       console.error('[GeminiProvider.countTokens] API failed:', error.message);
+      console.error('[GeminiProvider.countTokens] Full error:', error);
       const estimated = Math.ceil(text.length / 4);
+      console.log('[GeminiProvider.countTokens] Using character-based estimation:', estimated);
       return estimated;
     }
   }
