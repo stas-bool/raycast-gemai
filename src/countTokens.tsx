@@ -1,49 +1,196 @@
-import { Detail, getSelectedText, showToast, Toast } from "@raycast/api";
+import { Action, ActionPanel, Detail, Form, getSelectedText, Icon, Keyboard, showToast, Toast } from "@raycast/api";
+import * as fs from "fs";
 import { useEffect, useState } from "react";
 import { createAIProvider } from "./core/aiProvider";
 import { buildAIConfig } from "./core/buildAIConfig";
 import { getCmd, CMD_COUNT_TOKENS } from "./core/commands";
 
 export default function CountTokens() {
+  const PageState = { Form: 0, Response: 1 };
+
   const [markdown, setMarkdown] = useState<string>("Counting tokens...");
+  const [page, setPage] = useState(PageState.Response);
+  const [isLoading, setIsLoading] = useState(true);
+  const [textarea, setTextarea] = useState("");
+  const [navigationTitle] = useState("GemAI -> Count Tokens");
+
+  const countTokens = async (text?: string, attachmentFile?: string) => {
+    setPage(PageState.Response);
+    setIsLoading(true);
+    setMarkdown("Counting tokens...");
+
+    await showToast({
+      style: Toast.Style.Animated,
+      title: "Counting tokens...",
+    });
+
+    try {
+      // Build AI configuration using universal system
+      const config = buildAIConfig(getCmd(CMD_COUNT_TOKENS).id, {
+        arguments: { query: text || "" },
+        fallbackText: text || "",
+        launchType: "immediate"
+      });
+
+      // Create appropriate provider based on configuration
+      const provider = createAIProvider(config);
+
+      let tokenCount: number;
+      let contentInfo = "";
+
+      if (attachmentFile && fs.existsSync(attachmentFile) && fs.lstatSync(attachmentFile).isFile()) {
+        // Count tokens with file attachment
+        const attachment = await provider.prepareAttachment(attachmentFile);
+        tokenCount = await provider.countTokens(config, text || "", attachment);
+        contentInfo = `**Content:** Text + File (${attachmentFile.split('/').pop()})\n\n`;
+      } else {
+        // Count tokens for text only
+        tokenCount = await provider.countTokens(config, text || "");
+        if (text) {
+          contentInfo = `**Content:** Text (${text.length} characters)\n\n`;
+        }
+      }
+
+      const result = `**Token count:** ${tokenCount}\n\n${contentInfo}**Model:** ${config.model.modelNameUser}\n\n**Provider:** ${config.provider.toUpperCase()}`;
+      
+      setMarkdown(result);
+
+      await showToast({
+        style: Toast.Style.Success,
+        title: "Tokens counted",
+        message: `${tokenCount} tokens`
+      });
+
+    } catch (error: any) {
+      console.error("Token counting error:", error);
+      console.error("Error stack:", error.stack);
+      
+      await showToast({ 
+        style: Toast.Style.Failure, 
+        title: "Error counting tokens", 
+        message: error.message || "Unknown error"
+      });
+      
+      setMarkdown(`**Failed to count tokens**\n\n**Error:** ${error.message || "Unknown error"}\n\n**Details:** ${error.stack ? error.stack.split('\n')[0] : "No details"}`);
+    }
+
+    setIsLoading(false);
+  };
 
   useEffect(() => {
     (async () => {
       try {
-        const text = await getSelectedText();
-        if (!text) {
-          setMarkdown("No text selected.");
+        let selectedText = "";
+
+        try {
+          selectedText = await getSelectedText();
+        } catch (e) {
+          // No selected text, will show form
+          selectedText = "";
+        }
+
+        if (selectedText.trim() === "") {
+          setPage(PageState.Form);
+          setIsLoading(false);
           return;
         }
 
-        // Build AI configuration using universal system
-        const config = buildAIConfig(getCmd(CMD_COUNT_TOKENS).id, {
-          arguments: { query: text },
-          fallbackText: text,
-          launchType: "immediate"
-        });
-
-        // Create appropriate provider based on configuration
-        const provider = createAIProvider(config);
-
-        // Count tokens using the provider's method
-        const tokenCount = await provider.countTokens(config, text);
-
-        setMarkdown(`**Token count:** ${tokenCount}\n\n**Model:** ${config.model.modelNameUser}\n\n**Provider:** ${config.provider.toUpperCase()}`);
-      } catch (error: any) {
-        console.error("Token counting error:", error);
-        console.error("Error stack:", error.stack);
-        
-        await showToast({ 
-          style: Toast.Style.Failure, 
-          title: "Error counting tokens", 
-          message: error.message || "Unknown error"
-        });
-        
-        setMarkdown(`**Failed to count tokens**\n\n**Error:** ${error.message || "Unknown error"}\n\n**Details:** ${error.stack ? error.stack.split('\n')[0] : "No details"}`);
+        // Count tokens for selected text immediately
+        countTokens(selectedText);
+      } catch (e: any) {
+        console.error("Fatal error in useEffect:", e);
+        await showToast({ style: Toast.Style.Failure, title: "An error occurred", message: e.message });
+        setPage(PageState.Response);
+        setMarkdown(`**Error:** ${e.message}`);
+        setIsLoading(false);
       }
     })();
   }, []);
 
-  return <Detail markdown={markdown} />;
+  return page === PageState.Response ? (
+    <Detail
+      actions={
+        !isLoading && (
+          <ActionPanel>
+            <Action.CopyToClipboard 
+              shortcut={Keyboard.Shortcut.Common.Copy} 
+              content={markdown} 
+              title="Copy Result"
+            />
+            <Action
+              title="Count Again"
+              icon={Icon.Repeat}
+              shortcut={Keyboard.Shortcut.Common.Refresh}
+              onAction={() => {
+                setPage(PageState.Form);
+                setTextarea("");
+              }}
+            />
+          </ActionPanel>
+        )
+      }
+      isLoading={isLoading}
+      markdown={markdown}
+      navigationTitle={navigationTitle}
+    />
+  ) : (
+    <Form
+      actions={
+        <ActionPanel>
+          <Action.SubmitForm
+            title="Count Tokens"
+            onSubmit={(values: { text?: string; file?: string[] }) => {
+              const textValue = values.text?.trim() || "";
+              let filePathValue = undefined;
+              
+              if (values?.file?.length && values.file.length > 0) {
+                const filePath = values.file[0];
+                if (fs.existsSync(filePath) && fs.lstatSync(filePath).isFile()) {
+                  filePathValue = filePath;
+                }
+              }
+
+              if (!textValue && !filePathValue) {
+                showToast({
+                  style: Toast.Style.Failure,
+                  title: "Input required",
+                  message: "Please enter text or select a file"
+                });
+                return;
+              }
+
+              countTokens(textValue, filePathValue);
+            }}
+          />
+        </ActionPanel>
+      }
+    >
+      <Form.TextArea
+        id="text"
+        title="Text to Count"
+        value={textarea}
+        onChange={setTextarea}
+        placeholder="Enter text to count tokens..."
+        autoFocus={true}
+      />
+      
+      <Form.Description 
+        title="File Attachment" 
+        text="Optionally attach a file to count tokens including the file content. Supported: images, documents, etc." 
+      />
+      <Form.FilePicker 
+        id="file" 
+        title="Select File" 
+        showHiddenFiles={false} 
+        allowMultipleSelection={false}
+        canChooseFiles={true}
+        canChooseDirectories={false}
+      />
+
+      <Form.Description
+        title="Model Info"
+        text={`This will use your currently configured model and provider for token counting.`}
+      />
+    </Form>
+  );
 }
