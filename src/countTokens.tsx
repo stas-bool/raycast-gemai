@@ -16,7 +16,7 @@ export default function CountTokens() {
 
   const countTokens = async (text?: string, attachmentFile?: string) => {
     console.log("[CountTokens] Starting with:", { text: text?.substring(0, 100), attachmentFile });
-    
+
     setPage(PageState.Response);
     setIsLoading(true);
     setMarkdown("Counting tokens...");
@@ -31,7 +31,7 @@ export default function CountTokens() {
       const config = buildAIConfig(getCmd(CMD_COUNT_TOKENS).id, {
         arguments: { query: text || "" },
         fallbackText: text || "",
-        launchType: "immediate"
+        launchType: "immediate",
       });
 
       // Create appropriate provider based on configuration
@@ -42,27 +42,27 @@ export default function CountTokens() {
 
       if (attachmentFile && fs.existsSync(attachmentFile) && fs.lstatSync(attachmentFile).isFile()) {
         console.log("[CountTokens] Processing file:", attachmentFile);
-        
+
         // For token counting, we can read file content as text instead of using API upload
         // This works for text files, code files, etc.
         try {
-          const fileContent = fs.readFileSync(attachmentFile, 'utf8');
+          const fileContent = fs.readFileSync(attachmentFile, "utf8");
           const combinedText = text ? `${text}\n\n--- File Content ---\n${fileContent}` : fileContent;
           tokenCount = await provider.countTokens(config, combinedText);
-          
-          const fileName = attachmentFile.split('/').pop();
+
+          const fileName = attachmentFile.split("/").pop();
           const fileSize = fs.statSync(attachmentFile).size;
           contentInfo = `**Content:** Text + File (${fileName}, ${fileSize} bytes)\n\n`;
-          
+
           console.log("[CountTokens] File read as text, counting tokens for combined content");
         } catch (fileError: any) {
           console.log("[CountTokens] Failed to read as text, trying attachment method:", fileError.message);
-          
+
           // Fallback: try to use provider's attachment method (for images, etc.)
           try {
             const attachment = await provider.prepareAttachment(attachmentFile);
             tokenCount = await provider.countTokens(config, text || "", attachment);
-            contentInfo = `**Content:** Text + File (${attachmentFile.split('/').pop()})\n\n`;
+            contentInfo = `**Content:** Text + File (${attachmentFile.split("/").pop()})\n\n`;
           } catch (attachmentError: any) {
             console.error("[CountTokens] Both file reading methods failed:", attachmentError.message);
             throw new Error(`Cannot process file: ${attachmentError.message}`);
@@ -77,26 +77,27 @@ export default function CountTokens() {
       }
 
       const result = `**Token count:** ${tokenCount}\n\n${contentInfo}**Model:** ${config.model.modelNameUser}\n\n**Provider:** ${config.provider.toUpperCase()}`;
-      
+
       setMarkdown(result);
 
       await showToast({
         style: Toast.Style.Success,
         title: "Tokens counted",
-        message: `${tokenCount} tokens`
+        message: `${tokenCount} tokens`,
       });
-
     } catch (error: any) {
       console.error("Token counting error:", error);
       console.error("Error stack:", error.stack);
-      
-      await showToast({ 
-        style: Toast.Style.Failure, 
-        title: "Error counting tokens", 
-        message: error.message || "Unknown error"
+
+      await showToast({
+        style: Toast.Style.Failure,
+        title: "Error counting tokens",
+        message: error.message || "Unknown error",
       });
-      
-      setMarkdown(`**Failed to count tokens**\n\n**Error:** ${error.message || "Unknown error"}\n\n**Details:** ${error.stack ? error.stack.split('\n')[0] : "No details"}`);
+
+      setMarkdown(
+        `**Failed to count tokens**\n\n**Error:** ${error.message || "Unknown error"}\n\n**Details:** ${error.stack ? error.stack.split("\n")[0] : "No details"}`,
+      );
     }
 
     setIsLoading(false);
@@ -137,11 +138,7 @@ export default function CountTokens() {
       actions={
         !isLoading && (
           <ActionPanel>
-            <Action.CopyToClipboard 
-              shortcut={Keyboard.Shortcut.Common.Copy} 
-              content={markdown} 
-              title="Copy Result"
-            />
+            <Action.CopyToClipboard shortcut={Keyboard.Shortcut.Common.Copy} content={markdown} title="Copy Result" />
             <Action
               title="Count Again"
               icon={Icon.Repeat}
@@ -167,7 +164,7 @@ export default function CountTokens() {
             onSubmit={(values: { text?: string; file?: string[] }) => {
               const textValue = values.text?.trim() || "";
               let filePathValue = undefined;
-              
+
               if (values?.file?.length && values.file.length > 0) {
                 const filePath = values.file[0];
                 if (fs.existsSync(filePath) && fs.lstatSync(filePath).isFile()) {
@@ -179,7 +176,7 @@ export default function CountTokens() {
                 showToast({
                   style: Toast.Style.Failure,
                   title: "Input required",
-                  message: "Please enter text or select a file"
+                  message: "Please enter text or select a file",
                 });
                 return;
               }
@@ -198,15 +195,15 @@ export default function CountTokens() {
         placeholder="Enter text to count tokens..."
         autoFocus={true}
       />
-      
-      <Form.Description 
-        title="File Attachment" 
-        text="Optionally attach a file to count tokens including the file content. Supported: images, documents, etc." 
+
+      <Form.Description
+        title="File Attachment"
+        text="Optionally attach a file to count tokens including the file content. Supported: images, documents, etc."
       />
-      <Form.FilePicker 
-        id="file" 
-        title="Select File" 
-        showHiddenFiles={false} 
+      <Form.FilePicker
+        id="file"
+        title="Select File"
+        showHiddenFiles={false}
         allowMultipleSelection={false}
         canChooseFiles={true}
         canChooseDirectories={false}

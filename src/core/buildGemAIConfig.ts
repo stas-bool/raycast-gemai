@@ -18,7 +18,7 @@ export function buildGemAIConfig(actionName: string, props: RaycastProps, fallba
   const thinkingConfig = modelInfo ? { includeThoughts: false, thinkingBudget: modelInfo.thinking_budget } : undefined;
 
   return {
-    provider: 'gemini',
+    provider: "gemini",
     model: {
       geminiApiKey: prefs.geminiApiKey.trim(),
       modelName: currentModelName,

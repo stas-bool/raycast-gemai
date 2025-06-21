@@ -2,6 +2,7 @@ import * as fs from "fs";
 
 import {
   CMD_ASK,
+  CMD_CHAT,
   CMD_COUNT_TOKENS,
   CMD_EXPLAINER,
   CMD_FRIEND,
@@ -147,6 +148,12 @@ const commands = [
     title: getCmd(CMD_ASK).name,
     description: getCmd(CMD_ASK).description,
     promptFile: "AskQuestion.md",
+  }),
+  makeCommand({
+    name: getCmd(CMD_CHAT).id,
+    title: getCmd(CMD_CHAT).name,
+    description: getCmd(CMD_CHAT).description,
+    promptFile: "ChatRoom.md",
   }),
   makeCommand({
     name: getCmd(CMD_EXPLAINER).id,

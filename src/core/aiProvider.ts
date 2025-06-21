@@ -20,7 +20,7 @@ export class GeminiProvider implements AIProvider {
   private ai: GoogleGenAI;
 
   constructor(apiKey: string) {
-    this.ai = new GoogleGenAI({ apiKey: apiKey || '' });
+    this.ai = new GoogleGenAI({ apiKey: apiKey || "" });
   }
 
   async prepareAttachment(actualFilePath?: string): Promise<Part | null> {
@@ -83,7 +83,7 @@ export class GeminiProvider implements AIProvider {
     };
 
     const response = await this.ai.models.generateContentStream(requestParams);
-    
+
     for await (const chunk of response) {
       yield chunk;
     }
@@ -94,12 +94,12 @@ export class GeminiProvider implements AIProvider {
       model: config.model.modelName.replace("__thinking", ""),
       contents: filePart ? [query, filePart] : [query],
     });
-    
+
     // For Gemini:
     // - promptTokenCount = all input tokens (system + user)
     // - candidatesTokenCount = output tokens from model
     // - totalTokenCount = promptTokenCount + candidatesTokenCount
-    
+
     const outputTokens = usageMetadata?.candidatesTokenCount ?? 0;
     const systemPromptTokens = Math.ceil((config.model.systemPrompt || "").length / 4);
     const userInputTokens = Math.max(0, (usageMetadata?.promptTokenCount ?? 0) - systemPromptTokens);
@@ -116,7 +116,7 @@ export class GeminiProvider implements AIProvider {
 
   async countTokens(config: AIConfig, text: string, attachment?: any): Promise<number> {
     try {
-            const contents = [text];
+      const contents = [text];
       if (attachment) {
         // @ts-ignore
         contents.push(attachment);
@@ -130,10 +130,10 @@ export class GeminiProvider implements AIProvider {
       return result.totalTokens || 0;
     } catch (error: any) {
       // Fallback to character-based estimation
-      console.error('[GeminiProvider.countTokens] API failed:', error.message);
-      console.error('[GeminiProvider.countTokens] Full error:', error);
+      console.error("[GeminiProvider.countTokens] API failed:", error.message);
+      console.error("[GeminiProvider.countTokens] Full error:", error);
       const estimated = Math.ceil(text.length / 4);
-      console.log('[GeminiProvider.countTokens] Using character-based estimation:', estimated);
+      console.log("[GeminiProvider.countTokens] Using character-based estimation:", estimated);
       return estimated;
     }
   }
@@ -144,9 +144,9 @@ export class OpenAIProvider implements AIProvider {
   private client: OpenAI;
 
   constructor(apiKey: string, baseURL?: string) {
-    this.client = new OpenAI({ 
-      apiKey: apiKey || '',
-      ...(baseURL && { baseURL })
+    this.client = new OpenAI({
+      apiKey: apiKey || "",
+      ...(baseURL && { baseURL }),
     });
   }
 
@@ -158,19 +158,19 @@ export class OpenAIProvider implements AIProvider {
     try {
       const fileName = path.basename(actualFilePath);
       const mimeType = mime.lookup(fileName) || "application/octet-stream";
-      
+
       // For images, encode as base64 for vision models
-      if (mimeType.startsWith('image/')) {
+      if (mimeType.startsWith("image/")) {
         const fileBuffer = fs.readFileSync(actualFilePath);
-        const base64 = fileBuffer.toString('base64');
+        const base64 = fileBuffer.toString("base64");
         return {
           type: "image_url",
           image_url: {
-            url: `data:${mimeType};base64,${base64}`
-          }
+            url: `data:${mimeType};base64,${base64}`,
+          },
         };
       }
-      
+
       // For other files, upload to OpenAI (if supported)
       // Note: OpenAI file uploads are mainly for assistants API
       // For now, we'll handle images only
@@ -184,49 +184,46 @@ export class OpenAIProvider implements AIProvider {
 
   async *sendRequest(originalConfig: AIConfig, query?: string, attachment?: any): AsyncGenerator<any, void, unknown> {
     let config = originalConfig;
-    
+
     // Check if this is a reasoning model with an image attachment
-    const isReasoningModel = config.model.modelName.startsWith('o1');
-    
+    const isReasoningModel = config.model.modelName.startsWith("o1");
+
     // Auto-switch reasoning models to vision-capable models when image is provided
     if (isReasoningModel && attachment) {
       config = switchToVisionModel(config);
-      
-      await showToast({ 
-        style: Toast.Style.Success, 
-        title: "Model auto-switched", 
-        message: `Switched to GPT-4o for image processing (was ${originalConfig.model.modelNameUser})` 
+
+      await showToast({
+        style: Toast.Style.Success,
+        title: "Model auto-switched",
+        message: `Switched to GPT-4o for image processing (was ${originalConfig.model.modelNameUser})`,
       });
     }
-    
+
     // Re-check if this is still a reasoning model after potential switch
-    const isFinalReasoningModel = config.model.modelName.startsWith('o1');
-    
+    const isFinalReasoningModel = config.model.modelName.startsWith("o1");
+
     const messages: any[] = [];
-    
+
     // For reasoning models, include system prompt in user message
     // For regular models, use separate system message
     if (!isFinalReasoningModel) {
       messages.push({
         role: "system",
-        content: config.model.systemPrompt
+        content: config.model.systemPrompt,
       });
     }
 
     // Prepare user message with optional attachment
     let userContent = query || "";
-    
+
     // For reasoning models, prepend system prompt to user message
     if (isFinalReasoningModel && config.model.systemPrompt) {
       userContent = `${config.model.systemPrompt}\n\n---\n\n${userContent}`;
     }
-    
+
     const userMessage: any = {
       role: "user",
-      content: attachment ? [
-        { type: "text", text: userContent },
-        attachment
-      ] : userContent
+      content: attachment ? [{ type: "text", text: userContent }, attachment] : userContent,
     };
 
     messages.push(userMessage);
@@ -236,7 +233,7 @@ export class OpenAIProvider implements AIProvider {
       messages: messages,
       stream: true,
       stream_options: {
-        include_usage: true // Required to get usage stats in streaming mode
+        include_usage: true, // Required to get usage stats in streaming mode
       },
     };
 
@@ -254,13 +251,13 @@ export class OpenAIProvider implements AIProvider {
       requestParams.temperature = 1; // Fixed temperature for reasoning models
     }
 
-    const response = await this.client.chat.completions.create(requestParams) as any;
-    
+    const response = (await this.client.chat.completions.create(requestParams)) as any;
+
     for await (const chunk of response) {
       yield {
-        text: chunk.choices[0]?.delta?.content || '',
+        text: chunk.choices[0]?.delta?.content || "",
         usageMetadata: chunk.usage, // Will be available on last chunk
-        finishReason: chunk.choices[0]?.finish_reason
+        finishReason: chunk.choices[0]?.finish_reason,
       };
     }
   }
@@ -271,7 +268,7 @@ export class OpenAIProvider implements AIProvider {
       // Calculate approximate user input tokens by estimating system prompt tokens
       const systemPromptTokens = Math.ceil((config.model.systemPrompt || "").length / 4);
       const userInputTokens = Math.max(0, (usageMetadata.prompt_tokens || 0) - systemPromptTokens);
-      
+
       return {
         prompt: usageMetadata.prompt_tokens || 0, // All input tokens (system + user)
         input: userInputTokens, // Estimated user-only tokens
@@ -286,7 +283,7 @@ export class OpenAIProvider implements AIProvider {
     const estimatedUserTokens = Math.ceil(query.length / 4);
     const estimatedSystemTokens = Math.ceil((config.model.systemPrompt || "").length / 4);
     const estimatedTotalPrompt = estimatedUserTokens + estimatedSystemTokens;
-    
+
     return {
       prompt: estimatedTotalPrompt, // System + user
       input: estimatedUserTokens, // User only
@@ -302,22 +299,22 @@ export class OpenAIProvider implements AIProvider {
     // More accurate methods would require tiktoken library or API calls
     // Using ~4 characters per token as a reasonable approximation
     let tokenCount = Math.ceil(text.length / 4);
-    
+
     // Add estimated tokens for attachments (if any)
     if (attachment && attachment.type === "image_url") {
       // Images typically consume 85-170 tokens per tile (512x512 px)
       // Adding a base estimate of 100 tokens per image
       tokenCount += 100;
     }
-    
+
     return tokenCount;
   }
 }
 
 // Helper function to switch reasoning models to vision-capable models when needed
 function switchToVisionModel(config: AIConfig): AIConfig {
-  const isReasoningModel = config.model.modelName.startsWith('o1');
-  
+  const isReasoningModel = config.model.modelName.startsWith("o1");
+
   if (!isReasoningModel) {
     return config; // No change needed
   }
@@ -341,7 +338,7 @@ function switchToVisionModel(config: AIConfig): AIConfig {
         ...config.model.thinkingConfig,
         thinkingBudget: 0, // Regular model, no thinking budget
       },
-    }
+    },
   };
 
   return newConfig;
@@ -350,17 +347,17 @@ function switchToVisionModel(config: AIConfig): AIConfig {
 // Provider Factory
 export function createAIProvider(config: AIConfig): AIProvider {
   switch (config.provider) {
-    case 'openai':
+    case "openai":
       if (!config.model.openaiApiKey) {
         throw new Error("OpenAI API key is required for OpenAI models");
       }
       return new OpenAIProvider(config.model.openaiApiKey, config.model.openaiBaseUrl);
-    
-    case 'gemini':
+
+    case "gemini":
     default:
       if (!config.model.geminiApiKey) {
         throw new Error("Gemini API key is required for Gemini models");
       }
       return new GeminiProvider(config.model.geminiApiKey);
   }
-} 
+}

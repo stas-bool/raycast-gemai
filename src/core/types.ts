@@ -2,7 +2,7 @@ import { SafetySetting } from "@google/genai";
 
 // Universal AI configuration interface
 export interface AIConfig {
-  provider: 'gemini' | 'openai';
+  provider: "gemini" | "openai";
   request: {
     actionName: string;
     origProps: object;
@@ -17,24 +17,24 @@ export interface AIConfig {
     modelNameUser: string;
     maxOutputTokens: number;
     temperature: number;
-    
+
     // Provider-specific fields
     geminiApiKey?: string;
     openaiApiKey?: string;
     openaiBaseUrl?: string;
-    
+
     // Common generation parameters
     topK?: number;
     topP?: number;
     frequencyPenalty?: number;
     presencePenalty?: number;
-    
+
     // Thinking/reasoning config
     thinkingConfig?: {
       includeThoughts?: boolean;
       thinkingBudget?: number;
     };
-    
+
     // Gemini-specific safety settings
     safetySettings?: SafetySetting[];
   };
@@ -47,8 +47,8 @@ export interface AIConfig {
 
 // Legacy interface for backward compatibility
 export interface GemAIConfig extends AIConfig {
-  provider: 'gemini';
-  model: AIConfig['model'] & {
+  provider: "gemini";
+  model: AIConfig["model"] & {
     geminiApiKey: string;
     topK: number;
     topP: number;
@@ -67,6 +67,16 @@ export interface HistoryItem {
   response: string;
   requestStats: RequestStats;
   stats?: string;
+}
+
+export interface ChatMessage {
+  id: string;
+  timestamp: number;
+  role: "user" | "assistant";
+  content: string;
+  model?: string;
+  requestStats?: RequestStats;
+  isStreaming?: boolean;
 }
 
 export interface RequestStats {

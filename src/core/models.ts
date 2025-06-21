@@ -19,7 +19,7 @@ export interface ModelInfo {
   price_output: number;
   price_output_thinking: number;
   thinking_budget: number;
-  provider?: 'gemini' | 'openai';
+  provider?: "gemini" | "openai";
   supportsVision?: boolean;
 }
 
@@ -31,7 +31,7 @@ export const allModels: Record<string, ModelInfo> = {
     price_output: 0.3,
     price_output_thinking: 0.3,
     thinking_budget: 0,
-    provider: 'gemini',
+    provider: "gemini",
     supportsVision: true,
   },
   "gemini-2.0-flash": {
@@ -41,7 +41,7 @@ export const allModels: Record<string, ModelInfo> = {
     price_output: 0.4,
     price_output_thinking: 0.4,
     thinking_budget: 0,
-    provider: 'gemini',
+    provider: "gemini",
     supportsVision: true,
   },
   "gemini-2.5-flash-preview-04-17": {
@@ -51,7 +51,7 @@ export const allModels: Record<string, ModelInfo> = {
     price_output: 0.6,
     price_output_thinking: 3.5,
     thinking_budget: 0,
-    provider: 'gemini',
+    provider: "gemini",
     supportsVision: true,
   },
   "gemini-2.5-flash-preview-04-17__thinking": {
@@ -61,7 +61,7 @@ export const allModels: Record<string, ModelInfo> = {
     price_output: 0.6,
     price_output_thinking: 3.5,
     thinking_budget: 2000,
-    provider: 'gemini',
+    provider: "gemini",
     supportsVision: true,
   },
   "gemini-2.5-pro-preview-05-06": {
@@ -71,7 +71,7 @@ export const allModels: Record<string, ModelInfo> = {
     price_output: 10,
     price_output_thinking: 10,
     thinking_budget: 4000,
-    provider: 'gemini',
+    provider: "gemini",
     supportsVision: true,
   },
   // OpenAI Models
@@ -82,7 +82,7 @@ export const allModels: Record<string, ModelInfo> = {
     price_output: 10.0,
     price_output_thinking: 10.0,
     thinking_budget: 0,
-    provider: 'openai',
+    provider: "openai",
     supportsVision: true,
   },
   "gpt-4o-mini": {
@@ -92,7 +92,7 @@ export const allModels: Record<string, ModelInfo> = {
     price_output: 0.6,
     price_output_thinking: 0.6,
     thinking_budget: 0,
-    provider: 'openai',
+    provider: "openai",
     supportsVision: true,
   },
   "o1-preview": {
@@ -102,7 +102,7 @@ export const allModels: Record<string, ModelInfo> = {
     price_output: 60.0,
     price_output_thinking: 60.0,
     thinking_budget: 32768, // 32K thinking tokens budget for reasoning model
-    provider: 'openai',
+    provider: "openai",
     supportsVision: false,
   },
   "o1-mini": {
@@ -112,7 +112,7 @@ export const allModels: Record<string, ModelInfo> = {
     price_output: 12.0,
     price_output_thinking: 12.0,
     thinking_budget: 65536, // 65K thinking tokens budget for reasoning model
-    provider: 'openai',
+    provider: "openai",
     supportsVision: false,
   },
 };

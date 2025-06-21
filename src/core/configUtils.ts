@@ -91,7 +91,9 @@ export function getTemperature(prefs: any): number {
  */
 export function getCurrentModel(prefs: any): string {
   const isCustomModelValid = Boolean(prefs.customModel && prefs.customModel.trim().length > 0);
-  const globalModelName = isCustomModelValid ? prefs.customModel.toLowerCase().trim() : (prefs.defaultModel || "gemini-2.5-flash-preview-04-17");
+  const globalModelName = isCustomModelValid
+    ? prefs.customModel.toLowerCase().trim()
+    : prefs.defaultModel || "gemini-2.5-flash-preview-04-17";
   const commandModel = prefs.commandModel || "default";
   return commandModel === "default" ? globalModelName : commandModel;
 }
@@ -101,4 +103,4 @@ export function getCurrentModel(prefs: any): string {
  */
 export function getConfigPreferences() {
   return getPreferenceValues();
-} 
+}

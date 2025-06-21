@@ -1,4 +1,5 @@
 export const CMD_ASK = "ask";
+export const CMD_CHAT = "chat";
 export const CMD_EXPLAINER = "explainer";
 export const CMD_FRIEND = "friend";
 export const CMD_GRAMMAR = "grammar";
@@ -29,6 +30,12 @@ const allCommands: Record<string, GemAiCommand> = {
     name: "Ask AI",
     description: "Ask AI any question on any topic.",
     ui_placeholder: "Ask me any question",
+  },
+  [CMD_CHAT]: {
+    id: CMD_CHAT,
+    name: "Chat Room",
+    description: "Interactive chat with AI in a persistent conversation room.",
+    ui_placeholder: "Start chatting with AI...",
   },
   [CMD_EXPLAINER]: {
     id: CMD_EXPLAINER,

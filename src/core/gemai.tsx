@@ -20,7 +20,10 @@ export default function GemAI(aiConfig: AIConfig) {
   const [textarea, setTextarea] = useState("");
   const [navigationTitle, setNavigationTitle] = useState("GemAI -> " + getCmd(aiConfig.request.actionName).name);
   const [renderedText, setRenderedText] = useState("");
-  const [latestQuery, setLatestQuery] = useState<{ query?: string; attachmentFile?: string }>({ query: undefined, attachmentFile: undefined });
+  const [latestQuery, setLatestQuery] = useState<{ query?: string; attachmentFile?: string }>({
+    query: undefined,
+    attachmentFile: undefined,
+  });
   const { addToHistory, getHistoryStats } = useCommandHistory();
 
   const getAiResponse = async (query?: string, attachmentFile?: string) => {
@@ -37,11 +40,11 @@ export default function GemAI(aiConfig: AIConfig) {
     try {
       const provider = createAIProvider(aiConfig);
       const actualFilePath = attachmentFile || aiConfig.request.attachmentFile;
-      
+
       const attachmentPrepStart = Date.now();
       const attachment = await provider.prepareAttachment(actualFilePath);
       const attachmentPrepTime = (Date.now() - attachmentPrepStart) / 1000;
-      
+
       const requestStart = Date.now();
       const response = provider.sendRequest(aiConfig, query, attachment);
       const requestInitTime = (Date.now() - requestStart) / 1000;
@@ -63,19 +66,19 @@ export default function GemAI(aiConfig: AIConfig) {
         if (firstRespTime === null && chunk.text) {
           firstRespTime = (Date.now() - startTime) / 1000;
         }
-        
+
         if (chunk.text) {
           markdown += chunk.text;
           setRenderedText(markdown);
         }
-        
+
         if (chunk.usageMetadata) {
           usageMetadata = chunk.usageMetadata;
         }
-        
+
         const totalTime = (Date.now() - startTime) / 1000;
         requestStats.totalTime = totalTime;
-        
+
         showToast({ style: Toast.Style.Success, title: `Typing...` });
       }
 
