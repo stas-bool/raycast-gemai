@@ -1,17 +1,8 @@
-import { getPreferenceValues } from "@raycast/api";
 import { buildGemAIConfig } from "./buildGemAIConfig";
 import { buildOpenAIConfig } from "./buildOpenAIConfig";
 import { allModels } from "./models";
 import { AIConfig, GemAIConfig, RaycastProps } from "./types";
-
-/**
- * Determines the current model from preferences
- */
-function getCurrentModel(prefs: any): string {
-  const isCustomModelValid = Boolean(prefs.customModel && prefs.customModel.trim().length > 0);
-  const globalModelName = isCustomModelValid ? prefs.customModel.toLowerCase().trim() : prefs.defaultModel;
-  return prefs.commandModel === "default" ? globalModelName : prefs.commandModel;
-}
+import { getCurrentModel, getConfigPreferences } from "./configUtils";
 
 /**
  * Determines provider for custom models based on common naming patterns
@@ -39,7 +30,7 @@ function detectProviderFromModelName(modelName: string): 'openai' | 'gemini' {
  * based on the selected model's provider field in models.ts
  */
 export function buildAIConfig(actionName: string, props: RaycastProps, fallbackPrompt?: string): AIConfig | GemAIConfig {
-  const prefs = getPreferenceValues();
+  const prefs = getConfigPreferences();
   const currentModelName = getCurrentModel(prefs);
   
   // Get provider from model definition or detect for custom models
