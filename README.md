@@ -18,6 +18,7 @@
 
 ### 📝 Comprehensive Text Tools
 - **Ask AI:** Get answers using the most advanced models (GPT-4o, o1-series, Gemini Pro)
+- **Chat Room:** Interactive chat with AI in a persistent conversation room with context memory
 - **Summarize It:** Condense long texts with intelligent summarization
 - **Explain It:** Understand complex concepts with detailed explanations
 - **Rephrase It:** Rewrite text while preserving meaning and style
@@ -25,6 +26,7 @@
 - **Fix Grammar:** Perfect grammar, spelling, and punctuation
 - **Change Tone:** Transform text to be friendlier or more professional
 - **Translate:** Multi-language translation with auto-detection
+- **Count Tokens:** Estimate costs and optimize usage
 
 ### 🖼️ Screenshot & Vision Analysis
 - **Screenshot to Markdown:** Convert screenshots to perfectly formatted GitHub Flavored Markdown
@@ -34,7 +36,7 @@
 
 ### 🛠️ Advanced Configuration
 - **Multiple AI Providers:** Configure both Gemini and OpenAI API keys
-- **Model Selection:** Choose from 15+ models including GPT-4o, o1-series, and Gemini models
+- **Model Selection:** Choose from 10+ models including GPT-4o, o1-series, and Gemini models
 - **Custom System Prompts:** Tailor AI behavior with custom prompts per command
 - **Language Preferences:** Set primary/secondary languages for translation
 - **Temperature Control:** Fine-tune creativity and randomness
@@ -53,8 +55,10 @@
 ### Google Gemini Models
 | Model | Type | Input Cost | Output Cost | Best For |
 |-------|------|------------|-------------|----------|
-| **Gemini 2.0 Flash** | Vision + Text | $0.10/1M | $0.40/1M | Fast, multimodal tasks |
+| **Gemini 2.0 Flash-Lite** | Vision + Text | $0.075/1M | $0.30/1M | Fast, cost-effective tasks |
+| **Gemini 2.0 Flash** | Vision + Text | $0.10/1M | $0.40/1M | Balanced performance |
 | **Gemini 2.5 Flash** | Vision + Text | $0.15/1M | $0.60/1M | Enhanced performance |
+| **Gemini 2.5 Flash Thinking** | Vision + Text | $0.15/1M | $0.60/1M + $3.50/1M thinking | Advanced reasoning |
 | **Gemini 2.5 Pro** | Vision + Text | $1.25/1M | $10.00/1M | Complex reasoning and analysis |
 
 *All costs are per 1 million tokens. Reasoning models include additional thinking token costs.*
@@ -76,7 +80,7 @@
 
 2. **Clone and Setup:**
    ```bash
-   git clone https://github.com/your-username/raycast-gemai.git
+   git clone https://github.com/smetdenis/raycast-gemai.git
    cd raycast-gemai
    npm install
    ```
@@ -113,7 +117,7 @@ Access all settings via **Raycast Preferences → Extensions → GemAI**:
 
 ### Cost Management
 - **Usage Tracking:** Monitor token usage and costs across all models
-- **Budget Alerts:** Set spending limits and usage notifications
+- **Token Counting:** Estimate costs before processing with Count Tokens command
 - **Model Optimization:** Recommendations for cost-effective model selection
 
 ## 📋 Available Commands
@@ -121,6 +125,7 @@ Access all settings via **Raycast Preferences → Extensions → GemAI**:
 | Command | AI Provider | Description | Input Type |
 |---------|-------------|-------------|------------|
 | **Ask AI** | Universal | Ask questions using any available model | Text/Selection |
+| **Chat Room** | Universal | Interactive chat with persistent context | Text Input |
 | **Explain It** | Universal | Detailed explanations with context | Selection |
 | **Summarize It** | Universal | Intelligent text summarization | Selection |
 | **Rephrase It** | Universal | Rewrite while preserving meaning | Selection |
@@ -131,6 +136,7 @@ Access all settings via **Raycast Preferences → Extensions → GemAI**:
 | **Make Shorter** | Universal | Concise, focused versions | Selection |
 | **Translate** | Universal | Multi-language translation | Selection |
 | **Prompt Builder** | Universal | Create better AI prompts | Text Input |
+| **Count Tokens** | Universal | Estimate costs and optimize usage | Text/Selection |
 | **Screenshot → Markdown** | Vision Models | Convert images to Markdown | Screenshot |
 | **Screenshot → Explain** | Vision Models | Analyze and describe images | Screenshot |
 | **Screenshot → Translate** | Vision Models | Extract and translate image text | Screenshot |
@@ -145,6 +151,14 @@ Access all settings via **Raycast Preferences → Extensions → GemAI**:
 → Fix Grammar: "there dog is running" → "Their dog is running"
 → Professional: "hey, can u help?" → "Could you please assist me?"
 → Summarize: [Long article] → [Concise summary with key points]
+```
+
+### Interactive Chat
+```bash
+# Use Chat Room for ongoing conversations:
+→ Chat Room: Start a persistent conversation with context memory
+→ Ask follow-up questions with full conversation history
+→ Perfect for brainstorming, debugging, or complex discussions
 ```
 
 ### Advanced Reasoning
@@ -162,6 +176,13 @@ Access all settings via **Raycast Preferences → Extensions → GemAI**:
 → Screenshot → Translate: Extracts and translates foreign text
 ```
 
+### Cost Optimization
+```bash
+# Use Count Tokens to estimate costs:
+→ Count Tokens: "Your text here" → Shows token count and estimated cost
+→ Compare costs across different models before processing
+```
+
 ### Smart Model Switching
 ```bash
 # When using reasoning models with images:
@@ -173,14 +194,35 @@ o1-mini + Screenshot → Automatically switches to GPT-4o
 
 ### Project Structure
 ```
-src/core/
-├── aiProvider.ts          # Universal AI provider implementations
-├── buildAIConfig.ts       # Universal config router
-├── buildOpenAIConfig.ts   # OpenAI-specific configuration
-├── buildGemAIConfig.ts    # Gemini-specific configuration (legacy-compatible)
-├── types.ts               # Universal type definitions
-├── models.ts              # Model definitions and pricing
-└── gemai.tsx              # Main UI component
+src/
+├── core/
+│   ├── aiProvider.ts          # Universal AI provider implementations
+│   ├── buildAIConfig.ts       # Universal config router
+│   ├── buildOpenAIConfig.ts   # OpenAI-specific configuration
+│   ├── buildGemAIConfig.ts    # Gemini-specific configuration
+│   ├── types.ts               # Universal type definitions
+│   ├── models.ts              # Model definitions and pricing
+│   ├── chatHistory.ts         # Chat room history management
+│   ├── chatroom.tsx           # Chat room UI component
+│   └── gemai.tsx              # Main UI component
+├── ask.ts                     # Ask AI command
+├── chat.ts                    # Chat Room command
+├── countTokens.tsx            # Token counting utility
+├── explainer.ts               # Explain It command
+├── friend.ts                  # Friendly Tone command
+├── grammar.ts                 # Grammar correction
+├── history.tsx                # Command history
+├── longer.ts                  # Make Longer command
+├── professional.ts            # Professional Tone command
+├── promptBuilder.ts           # Prompt Builder command
+├── rephraser.ts               # Rephrase It command
+├── screenshotToExplain.ts     # Screenshot analysis
+├── screenshotToMarkdown.ts    # Screenshot to Markdown
+├── screenshotToTranslate.ts   # Screenshot translation
+├── shorter.ts                 # Make Shorter command
+├── stats.tsx                  # Usage statistics
+├── summator.ts                # Summarize It command
+└── translator.ts              # Translation command
 ```
 
 ### Key Features
@@ -188,6 +230,7 @@ src/core/
 - **Reasoning Model Support:** Full o1-series compatibility with proper parameter handling
 - **Vision Auto-switching:** Intelligent model selection for multimodal tasks
 - **Real-time Analytics:** Accurate token counting and cost calculation
+- **Chat Room:** Persistent conversations with context memory
 - **Backward Compatibility:** Seamless migration from Gemini-only version
 
 ### Building from Source
@@ -226,7 +269,7 @@ We welcome contributions! Here's how to get started:
 1. **Fork the Repository**
 2. **Clone Locally:**
    ```bash
-   git clone https://github.com/your-username/raycast-gemai.git
+   git clone https://github.com/smetdenis/raycast-gemai.git
    cd raycast-gemai
    npm install
    ```
@@ -263,4 +306,4 @@ This project is licensed under the **[MIT License](LICENSE)**.
 
 **Raycast GemAI** - Your universal AI assistant, powered by the best models from Google and OpenAI. Transform your workflow with intelligent automation, advanced reasoning, and seamless multimodal capabilities.
 
-For support, feature requests, or bug reports, please visit our [GitHub Issues](https://github.com/your-username/raycast-gemai/issues).
+For support, feature requests, or bug reports, please visit our [GitHub Issues](https://github.com/smetdenis/raycast-gemai/issues).
