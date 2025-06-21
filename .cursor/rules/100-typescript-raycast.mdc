@@ -1,5 +1,67 @@
 ---
-description:
-globs:
+description: 
+globs: 
 alwaysApply: false
 ---
+# TypeScript & Raycast Development Standards
+
+## 🚫 Git Commit Policy (КРИТИЧНО)
+- **Коммиты делать ТОЛЬКО если пользователь ЯВНО попросил**
+- **НИКОГДА не делать коммиты самостоятельно**
+- **Тексты коммитов ТОЛЬКО на русском языке**
+- Формат: `тип: описание на русском`
+
+## TypeScript Guidelines
+- **Use strict TypeScript** - enable all strict mode flags
+- **Prefer interfaces over types** for object shapes
+- **Use literal types** for model names, provider types: `'gemini' | 'openai'`
+- **Avoid `any`** - use `unknown` or proper type guards
+- **Generic constraints** for provider-agnostic functions
+
+## Interface Design Patterns
+```typescript
+// ✅ Universal interface with provider extensions
+interface AIConfig {
+  provider: 'gemini' | 'openai';
+  model: { /* universal fields */ };
+}
+
+// ✅ Backward compatibility through extension
+interface GemAIConfig extends AIConfig {
+  provider: 'gemini';
+  // provider-specific required fields
+}
+```
+
+## Raycast Integration Standards
+- **Export default function** for each command
+- **Use RaycastProps type** for prop typing
+- **Handle launchContext** for screenshot integration
+- **Consistent UI patterns** across commands
+
+## Command Structure Template
+```typescript
+export default function MyCommand(props: RaycastProps) {
+  const aiConfig = buildAIConfig(getCmd(CMD_MY_COMMAND).id, props, fallbackPrompt);
+  aiConfig.ui.placeholder = "Custom placeholder...";
+  return GemAI(aiConfig);
+}
+```
+
+## Error Handling
+- **Specific error types**: `AIProviderError`, not generic `Error`
+- **User-friendly messages**: Clear explanations for API failures
+- **Graceful degradation**: Handle missing keys, rate limits, network issues
+- **Toast notifications**: Appropriate styles (Success/Failure/Animated)
+
+## Async Patterns
+- **Use async/await** consistently
+- **Provider factory pattern**: `createAIProvider(config)`
+- **Streaming responses**: Proper AsyncGenerator handling
+- **Context propagation**: Maintain config through async chains
+
+## File Organization
+- Keep logic decoupled from Raycast-specific code
+- Universal provider functions work with both Gemini and OpenAI
+- Clear parameter typing for model configurations
+- Return type annotations for complex functions

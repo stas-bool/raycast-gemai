@@ -1,5 +1,53 @@
 ---
-description:
-globs:
+description: 
+globs: 
 alwaysApply: false
 ---
+# .mdc File Structure & Best Practices
+
+## File Naming Convention
+- Format: `NNN-descriptive-name.mdc` (NNN = 001-299)
+- 001-099: Core/workspace rules
+- 100-199: Integration rules  
+- 200-299: Pattern/feature-specific rules
+- Higher numbers take precedence if rules conflict
+
+## MDC File Components
+
+### 1. Frontmatter (YAML)
+```yaml
+---
+description: Brief purpose summary (appears in AI context)
+globs: comma,separated,glob,patterns
+alwaysApply: true|false
+---
+```
+
+### 2. Body Content
+- Keep under 25 lines for optimal token efficiency
+- Use concise/shorthand notation
+- Tag files with @ for cross-references
+- Focus on key directives and constraints
+
+## Rule Types
+
+| Type | Description | Frontmatter Settings |
+|------|-------------|---------------------|
+| **Always** | Always included in model context | `alwaysApply: true`, `globs:` optional |
+| **Auto Attached** | Included when files match glob pattern | `alwaysApply: false`, `globs: pattern` |
+| **Agent Requested** | AI decides when to include based on description | `description: detailed`, `globs:` blank |
+| **Manual** | Only when explicitly referenced with @ruleName | minimal frontmatter |
+
+## Best Practices
+- Use @ tags for file references: `@buildAIConfig.ts`
+- Keep rules focused and actionable
+- Avoid redundancy across rule files
+- Test rule effectiveness with relevant file patterns
+- Update via Cursor UI, not direct file edits
+
+## 🚫 Git Commit Policy (КРИТИЧНО)
+- **Коммиты делать ТОЛЬКО если пользователь ЯВНО попросил**
+- **НИКОГДА не делать коммиты самостоятельно без явного запроса**
+- **Тексты коммитов ТОЛЬКО на русском языке**
+
+**Note**: The assistant may propose changes to .mdc files for the user to copy into the UI. The assistant should not attempt direct file edits to .mdc files.

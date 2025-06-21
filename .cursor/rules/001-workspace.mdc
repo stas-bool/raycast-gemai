@@ -1,5 +1,87 @@
 ---
-description:
-globs:
+description: 
+globs: 
 alwaysApply: false
 ---
+# Raycast GemAI - Universal AI Extension
+
+**raycast-gemai** - Production Raycast extension providing AI-powered text processing with universal Gemini/OpenAI support.
+
+## 🏗️ CRITICAL ARCHITECTURE
+
+### Universal Provider System
+- **ALWAYS use `buildAIConfig()`** instead of `buildGemAIConfig()` for new code
+- `AIConfig` is universal interface, `GemAIConfig` for backward compatibility only
+- Provider auto-detection based on model selection in `buildAIConfig.ts`
+- Factory pattern: `createAIProvider(config)` returns appropriate provider
+
+### Key Files Structure
+```
+src/core/
+  ├── aiProvider.ts          # Universal AI provider implementations
+  ├── buildAIConfig.ts       # Universal config router (USE THIS)
+  ├── buildGemAIConfig.ts    # Legacy Gemini config (maintain compatibility)
+  ├── buildOpenAIConfig.ts   # OpenAI config builder
+  ├── types.ts               # Universal types and interfaces
+  ├── models.ts              # Model definitions with pricing/capabilities
+  └── gemai.tsx              # Main UI component (universal)
+```
+
+## 🤖 AI PROVIDER SPECIFICS
+
+### Reasoning Models (o1-series)
+- **NEVER** send system prompts as separate messages to o1-preview/o1-mini
+- **ALWAYS** include system prompt in user message for reasoning models
+- Use `max_completion_tokens` instead of `max_tokens` for o1-series
+- Fixed temperature = 1 for reasoning models (OpenAI requirement)
+
+### Vision API Auto-switching
+- Reasoning models don't support vision - auto-switch to GPT-4o when image detected
+- Show user notification about model auto-switching
+- Preserve original config settings when switching
+
+### Token Counting & Statistics
+- Use real API usage data (`usageMetadata`) whenever available
+- OpenAI: `prompt_tokens` includes system + user, calculate user tokens by subtraction
+- Gemini: `promptTokenCount` = all input, `candidatesTokenCount` = output tokens
+- Include thinking tokens for reasoning models in statistics
+
+## 💰 PRICING & PERFORMANCE
+
+### Current Pricing (verify regularly)
+- GPT-4o: $2.50/$10.00 (input/output per 1M tokens)
+- GPT-4o-mini: $0.15/$0.60
+- o1-preview: $15.00/$60.00
+- o1-mini: $3.00/$12.00
+
+### Timing Measurement
+- First Response Time: Measure from request start to first content chunk
+- **NEVER** measure timing before streaming starts - that's just initialization
+- Total Time: Full streaming duration including final processing
+
+## 🔧 DEVELOPMENT STANDARDS
+
+### Git Commit Policy
+- **КРИТИЧНО**: Коммиты делать ТОЛЬКО если пользователь ЯВНО попросил
+- **НИКОГДА** не делать коммиты самостоятельно без явного запроса
+- **Тексты коммитов ТОЛЬКО на русском языке** - никаких английских сообщений
+- Формат коммитов: `тип: краткое описание на русском`
+- Примеры: `feat: добавлена поддержка новой модели`, `fix: исправлена ошибка подсчёта токенов`
+
+### Debug Logging
+- Production: All debug `console.log()` should be commented out
+- Keep error handling: `console.error()` for genuine errors should remain
+- Comment Format: Use `// console.log(...)` to preserve debugging code
+
+### Backward Compatibility
+- GemAIConfig interface must remain functional for existing code
+- Legacy commands should work without modification
+- Type safety: Ensure AIConfig can be cast to GemAIConfig when appropriate
+
+### Critical Test Scenarios
+1. Screenshot + OpenAI: Verify screenshotToMarkdown works with GPT-4o
+2. Reasoning + Vision: Test auto-switching from o1-mini to GPT-4o with images
+3. Token Statistics: Verify accurate token counting for both providers
+4. Model Pricing: Ensure cost calculations match official API pricing
+
+**Remember**: This is a production Raycast extension used by real users. Prioritize stability, clear user feedback, and smooth operation across all supported AI models.
