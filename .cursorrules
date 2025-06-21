@@ -1,42 +1,42 @@
-# Raycast GemAI - Legacy Rules (DEPRECATED - Use .cursor/rules/*.mdc)
+# Raycast GemAI - Устаревшие правила (DEPRECATED - Используй .cursor/rules/*.mdc)
 
-⚠️ **DEPRECATED**: This `.cursorrules` file is legacy. 
-✅ **USE INSTEAD**: Modern `.cursor/rules/*.mdc` files for better organization and token efficiency.
+⚠️ **УСТАРЕЛО**: Этот файл `.cursorrules` устарел. 
+✅ **ИСПОЛЬЗУЙ ВМЕСТО ЭТОГО**: Современные файлы `.cursor/rules/*.mdc` для лучшей организации и эффективности токенов.
 
-## Quick Reference for Modern Rules
+## Краткий справочник по современным правилам
 
-The new rule system provides better organization and context-aware activation:
+Новая система правил обеспечивает лучшую организацию и контекстно-зависимую активацию:
 
-- **001-workspace.mdc**: Core project architecture and universal provider system
-- **002-cursor-rules.mdc**: How .mdc files work and best practices  
-- **100-typescript-raycast.mdc**: TypeScript and Raycast development standards
-- **200-ai-provider-patterns.mdc**: AI provider implementation patterns
-- **201-models-pricing.mdc**: Model definitions and pricing management
-- **202-debugging-troubleshooting.mdc**: Debugging strategies and common issues
-- **203-screenshot-vision.mdc**: Screenshot processing and vision API integration
+- **001-workspace.mdc**: Основная архитектура проекта и универсальная система провайдеров
+- **002-cursor-rules.mdc**: Как работают .mdc файлы и лучшие практики  
+- **100-typescript-raycast.mdc**: Стандарты разработки TypeScript и Raycast
+- **200-ai-provider-patterns.mdc**: Паттерны реализации AI провайдеров
+- **201-models-pricing.mdc**: Определения моделей и управление ценами
+- **202-debugging-troubleshooting.mdc**: Стратегии отладки и распространенные проблемы
+- **203-screenshot-vision.mdc**: Обработка скриншотов и интеграция vision API
 
-## Critical Points (Legacy Compatibility)
+## Критичные моменты (совместимость с устаревшими версиями)
 
-### Universal Provider System
-- Use `buildAIConfig()` instead of `buildGemAIConfig()` for new code
-- `AIConfig` is universal interface, `GemAIConfig` for backward compatibility
-- Provider auto-detection based on model selection
-- Factory pattern: `createAIProvider(config)` returns appropriate provider
+### Универсальная система провайдеров
+- Используй `buildAIConfig()` вместо `buildGemAIConfig()` для нового кода
+- `AIConfig` - универсальный интерфейс, `GemAIConfig` для обратной совместимости
+- Автоопределение провайдера на основе выбранной модели
+- Паттерн фабрики: `createAIProvider(config)` возвращает подходящий провайдер
 
-### Reasoning Models (o1-series)
-- NEVER send system prompts as separate messages to o1-preview/o1-mini
-- ALWAYS include system prompt in user message for reasoning models
-- Use `max_completion_tokens` instead of `max_tokens` for o1-series
-- Fixed temperature = 1 for reasoning models (OpenAI requirement)
+### Reasoning модели (o1-серия)
+- НИКОГДА не отправляй system prompts как отдельные сообщения в o1-preview/o1-mini
+- ВСЕГДА включай system prompt в user message для reasoning моделей
+- Используй `max_completion_tokens` вместо `max_tokens` для o1-серии
+- Фиксированная температура = 1 для reasoning моделей (требование OpenAI)
 
-### Vision API Auto-switching  
-- Reasoning models don't support vision - auto-switch to GPT-4o when image detected
-- Show user notification about model auto-switching
-- Preserve original config settings when switching
+### Vision API автопереключение  
+- Reasoning модели не поддерживают vision - автопереключение на GPT-4o при обнаружении изображения
+- Показывай пользователю уведомление об автопереключении модели
+- Сохраняй исходные настройки конфига при переключении
 
-### Debug Logging
-- Production: All debug `console.log()` should be commented out
-- Keep error handling: `console.error()` for genuine errors should remain
-- Comment Format: Use `// console.log(...)` to preserve debugging code
+### Отладочное логирование
+- Продакшен: Все отладочные `console.log()` должны быть закомментированы
+- Сохраняй обработку ошибок: `console.error()` для настоящих ошибок должны остаться
+- Формат комментариев: Используй `// console.log(...)` для сохранения отладочного кода
 
-**This is a production Raycast extension used by real users. Prioritize stability, clear user feedback, and smooth operation across all supported AI models.** 
+**Это продакшен расширение Raycast используемое реальными пользователями. Приоритет - стабильность, четкая обратная связь с пользователем, и плавная работа всех поддерживаемых AI моделей.** 
