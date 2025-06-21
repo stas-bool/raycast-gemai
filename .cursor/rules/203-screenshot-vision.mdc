@@ -3,3 +3,48 @@ description:
 globs:
 alwaysApply: false
 ---
+# Обработка скриншотов и интеграция Vision API
+
+## Vision API автопереключение - КРИТИЧНО!
+- **Reasoning модели НЕ поддерживают vision** - автопереключение o1 → GPT-4o при обнаружении изображения
+- Показывай пользователю уведомление об автопереключении модели
+- Сохраняй исходные настройки конфига при переключении
+- Используй `switchToVisionModel()` в `@aiProvider.ts`
+
+## Обработка изображений
+- OpenAI: base64 кодирование для vision моделей
+- Gemini: upload через Files API с проверкой состояния
+- Поддерживаемые форматы: PNG, JPEG, WebP, GIF
+- Проверяй размер файла и MIME тип
+
+## Паттерн скриншотов
+```typescript
+// ✅ Интеграция с launchContext
+if (props.launchContext?.attachmentFile) {
+  const screenshotPath = props.launchContext.attachmentFile;
+  const attachment = await provider.prepareAttachment(screenshotPath);
+}
+```
+
+## Специфика провайдеров
+
+### OpenAI Vision
+- GPT-4o, GPT-4o-mini поддерживают vision
+- Reasoning модели (o1) НЕ поддерживают изображения
+- Использует `image_url` в message content
+
+### Gemini Vision
+- Все модели поддерживают vision
+- Требует upload файла через Files API
+- Проверка состояния обработки файла
+
+## Error handling для vision
+- Unsupported file type → fallback на текстовое чтение
+- File too large → компрессия или предупреждение  
+- Processing timeout → retry с backoff
+
+## Команды скриншотов
+- `screenshotToMarkdown`: преобразование скриншота → markdown
+- `screenshotToTranslate`: перевод текста со скриншота
+- `screenshotToExplain`: объяснение содержимого скриншота
+- Все команды поддерживают автопереключение моделей для vision
