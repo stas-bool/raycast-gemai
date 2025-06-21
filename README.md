@@ -2,6 +2,8 @@
 
 **Raycast GemAI** is a powerful Raycast extension that brings both **Google Gemini** and **OpenAI GPT** models directly into your workflow. Perform a wide array of tasks – from drafting emails and complex reasoning to analyzing screenshots and translating languages – all without leaving Raycast. With universal AI provider support, advanced reasoning capabilities, and intelligent model switching, GemAI is your versatile assistant for any task.
 
+> 🇷🇺 **Русская версия:** [README_RUS.md](README_RUS.md) - Полное описание функций на русском языке с инструкциями по установке
+
 ## ✨ Key Features
 
 ### 🤖 Universal AI Provider Support
