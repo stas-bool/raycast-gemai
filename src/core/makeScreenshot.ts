@@ -26,8 +26,6 @@ export default async function makeScreenshot(props: RaycastProps, isSelecting: b
     return;
   }
 
-  // console.debug(`Screenshot captured at ${screenshotPath}`);
-
   try {
     await launchCommand({
       name: CMD_ASK,

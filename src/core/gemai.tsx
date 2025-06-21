@@ -33,7 +33,6 @@ export default function GemAI(aiConfig: AIConfig) {
     });
 
     const startTime = Date.now();
-    // console.log(`Starting request at ${new Date(startTime).toISOString()}`);
 
     try {
       const provider = createAIProvider(aiConfig);
@@ -42,12 +41,10 @@ export default function GemAI(aiConfig: AIConfig) {
       const attachmentPrepStart = Date.now();
       const attachment = await provider.prepareAttachment(actualFilePath);
       const attachmentPrepTime = (Date.now() - attachmentPrepStart) / 1000;
-      // console.log(`Attachment preparation took ${attachmentPrepTime.toFixed(3)}s`);
       
       const requestStart = Date.now();
       const response = provider.sendRequest(aiConfig, query, attachment);
       const requestInitTime = (Date.now() - requestStart) / 1000;
-      // console.log(`Request initialization took ${requestInitTime.toFixed(3)}s`);
 
       let markdown = "";
       let usageMetadata: any = undefined;
@@ -65,7 +62,6 @@ export default function GemAI(aiConfig: AIConfig) {
         // Measure first response time on first chunk with content
         if (firstRespTime === null && chunk.text) {
           firstRespTime = (Date.now() - startTime) / 1000;
-          // console.log(`First response received after ${firstRespTime.toFixed(3)}s`);
         }
         
         if (chunk.text) {
@@ -74,7 +70,6 @@ export default function GemAI(aiConfig: AIConfig) {
         }
         
         if (chunk.usageMetadata) {
-          // console.log('UI: Received usageMetadata:', chunk.usageMetadata);
           usageMetadata = chunk.usageMetadata;
         }
         
@@ -86,19 +81,11 @@ export default function GemAI(aiConfig: AIConfig) {
 
       const streamEndTime = Date.now();
       const totalStreamTime = (streamEndTime - startTime) / 1000;
-      // console.log(`Streaming completed after ${totalStreamTime.toFixed(3)}s`);
 
       // Get final token stats - always call this, not just when query exists
-      // console.log('UI: Calling getTokenStats with usageMetadata:', usageMetadata);
       requestStats = await provider.getTokenStats(aiConfig, usageMetadata, query || "", attachment);
       requestStats.firstRespTime = firstRespTime || 0; // Use 0 if no content chunks received
       requestStats.totalTime = (Date.now() - startTime) / 1000;
-      
-      // console.log(`Timing breakdown:
-      //   - First response: ${requestStats.firstRespTime.toFixed(3)}s
-      //   - Stream duration: ${totalStreamTime.toFixed(3)}s  
-      //   - Total time: ${requestStats.totalTime.toFixed(3)}s`);
-      // console.log('UI: Final requestStats:', requestStats);
 
       setMarkdown(markdown);
 

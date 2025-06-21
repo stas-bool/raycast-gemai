@@ -96,7 +96,6 @@ export function calculateItemCost(item: HistoryItem): number {
   const modelName = item.model ?? "gemini-2.5-flash-preview-04-17"; // Use default if model is undefined
   // Ensure requestStats exists before accessing its properties
   if (!item.requestStats) {
-    // console.warn(`[calculateItemCost] Missing requestStats for item:`, item);
     return 0; // Cannot calculate cost without stats
   }
   return calculatePricePerMillionTokens(modelName, item.requestStats);
@@ -123,8 +122,6 @@ export function calculateAggregatedStatsForGroup(group: HistoryItem[]): GroupSta
       totalTokensSum += item.requestStats.total;
       totalTimeSum += item.requestStats.totalTime;
       validStatsCount++;
-    } else {
-      // console.warn("[calculateAggregatedStatsForGroup] Skipping item from stats aggregation due to missing requestStats or total/totalTime", item);
     }
   }
 
@@ -229,7 +226,6 @@ export function getPeriodKey(timestamp: number, period: "hour" | "day" | "week" 
 export function calculatePricePerMillionTokens(modelKey: string, stats: RequestStats): number {
   const model = allModels[modelKey];
   if (!model) {
-    // console.warn(`[calculatePricePerMillionTokens] Unknown model key: ${modelKey}. Using default price 0.`);
     return 0; // Cannot calculate cost if model info is missing
   }
 

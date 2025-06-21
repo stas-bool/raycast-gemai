@@ -1,8 +1,10 @@
+import { HarmBlockThreshold, HarmCategory } from "@google/genai";
 import { buildGemAIConfig } from "./buildGemAIConfig";
 import { buildOpenAIConfig } from "./buildOpenAIConfig";
 import { allModels } from "./models";
 import { AIConfig, GemAIConfig, RaycastProps } from "./types";
-import { getCurrentModel, getConfigPreferences } from "./configUtils";
+import { getCurrentModel, getConfigPreferences, getTemperature } from "./configUtils";
+import { CMD_COUNT_TOKENS, CMD_HISTORY, CMD_STATS } from "./commands";
 
 /**
  * Determines provider for custom models based on common naming patterns
@@ -26,6 +28,55 @@ function detectProviderFromModelName(modelName: string): 'openai' | 'gemini' {
 }
 
 /**
+ * List of utility commands that don't need complex system prompts
+ */
+const UTILITY_COMMANDS = [CMD_COUNT_TOKENS, CMD_HISTORY, CMD_STATS];
+
+/**
+ * Creates a minimal AI configuration for utility commands
+ */
+function buildUtilityConfig(actionName: string, props: RaycastProps, provider: 'openai' | 'gemini'): AIConfig {
+  const prefs = getConfigPreferences();
+  const currentModelName = getCurrentModel(prefs);
+  const modelInfo = allModels[currentModelName];
+
+  return {
+    provider: provider,
+    request: {
+      actionName: actionName,
+      origProps: props,
+      primaryLanguage: prefs.primaryLanguage || "English",
+      userPrompt: props.arguments?.query || props.fallbackText || "",
+    },
+    model: {
+      systemPrompt: "", // No system prompt for utility commands
+      modelName: currentModelName,
+      modelNameUser: modelInfo?.name ?? currentModelName,
+      maxOutputTokens: 4096, // Minimal for utility commands
+      temperature: getTemperature(prefs),
+      geminiApiKey: prefs.geminiApiKey?.trim(),
+      openaiApiKey: prefs.openaiApiKey?.trim(),
+      openaiBaseUrl: prefs.openaiBaseUrl?.trim(),
+      topK: 0,
+      topP: 0.95,
+      frequencyPenalty: 0,
+      presencePenalty: 0,
+      safetySettings: [
+        { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+        { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_NONE },
+        { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_NONE },
+        { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+      ],
+    },
+    ui: {
+      placeholder: "Your question to AI here",
+      allowPaste: true,
+      useSelected: true,
+    },
+  };
+}
+
+/**
  * Universal AI configuration builder that routes to appropriate provider
  * based on the selected model's provider field in models.ts
  */
@@ -43,10 +94,14 @@ export function buildAIConfig(actionName: string, props: RaycastProps, fallbackP
   } else {
     // For custom models, detect provider based on model name patterns
     provider = detectProviderFromModelName(currentModelName);
-    // console.log(`Custom model detected: ${currentModelName} -> provider: ${provider}`);
   }
   
-  // Route to appropriate provider configuration
+  // Special handling for utility commands - create minimal configuration
+  if (UTILITY_COMMANDS.includes(actionName)) {
+    return buildUtilityConfig(actionName, props, provider);
+  }
+  
+  // Route to appropriate provider configuration for regular commands
   switch (provider) {
     case 'openai':
       return buildOpenAIConfig(actionName, props, fallbackPrompt);

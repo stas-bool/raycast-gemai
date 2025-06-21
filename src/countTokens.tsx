@@ -1,6 +1,8 @@
-import { GoogleGenAI } from "@google/genai";
-import { Detail, getPreferenceValues, getSelectedText, showToast, Toast } from "@raycast/api";
+import { Detail, getSelectedText, showToast, Toast } from "@raycast/api";
 import { useEffect, useState } from "react";
+import { createAIProvider } from "./core/aiProvider";
+import { buildAIConfig } from "./core/buildAIConfig";
+import { getCmd, CMD_COUNT_TOKENS } from "./core/commands";
 
 export default function CountTokens() {
   const [markdown, setMarkdown] = useState<string>("Counting tokens...");
@@ -13,16 +15,32 @@ export default function CountTokens() {
           setMarkdown("No text selected.");
           return;
         }
-        const prefs = getPreferenceValues();
-        const ai = new GoogleGenAI({ apiKey: prefs.geminiApiKey.trim() });
-        const result = await ai.models.countTokens({
-          model: prefs.defaultModel,
-          contents: [text],
+
+        // Build AI configuration using universal system
+        const config = buildAIConfig(getCmd(CMD_COUNT_TOKENS).id, {
+          arguments: { query: text },
+          fallbackText: text,
+          launchType: "immediate"
         });
-        setMarkdown(`**Token count:** ${result.totalTokens}`);
+
+        // Create appropriate provider based on configuration
+        const provider = createAIProvider(config);
+
+        // Count tokens using the provider's method
+        const tokenCount = await provider.countTokens(config, text);
+
+        setMarkdown(`**Token count:** ${tokenCount}\n\n**Model:** ${config.model.modelNameUser}\n\n**Provider:** ${config.provider.toUpperCase()}`);
       } catch (error: any) {
-        await showToast({ style: Toast.Style.Failure, title: "Error counting tokens", message: error.message });
-        setMarkdown("Failed to count tokens.");
+        console.error("Token counting error:", error);
+        console.error("Error stack:", error.stack);
+        
+        await showToast({ 
+          style: Toast.Style.Failure, 
+          title: "Error counting tokens", 
+          message: error.message || "Unknown error"
+        });
+        
+        setMarkdown(`**Failed to count tokens**\n\n**Error:** ${error.message || "Unknown error"}\n\n**Details:** ${error.stack ? error.stack.split('\n')[0] : "No details"}`);
       }
     })();
   }, []);

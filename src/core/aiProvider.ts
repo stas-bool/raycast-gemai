@@ -12,6 +12,7 @@ export interface AIProvider {
   prepareAttachment(filePath?: string): Promise<any>;
   sendRequest(config: AIConfig, query?: string, attachment?: any): AsyncGenerator<any, void, unknown>;
   getTokenStats(config: AIConfig, usageMetadata: any, query: string, attachment?: any): Promise<RequestStats>;
+  countTokens(config: AIConfig, text: string, attachment?: any): Promise<number>;
 }
 
 // Gemini Provider Implementation
@@ -89,14 +90,10 @@ export class GeminiProvider implements AIProvider {
   }
 
   async getTokenStats(config: AIConfig, usageMetadata: any, query: string, filePart?: Part): Promise<RequestStats> {
-    // console.log('Gemini usage metadata:', usageMetadata);
-    
     const inputTokens = await this.ai.models.countTokens({
       model: config.model.modelName.replace("__thinking", ""),
       contents: filePart ? [query, filePart] : [query],
     });
-    
-    // console.log('Gemini countTokens result:', inputTokens);
     
     // For Gemini:
     // - promptTokenCount = all input tokens (system + user)
@@ -106,13 +103,6 @@ export class GeminiProvider implements AIProvider {
     const outputTokens = usageMetadata?.candidatesTokenCount ?? 0;
     const systemPromptTokens = Math.ceil((config.model.systemPrompt || "").length / 4);
     const userInputTokens = Math.max(0, (usageMetadata?.promptTokenCount ?? 0) - systemPromptTokens);
-    
-    // console.log(`Gemini token breakdown: 
-    //   - prompt_total=${usageMetadata?.promptTokenCount}
-    //   - output=${outputTokens}
-    //   - estimated_system=${systemPromptTokens}
-    //   - estimated_user=${userInputTokens}
-    //   - countTokens_user=${inputTokens?.totalTokens}`);
 
     return {
       prompt: usageMetadata?.promptTokenCount ?? 0, // All input tokens (system + user)
@@ -122,6 +112,28 @@ export class GeminiProvider implements AIProvider {
       firstRespTime: 0,
       totalTime: 0,
     };
+  }
+
+  async countTokens(config: AIConfig, text: string, attachment?: any): Promise<number> {
+    try {
+            const contents = [text];
+      if (attachment) {
+        // @ts-ignore
+        contents.push(attachment);
+      }
+
+      const result = await this.ai.models.countTokens({
+        model: config.model.modelName.replace("__thinking", ""),
+        contents: contents,
+      });
+
+      return result.totalTokens || 0;
+    } catch (error: any) {
+      // Fallback to character-based estimation
+      console.error('[GeminiProvider.countTokens] API failed:', error.message);
+      const estimated = Math.ceil(text.length / 4);
+      return estimated;
+    }
   }
 }
 
@@ -176,7 +188,6 @@ export class OpenAIProvider implements AIProvider {
     
     // Auto-switch reasoning models to vision-capable models when image is provided
     if (isReasoningModel && attachment) {
-      // console.log(`Auto-switching from reasoning model ${config.model.modelName} to GPT-4o for vision task`);
       config = switchToVisionModel(config);
       
       await showToast({ 
@@ -244,11 +255,6 @@ export class OpenAIProvider implements AIProvider {
     const response = await this.client.chat.completions.create(requestParams) as any;
     
     for await (const chunk of response) {
-      // Log usage metadata when it appears (usually on last chunk)
-      if (chunk.usage) {
-        // console.log('OpenAI streaming chunk usage:', chunk.usage);
-      }
-      
       yield {
         text: chunk.choices[0]?.delta?.content || '',
         usageMetadata: chunk.usage, // Will be available on last chunk
@@ -260,13 +266,9 @@ export class OpenAIProvider implements AIProvider {
   async getTokenStats(config: AIConfig, usageMetadata: any, query: string, attachment?: any): Promise<RequestStats> {
     // Use real usage data from OpenAI API response when available
     if (usageMetadata) {
-      // console.log('OpenAI usage metadata:', usageMetadata);
-      
       // Calculate approximate user input tokens by estimating system prompt tokens
       const systemPromptTokens = Math.ceil((config.model.systemPrompt || "").length / 4);
       const userInputTokens = Math.max(0, (usageMetadata.prompt_tokens || 0) - systemPromptTokens);
-      
-      // console.log(`Token breakdown: total_prompt=${usageMetadata.prompt_tokens}, estimated_system=${systemPromptTokens}, estimated_user=${userInputTokens}`);
       
       return {
         prompt: usageMetadata.prompt_tokens || 0, // All input tokens (system + user)
@@ -283,8 +285,6 @@ export class OpenAIProvider implements AIProvider {
     const estimatedSystemTokens = Math.ceil((config.model.systemPrompt || "").length / 4);
     const estimatedTotalPrompt = estimatedUserTokens + estimatedSystemTokens;
     
-    // console.warn('OpenAI usage metadata not available, using approximation');
-    
     return {
       prompt: estimatedTotalPrompt, // System + user
       input: estimatedUserTokens, // User only
@@ -293,6 +293,22 @@ export class OpenAIProvider implements AIProvider {
       firstRespTime: 0,
       totalTime: 0,
     };
+  }
+
+  async countTokens(config: AIConfig, text: string, attachment?: any): Promise<number> {
+    // For OpenAI, we use character-based estimation
+    // More accurate methods would require tiktoken library or API calls
+    // Using ~4 characters per token as a reasonable approximation
+    let tokenCount = Math.ceil(text.length / 4);
+    
+    // Add estimated tokens for attachments (if any)
+    if (attachment && attachment.type === "image_url") {
+      // Images typically consume 85-170 tokens per tile (512x512 px)
+      // Adding a base estimate of 100 tokens per image
+      tokenCount += 100;
+    }
+    
+    return tokenCount;
   }
 }
 

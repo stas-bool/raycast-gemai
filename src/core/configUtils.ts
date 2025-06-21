@@ -25,7 +25,7 @@ export const actionsWithPrimaryLanguage = [
  */
 export function buildRealPrompt(actionName: string, preferences: any, fallbackPrompt?: string): [boolean, string] {
   const systemPrompt = getSystemPrompt(preferences.promptDir + "/" + preferences.promptFile, fallbackPrompt);
-  const primaryLanguage = preferences.primaryLanguage.trim().toUpperCase();
+  const primaryLanguage = (preferences.primaryLanguage || "ENGLISH").trim().toUpperCase();
 
   const defaultLanguage = `# Language Policy
 **CRITICAL: ADHERE STRICTLY TO THIS LANGUAGE POLICY FOR YOUR RESPONSE.**
@@ -79,6 +79,9 @@ Your response MUST derive *exclusively* from the user input components that are 
  * Parses temperature from preferences with fallback
  */
 export function getTemperature(prefs: any): number {
+  if (!prefs.temperature) {
+    return 0.3;
+  }
   const temp = prefs.temperature.trim();
   return parseFloat(temp === "" ? "0.3" : temp);
 }
@@ -88,8 +91,9 @@ export function getTemperature(prefs: any): number {
  */
 export function getCurrentModel(prefs: any): string {
   const isCustomModelValid = Boolean(prefs.customModel && prefs.customModel.trim().length > 0);
-  const globalModelName = isCustomModelValid ? prefs.customModel.toLowerCase().trim() : prefs.defaultModel;
-  return prefs.commandModel === "default" ? globalModelName : prefs.commandModel;
+  const globalModelName = isCustomModelValid ? prefs.customModel.toLowerCase().trim() : (prefs.defaultModel || "gemini-2.5-flash-preview-04-17");
+  const commandModel = prefs.commandModel || "default";
+  return commandModel === "default" ? globalModelName : commandModel;
 }
 
 /**
