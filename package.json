@@ -16,7 +16,7 @@
     {
       "name": "ask",
       "title": "Ask AI",
-      "description": "Ask AI any question on any topic.",
+      "description": "Ask AI any question on any topic with expert-level responses.",
       "mode": "view",
       "preferences": [
         {
@@ -90,7 +90,7 @@
     {
       "name": "chat",
       "title": "Chat Room",
-      "description": "Interactive chat with AI in a persistent conversation room.",
+      "description": "Interactive chat with AI in a persistent conversation room with context memory.",
       "mode": "view",
       "preferences": [
         {
@@ -172,7 +172,7 @@
     {
       "name": "countTokens",
       "title": "GemAI - Count Tokens",
-      "description": "Count the tokens in the selected text.",
+      "description": "Count tokens in selected text or files for cost estimation and optimization.",
       "mode": "view",
       "preferences": [
         {
@@ -230,7 +230,7 @@
     {
       "name": "explainer",
       "title": "Explain It",
-      "description": "Explain selected text.",
+      "description": "Explain the meaning of words, sentences, or concepts clearly and concisely.",
       "mode": "view",
       "arguments": [
         {
@@ -312,7 +312,7 @@
     {
       "name": "friend",
       "title": "Friend Text Maker",
-      "description": "Make text warmer and friendly",
+      "description": "Make text warmer, friendlier, and more approachable while preserving the core message.",
       "mode": "view",
       "preferences": [
         {
@@ -386,7 +386,7 @@
     {
       "name": "grammar",
       "title": "Fix Grammar",
-      "description": "Fix correct grammar, spelling, punctuation for selected text.",
+      "description": "Fix grammar, spelling, punctuation, and improve readability for native speakers.",
       "mode": "view",
       "preferences": [
         {
@@ -468,14 +468,14 @@
     {
       "name": "history",
       "title": "GemAI - History",
-      "description": "Show history of chating with AI.",
+      "description": "Show history of conversations with AI with search and management features.",
       "mode": "view",
       "preferences": []
     },
     {
       "name": "longer",
       "title": "Longer Text Maker",
-      "description": "Make selected text significantly longer.",
+      "description": "Expand text by adding substantial details and examples while preserving core meaning.",
       "mode": "view",
       "preferences": [
         {
@@ -549,7 +549,7 @@
     {
       "name": "professional",
       "title": "Professional Text Maker",
-      "description": "Make text formal and professional",
+      "description": "Make text formal and professional using business tone while preserving core message.",
       "mode": "view",
       "preferences": [
         {
@@ -623,7 +623,7 @@
     {
       "name": "promptBuilder",
       "title": "Prompt Builder",
-      "description": "Create or improve your prompt",
+      "description": "Create or improve LLM prompts using prompt engineering best practices.",
       "mode": "view",
       "preferences": [
         {
@@ -697,7 +697,7 @@
     {
       "name": "rephraser",
       "title": "Rephrase It",
-      "description": "Rewrite the provided text using different phrasing while maintaining the original meaning.",
+      "description": "Rewrite text using different words and sentence structures while preserving meaning and style.",
       "mode": "view",
       "preferences": [
         {
@@ -771,7 +771,7 @@
     {
       "name": "screenshotToExplain",
       "title": "Screenshot -> Explain",
-      "description": "Take a screenshot and analyze it, and answer the user's question (if applicable).",
+      "description": "Take a screenshot and analyze it, answering questions or describing the content.",
       "mode": "no-view",
       "preferences": [
         {
@@ -845,7 +845,7 @@
     {
       "name": "screenshotToMarkdown",
       "title": "Screenshot -> Markdown",
-      "description": "Take a screenshot and convert it to markdown.",
+      "description": "Take a screenshot and convert all visible text to GitHub Flavored Markdown format.",
       "mode": "no-view",
       "preferences": [
         {
@@ -919,7 +919,7 @@
     {
       "name": "screenshotToTranslate",
       "title": "Screenshot -> Translate",
-      "description": "Take a screenshot and translate it.",
+      "description": "Take a screenshot and translate all visible text between your configured languages.",
       "mode": "no-view",
       "preferences": [
         {
@@ -1001,7 +1001,7 @@
     {
       "name": "shorter",
       "title": "Shorter Text Maker",
-      "description": "Make selected text significantly shorter and more concise.",
+      "description": "Make text significantly shorter and more concise while preserving all key information.",
       "mode": "view",
       "preferences": [
         {
@@ -1075,14 +1075,14 @@
     {
       "name": "stats",
       "title": "GemAI - Stats",
-      "description": "Show usage insides, stats and costs",
+      "description": "Show detailed usage statistics, costs, and insights across different time periods.",
       "mode": "view",
       "preferences": []
     },
     {
       "name": "summator",
       "title": "Summarize It",
-      "description": "Summary selected text.",
+      "description": "Summarize text concisely (3-15 sentences) conveying main ideas and key points.",
       "mode": "view",
       "preferences": [
         {
@@ -1156,7 +1156,7 @@
     {
       "name": "translator",
       "title": "Translator",
-      "description": "Translate selected text.",
+      "description": "Translate text between your configured primary and secondary languages with natural phrasing.",
       "mode": "view",
       "arguments": [
         {
@@ -1338,18 +1338,18 @@
     }
   ],
   "dependencies": {
-    "@google/genai": "^0.14.1",
-    "@raycast/api": "^1.98.5",
-    "@raycast/utils": "^1.19.1",
+    "@google/genai": "^1.6.0",
+    "@raycast/api": "^1.100.2",
+    "@raycast/utils": "^2.0.1",
     "mime-types": "^3.0.1",
-    "openai": "^4.73.0"
+    "openai": "^5.6.0"
   },
   "devDependencies": {
     "@raycast/eslint-config": "^2.0.4",
     "@types/mime-types": "^3.0.1",
-    "@types/node": "22.13.10",
-    "@types/react": "19.0.10",
-    "eslint": "^9.22.0",
+    "@types/node": "^24.0.3",
+    "@types/react": "^19.1.8",
+    "eslint": "^9.29.0",
     "prettier": "^3.5.3",
     "typescript": "^5.8.2"
   },
