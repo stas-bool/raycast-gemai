@@ -1,5 +1,5 @@
 ---
-description: 
+description: Специфичные правила для разработки расширений Raycast. Покрывают использование Raycast API, UI компонентов, preferences, toast уведомлений и интеграцию с окружением Raycast.
 globs: 
 alwaysApply: true
 ---

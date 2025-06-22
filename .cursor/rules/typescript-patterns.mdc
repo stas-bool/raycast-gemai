@@ -1,5 +1,5 @@
 ---
-description: 
+description: Стандарты качественной разработки на TypeScript. Определяют типобезопасность, паттерны интерфейсов, обработку ошибок, generic типы и best practices для React компонентов.
 globs: 
 alwaysApply: true
 ---
