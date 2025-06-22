@@ -1,10 +1,6 @@
 ---
-description: 
-globs: 
-alwaysApply: false
----
----
 description: Core project rules for raycast-gemai - universal AI assistant for Raycast
+globs:
 alwaysApply: true
 ---
 
