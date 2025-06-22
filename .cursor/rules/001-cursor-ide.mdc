@@ -1,7 +1,7 @@
 ---
 description: Правила организации конфигурации Cursor IDE и структуры файлов правил. Определяют современную структуру `.cursor/` папки, запрещают использование устаревшего `.cursorrules` файла и устанавливают стандарты для организации правил по категориям.
 globs: 
-alwaysApply: false
+alwaysApply: true
 ---
 # Cursor IDE Configuration Rules
 
