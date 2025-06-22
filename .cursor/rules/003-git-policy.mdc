@@ -1,11 +1,7 @@
 ---
-description: 
-globs: 
-alwaysApply: true
----
----
 description: Строгие правила работы с Git коммитами и push операциями в проекте raycast-gemai
-alwaysApply: true
+globs:
+alwaysApply: false
 ---
 
 # 🚫 Политика Git коммитов (СТРОГО!)

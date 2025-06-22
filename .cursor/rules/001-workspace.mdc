@@ -1,7 +1,7 @@
 ---
-description: 
-globs: 
-alwaysApply: true
+description:
+globs:
+alwaysApply: false
 ---
 # Raycast GemAI - Универсальное AI расширение
 
@@ -68,7 +68,7 @@ src/core/
 - **Тексты коммитов ТОЛЬКО на русском языке** - никаких английских сообщений
 - **Детальные коммиты**: Указывай что именно изменено и в каких файлах
 - Формат коммитов: `тип: детальное описание изменений`
-- Примеры: 
+- Примеры:
   - `feat: добавлена поддержка GPT-4o в buildOpenAIConfig.ts и обновлены цены в models.ts`
   - `fix: исправлена ошибка подсчёта токенов в aiProvider.ts для reasoning моделей`
   - `refactor: переход на универсальный AIConfig в gemai.tsx, buildAIConfig.ts`
