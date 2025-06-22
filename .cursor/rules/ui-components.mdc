@@ -1,5 +1,441 @@
 ---
-description:
-globs:
-alwaysApply: false
+description: 
+globs: 
+alwaysApply: true
 ---
+# UI Components and UX Patterns
+
+## React Component Structure
+
+### Functional Components
+```typescript
+// ✅ Правильная структура компонента
+interface GemAIProps {
+  initialInput?: string;
+  model: string;
+  onResponse?: (response: string) => void;
+}
+
+export default function GemAI({ initialInput, model, onResponse }: GemAIProps) {
+  // Hooks
+  const [state, setState] = useState<ComponentState>();
+  const preferences = getPreferenceValues<Preferences>();
+  
+  // Event handlers
+  const handleSubmit = useCallback(async (input: string) => {
+    // Implementation
+  }, [model]);
+  
+  // Effects
+  useEffect(() => {
+    if (initialInput) {
+      handleSubmit(initialInput);
+    }
+  }, [initialInput, handleSubmit]);
+  
+  // Render
+  return (
+    <Detail
+      isLoading={state?.isLoading}
+      markdown={state?.response || ""}
+      actions={<ActionPanel>{/* Actions */}</ActionPanel>}
+    />
+  );
+}
+```
+
+### Component Naming
+```typescript
+// ✅ Описательные имена компонентов
+export default function AIResponseViewer() {}
+export default function TokenCountDisplay() {}
+export default function ModelSelector() {}
+
+// ❌ Слишком общие имена
+export default function Component() {}
+export default function Handler() {}
+```
+
+## State Management Patterns
+
+### Local State
+```typescript
+// ✅ Описательные состояния
+interface AIState {
+  isLoading: boolean;
+  response: string | null;
+  error: string | null;
+  usage: TokenUsage | null;
+}
+
+const [aiState, setAIState] = useState<AIState>({
+  isLoading: false,
+  response: null,
+  error: null,
+  usage: null
+});
+
+// ✅ Atomic updates
+setAIState(prev => ({ ...prev, isLoading: true, error: null }));
+```
+
+### Effect Management
+```typescript
+// ✅ Оптимизированные эффекты
+useEffect(() => {
+  let cancelled = false;
+  
+  async function processRequest() {
+    if (cancelled) return;
+    
+    try {
+      const result = await aiProvider.process(input);
+      if (!cancelled) {
+        setAIState(prev => ({ 
+          ...prev, 
+          isLoading: false, 
+          response: result.content 
+        }));
+      }
+    } catch (error) {
+      if (!cancelled) {
+        setAIState(prev => ({ 
+          ...prev, 
+          isLoading: false, 
+          error: error.message 
+        }));
+      }
+    }
+  }
+  
+  if (input) {
+    processRequest();
+  }
+  
+  return () => { cancelled = true; };
+}, [input, aiProvider]);
+```
+
+## Raycast UI Patterns
+
+### Detail Component Patterns
+```typescript
+// ✅ Богатый Detail с метаданными
+<Detail
+  isLoading={isLoading}
+  markdown={response}
+  metadata={
+    <Detail.Metadata>
+      <Detail.Metadata.Label title="Model" text={config.model} />
+      <Detail.Metadata.Label title="Tokens" text={`${usage?.totalTokens || 0}`} />
+      <Detail.Metadata.Label title="Cost" text={`$${usage?.cost.toFixed(4) || '0.0000'}`} />
+      <Detail.Metadata.Separator />
+      <Detail.Metadata.Label title="Provider" text={config.provider} />
+    </Detail.Metadata>
+  }
+  actions={
+    <ActionPanel>
+      <Action.CopyToClipboard 
+        title="Copy Response" 
+        content={response || ""} 
+        shortcut={{ modifiers: ["cmd"], key: "c" }}
+      />
+      <Action 
+        title="Regenerate" 
+        onAction={handleRegenerate}
+        shortcut={{ modifiers: ["cmd"], key: "r" }}
+      />
+      <Action 
+        title="New Chat" 
+        onAction={handleNewChat}
+        shortcut={{ modifiers: ["cmd"], key: "n" }}
+      />
+    </ActionPanel>
+  }
+/>
+```
+
+### Form Component Patterns
+```typescript
+// ✅ Валидация и UX формы
+<Form
+  isLoading={isProcessing}
+  actions={
+    <ActionPanel>
+      <Action.SubmitForm 
+        title="Ask AI" 
+        onSubmit={handleSubmit}
+        shortcut={{ modifiers: ["cmd"], key: "return" }}
+      />
+      <Action 
+        title="Clear" 
+        onAction={handleClear}
+        shortcut={{ modifiers: ["cmd"], key: "k" }}
+      />
+    </ActionPanel>
+  }
+>
+  <Form.TextArea
+    id="input"
+    title="Your Question"
+    placeholder="What would you like to know?"
+    value={input}
+    onChange={setInput}
+    error={inputError}
+  />
+  
+  <Form.Dropdown
+    id="model"
+    title="AI Model"
+    value={selectedModel}
+    onChange={setSelectedModel}
+  >
+    {models.map(model => (
+      <Form.Dropdown.Item
+        key={model.id}
+        value={model.id}
+        title={model.name}
+        icon={model.provider === 'openai' ? '🤖' : '💎'}
+      />
+    ))}
+  </Form.Dropdown>
+  
+  <Form.TextField
+    id="temperature"
+    title="Temperature"
+    value={temperature}
+    onChange={setTemperature}
+    info="Higher values make output more creative"
+  />
+</Form>
+```
+
+### List Component Patterns
+```typescript
+// ✅ Интерактивные списки с поиском
+<List
+  isLoading={isLoading}
+  searchBarPlaceholder="Search conversations..."
+  filtering
+  actions={
+    <ActionPanel>
+      <Action 
+        title="New Chat" 
+        onAction={handleNewChat}
+        shortcut={{ modifiers: ["cmd"], key: "n" }}
+      />
+    </ActionPanel>
+  }
+>
+  {conversations.map(conversation => (
+    <List.Item
+      key={conversation.id}
+      title={conversation.title}
+      subtitle={conversation.preview}
+      accessories={[
+        { text: conversation.messageCount.toString() },
+        { date: new Date(conversation.updatedAt) }
+      ]}
+      actions={
+        <ActionPanel>
+          <Action 
+            title="Open Chat" 
+            onAction={() => handleOpenChat(conversation.id)}
+          />
+          <Action 
+            title="Delete" 
+            onAction={() => handleDelete(conversation.id)}
+            style={Action.Style.Destructive}
+          />
+        </ActionPanel>
+      }
+    />
+  ))}
+</List>
+```
+
+## Loading and Error States
+
+### Loading Indicators
+```typescript
+// ✅ Контекстуальные загрузочные состояния
+function LoadingDetail({ message }: { message: string }) {
+  return (
+    <Detail 
+      isLoading={true}
+      markdown={`# Processing...\n\n${message}`}
+    />
+  );
+}
+
+// ✅ Прогресс для долгих операций
+function ProcessingDetail({ progress }: { progress: number }) {
+  const progressBar = '█'.repeat(Math.floor(progress / 5)) + 
+                      '░'.repeat(20 - Math.floor(progress / 5));
+  
+  return (
+    <Detail 
+      isLoading={true}
+      markdown={`# Processing Response\n\nProgress: ${progress}%\n\n\`${progressBar}\``}
+    />
+  );
+}
+```
+
+### Error Handling UI
+```typescript
+// ✅ Информативные ошибки с действиями
+function ErrorDetail({ error, onRetry }: { error: Error; onRetry: () => void }) {
+  const errorMessage = `# Error\n\n**${error.name}**\n\n${error.message}`;
+  
+  return (
+    <Detail
+      markdown={errorMessage}
+      actions={
+        <ActionPanel>
+          <Action 
+            title="Retry" 
+            onAction={onRetry}
+            shortcut={{ modifiers: ["cmd"], key: "r" }}
+          />
+          <Action 
+            title="Report Issue" 
+            onAction={handleReportIssue}
+          />
+        </ActionPanel>
+      }
+    />
+  );
+}
+```
+
+## Toast Notifications
+
+### Contextual Toasts
+```typescript
+// ✅ Информативные уведомления
+async function showProcessingToast(model: string) {
+  await showToast({
+    style: Toast.Style.Animated,
+    title: "Processing...",
+    message: `Using ${model}`
+  });
+}
+
+async function showSuccessToast(tokens: number, cost: number) {
+  await showToast({
+    style: Toast.Style.Success,
+    title: "Response Generated",
+    message: `${tokens} tokens • $${cost.toFixed(4)}`
+  });
+}
+
+async function showErrorToast(error: Error) {
+  await showToast({
+    style: Toast.Style.Failure,
+    title: "Error",
+    message: error.message,
+    primaryAction: {
+      title: "Retry",
+      onAction: handleRetry
+    }
+  });
+}
+```
+
+## Accessibility and UX
+
+### Keyboard Shortcuts
+```typescript
+// ✅ Последовательные горячие клавиши
+const shortcuts = {
+  ask: { modifiers: ["cmd"], key: "return" },
+  copy: { modifiers: ["cmd"], key: "c" },
+  regenerate: { modifiers: ["cmd"], key: "r" },
+  newChat: { modifiers: ["cmd"], key: "n" },
+  clear: { modifiers: ["cmd"], key: "k" }
+} as const;
+```
+
+### Semantic Structure
+```typescript
+// ✅ Семантичная структура контента
+function formatAIResponse(content: string): string {
+  return `# AI Response\n\n${content}\n\n---\n\n*Generated by ${model}*`;
+}
+
+// ✅ Структурированные метаданные
+function formatMetadata(usage: TokenUsage, model: string): Detail.Metadata.Props {
+  return (
+    <Detail.Metadata>
+      <Detail.Metadata.Label title="Model" text={model} />
+      <Detail.Metadata.Separator />
+      <Detail.Metadata.Label 
+        title="Input Tokens" 
+        text={usage.inputTokens.toLocaleString()} 
+      />
+      <Detail.Metadata.Label 
+        title="Output Tokens" 
+        text={usage.outputTokens.toLocaleString()} 
+      />
+      <Detail.Metadata.Label 
+        title="Total Cost" 
+        text={`$${usage.cost.toFixed(4)}`} 
+      />
+    </Detail.Metadata>
+  );
+}
+```
+
+## Performance Optimization
+
+### Memoization
+```typescript
+// ✅ Мемоизация дорогих вычислений
+const processedContent = useMemo(() => {
+  if (!response) return "";
+  return formatMarkdown(response);
+}, [response]);
+
+const actionPanel = useMemo(() => (
+  <ActionPanel>
+    <Action.CopyToClipboard content={response || ""} />
+    <Action title="Regenerate" onAction={handleRegenerate} />
+  </ActionPanel>
+), [response, handleRegenerate]);
+```
+
+### Lazy Loading
+```typescript
+// ✅ Ленивая загрузка тяжелых компонентов
+const TokenAnalyzer = lazy(() => import('./TokenAnalyzer'));
+const UsageStats = lazy(() => import('./UsageStats'));
+
+function ConditionalComponents({ showStats }: { showStats: boolean }) {
+  return (
+    <Suspense fallback={<Detail isLoading={true} />}>
+      {showStats && <UsageStats />}
+    </Suspense>
+  );
+}
+```
+
+## Best Practices
+
+### Component Design
+- Создавайте переиспользуемые компоненты
+- Используйте композицию над наследованием
+- Следуйте принципу единственной ответственности
+- Минимизируйте props drilling
+
+### User Experience
+- Всегда показывайте загрузочные состояния
+- Предоставляйте понятную обратную связь
+- Поддерживайте keyboard navigation
+- Реализуйте graceful error handling
+
+### Performance
+- Используйте мемоизацию для дорогих операций
+- Оитимизируйте re-renders с useCallback/useMemo
+- Применяйте lazy loading для больших компонентов
+- Минимизируйте bundle size

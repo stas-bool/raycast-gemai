@@ -1,5 +1,177 @@
 ---
-description:
-globs:
-alwaysApply: false
+description: 
+globs: 
+alwaysApply: true
 ---
+# AI Provider Integration Rules
+
+## Universal AI Provider Interface
+
+### Core Interface
+```typescript
+interface AIConfig {
+  provider: 'gemini' | 'openai';
+  model: string;
+  apiKey: string;
+  temperature: number;
+  maxTokens?: number;
+  stream: boolean;
+}
+
+interface AIResponse {
+  success: boolean;
+  content?: string;
+  error?: string;
+  usage?: TokenUsage;
+  finishReason?: string;
+}
+```
+
+### Provider Abstraction
+- Создавайте единый интерфейс для всех провайдеров
+- Обрабатывайте различия в API внутри провайдеров
+- Поддерживайте автоматическое переключение между моделями
+
+## Gemini Integration
+
+### Supported Models
+```typescript
+const GEMINI_MODELS = {
+  'gemini-2.0-flash-lite': { cost: { input: 0.075, output: 0.30 } },
+  'gemini-2.0-flash': { cost: { input: 0.10, output: 0.40 } },
+  'gemini-2.5-flash-preview-04-17': { cost: { input: 0.15, output: 0.60 } },
+  'gemini-2.5-flash-preview-04-17__thinking': { 
+    cost: { input: 0.15, output: 0.60, thinking: 3.50 } 
+  },
+  'gemini-2.5-pro-preview-05-06': { cost: { input: 1.25, output: 10.00 } }
+} as const;
+```
+
+### Thinking Tokens Handling
+```typescript
+// Для моделей с thinking
+if (model.includes('__thinking')) {
+  // Обработка thinking tokens отдельно
+  const thinkingTokens = response.usageMetadata.candidatesTokenCount;
+  const outputTokens = response.usageMetadata.totalTokenCount - thinkingTokens;
+}
+```
+
+### Streaming Implementation
+```typescript
+const stream = model.generateContentStream({
+  contents: messages,
+  generationConfig: {
+    temperature,
+    maxOutputTokens: maxTokens
+  }
+});
+
+for await (const chunk of stream.stream) {
+  const content = chunk.text();
+  if (content) {
+    onToken(content);
+  }
+}
+```
+
+## OpenAI Integration
+
+### Model Handling
+```typescript
+const OPENAI_MODELS = {
+  'gpt-4o': { cost: { input: 2.50, output: 10.00 }, vision: true },
+  'gpt-4o-mini': { cost: { input: 0.15, output: 0.60 }, vision: true },
+  'o1-preview': { cost: { input: 15.00, output: 60.00 }, reasoning: true },
+  'o1-mini': { cost: { input: 3.00, output: 12.00 }, reasoning: true }
+} as const;
+```
+
+### Reasoning Models (o1-series)
+```typescript
+// o1 модели не поддерживают system messages и streaming
+if (isReasoningModel(model)) {
+  const response = await openai.chat.completions.create({
+    model,
+    messages: userMessages, // Только user messages
+    stream: false, // Нет streaming для o1
+    temperature: 1 // Фиксированная температура
+  });
+}
+```
+
+### Auto-switching for Vision
+```typescript
+// Автоматическое переключение o1 → GPT-4o для изображений
+if (hasImages && isReasoningModel(model)) {
+  console.log(`Switching from ${model} to gpt-4o for image processing`);
+  model = 'gpt-4o';
+}
+```
+
+## Token Counting & Cost Calculation
+
+### Accurate Token Counting
+```typescript
+interface TokenUsage {
+  inputTokens: number;
+  outputTokens: number;
+  thinkingTokens?: number; // Для Gemini Thinking
+  reasoningTokens?: number; // Для OpenAI o1
+  totalTokens: number;
+  cost: number;
+}
+```
+
+### Fallback Estimation
+```typescript
+// Если точный подсчет недоступен
+function estimateTokens(text: string): number {
+  // Приблизительная оценка: 1 токен ≈ 4 символа
+  return Math.ceil(text.length / 4);
+}
+```
+
+## Error Handling
+
+### Provider-Specific Errors
+```typescript
+try {
+  const response = await provider.call(request);
+} catch (error) {
+  if (error.code === 'QUOTA_EXCEEDED') {
+    throw new Error('API quota exceeded. Please check your usage.');
+  } else if (error.code === 'INVALID_API_KEY') {
+    throw new Error('Invalid API key. Please check your configuration.');
+  }
+  throw error;
+}
+```
+
+### Graceful Fallbacks
+```typescript
+// Fallback между провайдерами
+try {
+  return await primaryProvider.call(request);
+} catch (error) {
+  console.warn('Primary provider failed, trying fallback');
+  return await fallbackProvider.call(request);
+}
+```
+
+## Best Practices
+
+### Configuration Management
+- Валидируйте API ключи при старте
+- Поддерживайте multiple API keys для rate limiting
+- Используйте environment variables для sensitive data
+
+### Performance Optimization
+- Кэшируйте токенизацию для повторных запросов
+- Используйте connection pooling для HTTP requests
+- Оптимизируйте размер контекста для cost efficiency
+
+### Rate Limiting
+- Реализуйте exponential backoff для retry
+- Отслеживайте usage limits по провайдерам
+- Показывайте пользователю информацию о лимитах

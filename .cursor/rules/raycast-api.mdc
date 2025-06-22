@@ -1,5 +1,144 @@
 ---
-description:
-globs:
-alwaysApply: false
+description: 
+globs: 
+alwaysApply: true
 ---
+# Raycast API Integration Rules
+
+## Core Raycast Components
+
+### Обязательные импорты
+```typescript
+import { 
+  Action, ActionPanel, Detail, Form, List, 
+  showToast, Toast, getPreferenceValues,
+  LaunchProps, environment
+} from "@raycast/api";
+```
+
+### UI Component Patterns
+
+#### Detail Component
+- Используйте для отображения результатов AI
+- Всегда включайте `isLoading` состояние
+- Добавляйте `actions` в ActionPanel
+- Поддерживайте markdown рендеринг
+
+```typescript
+<Detail
+  isLoading={isLoading}
+  markdown={response}
+  actions={
+    <ActionPanel>
+      <Action.CopyToClipboard content={response} />
+      <Action title="Regenerate" onAction={handleRegenerate} />
+    </ActionPanel>
+  }
+/>
+```
+
+#### Form Component
+- Используйте для сбора пользовательского ввода
+- Включайте валидацию через `error` props
+- Поддерживайте `onSubmit` обработчик
+
+### Preferences Integration
+```typescript
+interface Preferences {
+  geminiApiKey: string;
+  openaiApiKey: string;
+  defaultModel: string;
+  temperature: string;
+}
+
+const prefs = getPreferenceValues<Preferences>();
+```
+
+### Toast Notifications
+```typescript
+// Успешная операция
+await showToast({
+  style: Toast.Style.Success,
+  title: "Success",
+  message: "Response generated"
+});
+
+// Ошибка
+await showToast({
+  style: Toast.Style.Failure,
+  title: "Error",
+  message: error.message
+});
+```
+
+### Environment Handling
+```typescript
+// Проверка окружения
+if (environment.commandName === "ask") {
+  // Специфичная логика для команды
+}
+
+// Поддержка аргументов
+export default function Command(props: LaunchProps<Arguments>) {
+  const { input } = props.arguments;
+  // Обработка входных данных
+}
+```
+
+## Command Structure
+
+### Стандартная структура команды
+```typescript
+interface Arguments {
+  input?: string;
+}
+
+export default function CommandName(props: LaunchProps<Arguments>) {
+  const [state, setState] = useState<CommandState>();
+  const preferences = getPreferenceValues<Preferences>();
+  
+  const handleSubmit = useCallback(async (values: FormValues) => {
+    // Логика обработки
+  }, []);
+  
+  return (
+    <Form
+      actions={<ActionPanel><Action.SubmitForm onSubmit={handleSubmit} /></ActionPanel>}
+    >
+      {/* Form fields */}
+    </Form>
+  );
+}
+```
+
+### Error Handling Patterns
+```typescript
+try {
+  const result = await aiProvider.process(input);
+  // Success handling
+} catch (error) {
+  await showToast({
+    style: Toast.Style.Failure,
+    title: "AI Error",
+    message: error instanceof Error ? error.message : "Unknown error"
+  });
+}
+```
+
+## Best Practices
+
+### Performance
+- Используйте `useCallback` для event handlers
+- Применяйте `useMemo` для дорогих вычислений
+- Избегайте излишних re-renders
+
+### User Experience
+- Всегда показывайте loading состояния
+- Предоставляйте понятные error messages
+- Включайте копирование результатов в буфер обмена
+- Поддерживайте keyboard shortcuts
+
+### Accessibility
+- Используйте семантически правильные заголовки
+- Добавляйте `title` и `subtitle` для List items
+- Обеспечивайте keyboard navigation

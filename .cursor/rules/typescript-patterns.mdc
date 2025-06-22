@@ -1,5 +1,270 @@
 ---
-description:
-globs:
-alwaysApply: false
+description: 
+globs: 
+alwaysApply: true
 ---
+# TypeScript Development Patterns
+
+## Type Safety Rules
+
+### Strict TypeScript Configuration
+```json
+{
+  "compilerOptions": {
+    "strict": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true
+  }
+}
+```
+
+### Avoid Dangerous Types
+```typescript
+// ❌ Избегайте
+const data: any = response;
+const config: object = settings;
+
+// ✅ Используйте
+const data: AIResponse = response;
+const config: AIConfig = settings;
+const unknown: unknown = response; // Предпочтительнее any
+```
+
+## Interface and Type Definitions
+
+### Naming Conventions
+```typescript
+// Интерфейсы с суффиксом (для props)
+interface CommandProps {
+  input: string;
+  model: string;
+}
+
+// Типы без суффикса (для данных)
+type AIProvider = 'gemini' | 'openai';
+type ModelName = keyof typeof SUPPORTED_MODELS;
+```
+
+### Prefer Interfaces Over Types
+```typescript
+// ✅ Для объектов используйте interfaces
+interface AIConfig {
+  provider: AIProvider;
+  model: string;
+  apiKey: string;
+}
+
+// ✅ Для unions используйте types
+type ResponseStatus = 'loading' | 'success' | 'error';
+```
+
+### Strict Object Typing
+```typescript
+// ❌ Слишком общий тип
+const processData = (data: Record<string, any>) => {};
+
+// ✅ Конкретные типы
+interface ProcessedData {
+  content: string;
+  tokens: number;
+  cost: number;
+}
+
+const processData = (data: ProcessedData) => {};
+```
+
+## Function Patterns
+
+### Function Declarations
+```typescript
+// ✅ Используйте function keyword для основных функций
+function buildAIConfig(preferences: Preferences): AIConfig {
+  return {
+    provider: preferences.provider,
+    model: preferences.model,
+    apiKey: preferences.apiKey
+  };
+}
+
+// ✅ Arrow functions для коллбеков и хуков
+const handleSubmit = useCallback(async (input: string) => {
+  // Implementation
+}, [dependencies]);
+```
+
+### Return Types
+```typescript
+// ✅ Всегда указывайте возвращаемые типы для публичных функций
+function calculateCost(tokens: TokenUsage, model: string): number {
+  const modelConfig = getModelConfig(model);
+  return tokens.inputTokens * modelConfig.inputCost;
+}
+
+// ✅ Для сложных возвращаемых типов
+type ProcessResult = {
+  success: true;
+  data: AIResponse;
+} | {
+  success: false;
+  error: string;
+};
+
+function processRequest(input: string): Promise<ProcessResult> {
+  // Implementation
+}
+```
+
+### Error Handling Types
+```typescript
+// ✅ Типизированные ошибки
+class AIProviderError extends Error {
+  constructor(
+    message: string,
+    public provider: AIProvider,
+    public code?: string
+  ) {
+    super(message);
+    this.name = 'AIProviderError';
+  }
+}
+
+// ✅ Result pattern для ошибок
+type Result<T, E = Error> = 
+  | { success: true; data: T }
+  | { success: false; error: E };
+```
+
+## Advanced Patterns
+
+### Generic Types
+```typescript
+// ✅ Для переиспользуемых компонентов
+interface APIResponse<T> {
+  data: T;
+  status: number;
+  message: string;
+}
+
+function makeRequest<T>(
+  endpoint: string
+): Promise<APIResponse<T>> {
+  // Implementation
+}
+```
+
+### Utility Types
+```typescript
+// ✅ Используйте встроенные utility types
+type PartialConfig = Partial<AIConfig>;
+type RequiredPrefs = Required<Pick<Preferences, 'apiKey' | 'model'>>;
+type ModelKeys = keyof typeof SUPPORTED_MODELS;
+
+// ✅ Создавайте собственные utility types
+type NonNullable<T> = T extends null | undefined ? never : T;
+type APIMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
+```
+
+### Conditional Types
+```typescript
+// ✅ Для сложной логики типов
+type ModelConfig<T extends string> = 
+  T extends `${infer Provider}-${infer Model}`
+    ? { provider: Provider; model: Model }
+    : { provider: 'unknown'; model: T };
+
+// ✅ Для проверки свойств
+type HasVision<T> = T extends { vision: true } ? true : false;
+```
+
+## React Component Patterns
+
+### Component Props
+```typescript
+// ✅ Интерфейс для props компонента
+interface AIResponseProps {
+  response: string;
+  isLoading: boolean;
+  onRegenerate: () => void;
+  className?: string; // Опциональные props
+}
+
+// ✅ Функциональный компонент
+function AIResponse({ response, isLoading, onRegenerate }: AIResponseProps) {
+  // Component implementation
+}
+
+// ❌ Не используйте React.FC
+const AIResponse: React.FC<AIResponseProps> = ({ response }) => {};
+```
+
+### Hook Typing
+```typescript
+// ✅ Типизированные хуки
+function useAIProvider(config: AIConfig): {
+  response: string | null;
+  isLoading: boolean;
+  error: Error | null;
+  execute: (input: string) => Promise<void>;
+} {
+  // Hook implementation
+}
+
+// ✅ Generic хуки
+function useAPI<T>(endpoint: string): {
+  data: T | null;
+  loading: boolean;
+  error: Error | null;
+} {
+  // Implementation
+}
+```
+
+## Configuration and Constants
+
+### Const Assertions
+```typescript
+// ✅ Для readonly объектов
+const SUPPORTED_MODELS = {
+  'gpt-4o': { cost: 0.005, vision: true },
+  'gemini-pro': { cost: 0.001, vision: false }
+} as const;
+
+type ModelName = keyof typeof SUPPORTED_MODELS;
+```
+
+### Environment Variables
+```typescript
+// ✅ Типизированный доступ к env
+interface EnvironmentConfig {
+  GEMINI_API_KEY: string;
+  OPENAI_API_KEY: string;
+  DEFAULT_MODEL: string;
+}
+
+function getEnvironmentConfig(): EnvironmentConfig {
+  return {
+    GEMINI_API_KEY: process.env.GEMINI_API_KEY || '',
+    OPENAI_API_KEY: process.env.OPENAI_API_KEY || '',
+    DEFAULT_MODEL: process.env.DEFAULT_MODEL || 'gpt-4o'
+  };
+}
+```
+
+## Best Practices
+
+### Code Organization
+- Группируйте связанные типы в отдельные файлы
+- Используйте index.ts для re-exports
+- Создавайте utility types для переиспользования
+
+### Performance
+- Используйте `const assertions` для неизменяемых данных
+- Применяйте `readonly` для массивов и объектов
+- Минимизируйте complex conditional types
+
+### Documentation
+- Добавляйте JSDoc комментарии для публичных API
+- Документируйте сложные типы и их использование
+- Объясняйте назначение utility types
