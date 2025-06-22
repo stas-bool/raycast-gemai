@@ -159,6 +159,174 @@ try {
 }
 ```
 
+## Backward Compatibility
+
+### Обратная совместимость
+- **Интерфейс GemAIConfig должен оставаться функциональным** для существующего кода
+- **Устаревшие команды должны работать без изменений** - не ломайте существующий API
+- **Типобезопасность**: Убедитесь что AIConfig можно привести к GemAIConfig когда уместно
+
+### Interface Compatibility
+```typescript
+// ✅ Правильно: GemAIConfig расширяет или совместим с AIConfig
+interface GemAIConfig extends Omit<AIConfig, 'provider'> {
+  provider: 'gemini';
+  // Дополнительные Gemini-специфичные поля
+  safetySettings?: SafetySettings;
+  generationConfig?: GenerationConfig;
+}
+
+// ✅ Type guards для безопасного приведения типов
+function isGemAIConfig(config: AIConfig): config is GemAIConfig {
+  return config.provider === 'gemini';
+}
+
+// ✅ Функции должны принимать оба типа
+function processConfig(config: AIConfig | GemAIConfig): ProcessedConfig {
+  if (isGemAIConfig(config)) {
+    // Специфичная логика для GemAI
+    return processGemAIConfig(config);
+  }
+  // Общая логика для AIConfig
+  return processGenericConfig(config);
+}
+```
+
+### Migration Strategy
+```typescript
+// ✅ Поддержка устаревших интерфейсов с предупреждениями
+/** @deprecated Use AIConfig instead. Will be removed in v2.0.0 */
+interface LegacyGemAIConfig {
+  apiKey: string;
+  model: string;
+  // ... устаревшие поля
+}
+
+// ✅ Adapter pattern для совместимости
+function adaptLegacyConfig(legacy: LegacyGemAIConfig): AIConfig {
+  console.warn('LegacyGemAIConfig is deprecated. Please migrate to AIConfig.');
+  return {
+    provider: 'gemini',
+    apiKey: legacy.apiKey,
+    model: legacy.model,
+    temperature: 0.7, // Значение по умолчанию
+    stream: true
+  };
+}
+```
+
+### Breaking Changes Prevention
+- **Никогда не удаляйте публичные методы** без deprecation периода
+- **Добавляйте новые поля как опциональные** в существующие интерфейсы
+- **Используйте union types** для поддержки множественных форматов
+- **Документируйте migration path** для каждого breaking change
+
+```typescript
+// ✅ Правильно: расширение без breaking changes
+interface AIConfigV2 extends AIConfig {
+  // Новые поля как опциональные
+  maxRetries?: number;
+  timeout?: number;
+  customHeaders?: Record<string, string>;
+}
+
+// ❌ Неправильно: изменение существующих полей
+interface AIConfigBroken {
+  provider: 'gemini' | 'openai' | 'claude'; // Добавление нового значения - OK
+  // model: ModelName; // Изменение типа - BREAKING CHANGE!
+}
+```
+
+## Critical Testing Scenarios
+
+### Критичные тестовые сценарии
+1. **Скриншот + OpenAI**: Проверь что screenshotToMarkdown работает с GPT-4o
+2. **Reasoning + Vision**: Тестируй автопереключение с o1-mini на GPT-4o с изображениями
+3. **Статистика токенов**: Проверяй точный подсчет токенов для обоих провайдеров
+4. **Цены моделей**: Убедись что расчет стоимости соответствует официальным ценам API
+
+### Production Quality Requirements
+**Помни**: Это продакшен расширение Raycast используемое реальными пользователями. Приоритет:
+- **Стабильность** - все функции должны работать надежно
+- **Четкая обратная связь с пользователем** - понятные ошибки и статусы
+- **Плавная работа всех поддерживаемых AI моделей** - без багов и зависаний
+
+### Test Cases Implementation
+```typescript
+// ✅ Тест скриншота с OpenAI
+async function testScreenshotWithOpenAI() {
+  const config: AIConfig = {
+    provider: 'openai',
+    model: 'gpt-4o',
+    apiKey: process.env.OPENAI_API_KEY,
+    temperature: 0.7,
+    stream: true
+  };
+  
+  const result = await screenshotToMarkdown(mockScreenshot, config);
+  expect(result.success).toBe(true);
+  expect(result.content).toContain('# '); // Должен содержать markdown
+}
+
+// ✅ Тест автопереключения с o1 на GPT-4o для изображений
+async function testReasoningVisionFallback() {
+  const config: AIConfig = {
+    provider: 'openai',
+    model: 'o1-mini',
+    apiKey: process.env.OPENAI_API_KEY,
+    temperature: 1,
+    stream: false
+  };
+  
+  const result = await processWithImage(mockImage, config);
+  // Должно автоматически переключиться на gpt-4o
+  expect(result.modelUsed).toBe('gpt-4o');
+  expect(result.success).toBe(true);
+}
+
+// ✅ Тест точности подсчета токенов
+async function testTokenCounting() {
+  const testCases = [
+    { provider: 'gemini', model: 'gemini-2.0-flash' },
+    { provider: 'openai', model: 'gpt-4o' },
+    { provider: 'openai', model: 'o1-preview' }
+  ];
+  
+  for (const testCase of testCases) {
+    const result = await makeRequest(testInput, testCase);
+    expect(result.usage.inputTokens).toBeGreaterThan(0);
+    expect(result.usage.outputTokens).toBeGreaterThan(0);
+    expect(result.usage.totalTokens).toBe(
+      result.usage.inputTokens + result.usage.outputTokens
+    );
+    expect(result.usage.cost).toBeGreaterThan(0);
+  }
+}
+
+// ✅ Тест соответствия официальным ценам
+async function testPriceAccuracy() {
+  const officialPrices = {
+    'gpt-4o': { input: 2.50, output: 10.00 },
+    'gemini-2.0-flash': { input: 0.10, output: 0.40 }
+  };
+  
+  for (const [model, prices] of Object.entries(officialPrices)) {
+    const modelConfig = getModelConfig(model);
+    expect(modelConfig.cost.input).toBe(prices.input);
+    expect(modelConfig.cost.output).toBe(prices.output);
+  }
+}
+```
+
+### Manual Testing Checklist
+- [ ] Создание скриншота через screenshotToMarkdown с GPT-4o
+- [ ] Отправка изображения с o1-mini (должно переключиться на GPT-4o)
+- [ ] Проверка статистики токенов в stats.tsx
+- [ ] Сравнение расчетной стоимости с официальными ценами
+- [ ] Тестирование всех команд с обоими провайдерами
+- [ ] Проверка обработки ошибок API
+- [ ] Тестирование потоковой передачи ответов
+
 ## Best Practices
 
 ### Configuration Management
@@ -170,6 +338,57 @@ try {
 - Кэшируйте токенизацию для повторных запросов
 - Используйте connection pooling для HTTP requests
 - Оптимизируйте размер контекста для cost efficiency
+
+### Измерение времени
+- **Время первого ответа**: измеряй от начала запроса до первого чанка контента
+- **НИКОГДА не измеряй время до начала стриминга** - это просто инициализация
+- **Общее время**: полная продолжительность стриминга включая финальную обработку
+
+```typescript
+// ✅ Правильное измерение времени
+interface TimingMetrics {
+  requestStart: number;
+  firstChunkTime?: number;
+  streamEnd: number;
+  totalDuration: number;
+  timeToFirstToken: number;
+}
+
+async function measureStreamingResponse(provider: AIProvider, input: string): Promise<TimingMetrics> {
+  const requestStart = Date.now();
+  let firstChunkTime: number | undefined;
+  
+  const stream = await provider.generateStream(input);
+  
+  for await (const chunk of stream) {
+    if (chunk.content && !firstChunkTime) {
+      // ✅ Измеряем время до первого контента, НЕ до начала стрима
+      firstChunkTime = Date.now();
+    }
+    
+    // Обработка чанка...
+  }
+  
+  const streamEnd = Date.now();
+  
+  return {
+    requestStart,
+    firstChunkTime,
+    streamEnd,
+    totalDuration: streamEnd - requestStart,
+    timeToFirstToken: firstChunkTime ? firstChunkTime - requestStart : 0
+  };
+}
+
+// ❌ Неправильно: измерение времени инициализации
+async function incorrectTiming(provider: AIProvider, input: string) {
+  const start = Date.now();
+  const stream = await provider.generateStream(input);
+  const initTime = Date.now() - start; // ❌ Это НЕ время ответа!
+  
+  // Это просто время инициализации стрима
+}
+```
 
 ### Rate Limiting
 - Реализуйте exponential backoff для retry
