@@ -2,7 +2,7 @@ import * as fs from "fs";
 import * as os from "os";
 import * as path from "path";
 import { getCmd } from "./commands"; // Import getCmd here
-import { allModels } from "./models";
+import { allModels, getModelInfo } from "./models";
 import { GroupStats, HistoryItem, RequestStats } from "./types"; // Import GroupStats
 
 // Export time constants for use in stats calculations
@@ -223,8 +223,8 @@ export function getPeriodKey(timestamp: number, period: "hour" | "day" | "week" 
   }
 }
 
-export function calculatePricePerMillionTokens(modelKey: string, stats: RequestStats): number {
-  const model = allModels[modelKey];
+export function calculatePricePerMillionTokens(modelKey: string, stats: RequestStats, prefs?: any): number {
+  const model = getModelInfo(modelKey, prefs);
   if (!model) {
     return 0; // Cannot calculate cost if model info is missing
   }
@@ -283,7 +283,7 @@ export function getDetailedSubGroupStats(
       } else {
         // groupByKey === 'model'
         // Get friendly model name using the key (which is the model ID) or use key if not found
-        name = allModels[key]?.name || key;
+        name = getModelInfo(key).name;
       }
 
       detailedStats.push({

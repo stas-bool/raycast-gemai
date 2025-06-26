@@ -3,7 +3,6 @@ import { showFailureToast } from "@raycast/utils";
 import { useEffect, useState } from "react";
 import { ChatMessage } from "./types";
 
-
 const STORAGE_KEY = "gemai_chat_messages";
 const HISTORY_SETTINGS_KEY = "gemai_chat_history_settings";
 
@@ -80,20 +79,15 @@ export function useChatMessages() {
   };
 
   const addMessage = async (message: ChatMessage) => {
-    setMessages(prevMessages => {
+    setMessages((prevMessages) => {
       const updatedMessages = [...prevMessages, message];
       saveChatMessagesToStorage(updatedMessages);
       return updatedMessages;
     });
   };
 
-  const updateMessage = async (
-    messageId: string,
-    content: string,
-    isStreaming = false,
-    requestStats?: any
-  ) => {
-    setMessages(prevMessages => {
+  const updateMessage = async (messageId: string, content: string, isStreaming = false, requestStats?: any) => {
+    setMessages((prevMessages) => {
       const updatedMessages = prevMessages.map((msg) => {
         if (msg.id === messageId) {
           // Всегда обновляем requestStats если они переданы

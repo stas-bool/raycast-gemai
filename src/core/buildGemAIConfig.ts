@@ -1,7 +1,13 @@
 import { HarmBlockThreshold, HarmCategory } from "@google/genai";
-import { allModels } from "./models";
+import { allModels, getModelInfo } from "./models";
 import { GemAIConfig, RaycastProps } from "./types";
-import { buildRealPrompt, getCurrentModel, getTemperature, getConfigPreferences, getHistoryMessagesCount } from "./configUtils";
+import {
+  buildRealPrompt,
+  getCurrentModel,
+  getTemperature,
+  getConfigPreferences,
+  getHistoryMessagesCount,
+} from "./configUtils";
 
 const thinkingModels = [
   "gemini-2.5-flash-preview-04-17",
@@ -14,7 +20,7 @@ export function buildGemAIConfig(actionName: string, props: RaycastProps, fallba
 
   const currentModelName = getCurrentModel(prefs);
   const [isCustomPrompt, realSystemPrompt] = buildRealPrompt(actionName, prefs, fallbackPrompt);
-  const modelInfo = allModels[currentModelName];
+  const modelInfo = getModelInfo(currentModelName, prefs);
   const thinkingConfig = modelInfo ? { includeThoughts: false, thinkingBudget: modelInfo.thinking_budget } : undefined;
 
   const config: GemAIConfig = {
@@ -22,7 +28,7 @@ export function buildGemAIConfig(actionName: string, props: RaycastProps, fallba
     model: {
       geminiApiKey: prefs.geminiApiKey.trim(),
       modelName: currentModelName,
-      modelNameUser: (isCustomPrompt ? "💭 " : "") + (modelInfo?.name ?? currentModelName),
+      modelNameUser: (isCustomPrompt ? "💭 " : "") + modelInfo.name,
       maxOutputTokens: 32000,
       ...(thinkingModels.includes(currentModelName) && thinkingConfig && { thinkingConfig }),
       temperature: getTemperature(prefs),

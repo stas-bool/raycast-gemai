@@ -5,7 +5,7 @@ import mime from "mime-types";
 import OpenAI from "openai";
 import * as path from "path";
 import { AIConfig, RequestStats } from "./types";
-import { allModels } from "./models";
+import { allModels, getModelInfo } from "./models";
 
 // Universal AI Provider interface
 export interface AIProvider {
@@ -320,7 +320,7 @@ function switchToVisionModel(config: AIConfig): AIConfig {
   }
 
   // Switch to GPT-4o for vision tasks
-  const visionModel = allModels["gpt-4o"];
+  const visionModel = getModelInfo("gpt-4o");
   if (!visionModel) {
     throw new Error("GPT-4o model not found for vision fallback");
   }

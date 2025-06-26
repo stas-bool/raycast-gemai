@@ -1,34 +1,10 @@
 import { HarmBlockThreshold, HarmCategory } from "@google/genai";
 import { buildGemAIConfig } from "./buildGemAIConfig";
 import { buildOpenAIConfig } from "./buildOpenAIConfig";
-import { allModels } from "./models";
+import { allModels, getModelInfo, detectProviderFromModelName } from "./models";
 import { AIConfig, GemAIConfig, RaycastProps } from "./types";
 import { getCurrentModel, getConfigPreferences, getTemperature, getHistoryMessagesCount } from "./configUtils";
 import { CMD_COUNT_TOKENS, CMD_HISTORY, CMD_STATS } from "./commands";
-
-/**
- * Determines provider for custom models based on common naming patterns
- */
-function detectProviderFromModelName(modelName: string): "openai" | "gemini" {
-  const lowerModelName = modelName.toLowerCase();
-
-  // OpenAI model patterns
-  if (
-    lowerModelName.includes("gpt") ||
-    lowerModelName.includes("o1") ||
-    lowerModelName.includes("chatgpt") ||
-    lowerModelName.includes("claude") || // Anthropic models often work with OpenAI API
-    lowerModelName.includes("llama") || // Local LLaMA deployments
-    lowerModelName.includes("mistral") || // Mistral models
-    lowerModelName.includes("azure")
-  ) {
-    // Azure OpenAI
-    return "openai";
-  }
-
-  // Default to gemini for backward compatibility
-  return "gemini";
-}
 
 /**
  * List of utility commands that don't need complex system prompts
@@ -41,7 +17,7 @@ const UTILITY_COMMANDS = [CMD_COUNT_TOKENS, CMD_HISTORY, CMD_STATS];
 function buildUtilityConfig(actionName: string, props: RaycastProps, provider: "openai" | "gemini"): AIConfig {
   const prefs = getConfigPreferences();
   const currentModelName = getCurrentModel(prefs);
-  const modelInfo = allModels[currentModelName];
+  const modelInfo = getModelInfo(currentModelName, prefs);
 
   const config: AIConfig = {
     provider: provider,
@@ -54,7 +30,7 @@ function buildUtilityConfig(actionName: string, props: RaycastProps, provider: "
     model: {
       systemPrompt: "", // No system prompt for utility commands
       modelName: currentModelName,
-      modelNameUser: modelInfo?.name ?? currentModelName,
+      modelNameUser: modelInfo.name,
       maxOutputTokens: 4096, // Minimal for utility commands
       temperature: getTemperature(prefs),
       geminiApiKey: prefs.geminiApiKey?.trim(),
@@ -101,16 +77,8 @@ export function buildAIConfig(
   const currentModelName = getCurrentModel(prefs);
 
   // Get provider from model definition or detect for custom models
-  const modelInfo = allModels[currentModelName];
-  let provider: "openai" | "gemini";
-
-  if (modelInfo) {
-    // Use defined model provider
-    provider = modelInfo.provider || "gemini";
-  } else {
-    // For custom models, detect provider based on model name patterns
-    provider = detectProviderFromModelName(currentModelName);
-  }
+  const modelInfo = getModelInfo(currentModelName, prefs);
+  const provider = modelInfo.provider || "gemini";
 
   // Special handling for utility commands - create minimal configuration
   if (UTILITY_COMMANDS.includes(actionName)) {

@@ -1,6 +1,12 @@
-import { allModels } from "./models";
+import { allModels, getModelInfo } from "./models";
 import { AIConfig, RaycastProps } from "./types";
-import { buildRealPrompt, getCurrentModel, getTemperature, getConfigPreferences, getHistoryMessagesCount } from "./configUtils";
+import {
+  buildRealPrompt,
+  getCurrentModel,
+  getTemperature,
+  getConfigPreferences,
+  getHistoryMessagesCount,
+} from "./configUtils";
 
 // OpenAI reasoning models (o-series)
 const reasoningModels = ["o1-preview", "o1-mini"];
@@ -13,7 +19,7 @@ export function buildOpenAIConfig(actionName: string, props: RaycastProps, fallb
 
   // Configure reasoning for o-series models
   const isReasoningModel = reasoningModels.includes(currentModelName) || currentModelName.startsWith("o1");
-  const modelInfo = allModels[currentModelName];
+  const modelInfo = getModelInfo(currentModelName, prefs);
   const thinkingConfig =
     isReasoningModel && modelInfo
       ? {
@@ -31,7 +37,7 @@ export function buildOpenAIConfig(actionName: string, props: RaycastProps, fallb
 
       // Universal fields
       modelName: currentModelName,
-      modelNameUser: (isCustomPrompt ? "💭 " : "") + (modelInfo?.name ?? currentModelName),
+      modelNameUser: (isCustomPrompt ? "💭 " : "") + modelInfo.name,
       maxOutputTokens: isReasoningModel ? 16000 : 4000, // Reasoning models need more tokens due to thinking process
       temperature: isReasoningModel ? 1 : getTemperature(prefs), // Reasoning models require temperature = 1
       systemPrompt: realSystemPrompt,

@@ -1,14 +1,4 @@
-import {
-  Action,
-  ActionPanel,
-  Icon,
-  Keyboard,
-  List,
-  showToast,
-  Toast,
-  Color,
-  confirmAlert,
-} from "@raycast/api";
+import { Action, ActionPanel, Icon, Keyboard, List, showToast, Toast, Color, confirmAlert } from "@raycast/api";
 import React, { useState, useEffect } from "react";
 import { createAIProvider } from "./aiProvider";
 import { useChatMessages } from "./chatHistory";
@@ -20,7 +10,8 @@ interface ChatRoomProps {
 }
 
 export default function ChatRoom({ aiConfig }: ChatRoomProps) {
-  const { messages, isLoading, addMessage, updateMessage, clearMessages, historySettings, updateHistorySettings } = useChatMessages();
+  const { messages, isLoading, addMessage, updateMessage, clearMessages, historySettings, updateHistorySettings } =
+    useChatMessages();
   const [isGenerating, setIsGenerating] = useState(false);
   const [localMessages, setLocalMessages] = useState<ChatMessage[]>([]);
   const [searchText, setSearchText] = useState("");
@@ -75,13 +66,13 @@ export default function ChatRoom({ aiConfig }: ChatRoomProps) {
     };
 
     await addMessage(userMessage);
-    
+
     // Select the user message first
     setSelectedMessageId(userMessage.id);
 
     // Small delay to ensure user message is added before assistant placeholder
     // TODO: Consider removing this delay if state updates work correctly
-    await new Promise(resolve => setTimeout(resolve, 10));
+    await new Promise((resolve) => setTimeout(resolve, 10));
 
     // Create assistant message placeholder
     const assistantMessageId = `msg_${Date.now()}_assistant`;
@@ -109,8 +100,8 @@ export default function ChatRoom({ aiConfig }: ChatRoomProps) {
       // We need to manually add the user message since state might not be updated yet
       const currentMessages = [...messages, userMessage];
       const historyCount = historySettings.historyMessagesCount;
-      const contextMessages = currentMessages.slice(-historyCount).filter(msg => msg.id !== assistantMessageId);
-      
+      const contextMessages = currentMessages.slice(-historyCount).filter((msg) => msg.id !== assistantMessageId);
+
       // Build conversation context
       let conversationContext = "";
       if (contextMessages.length > 0) {
@@ -138,7 +129,7 @@ export default function ChatRoom({ aiConfig }: ChatRoomProps) {
         if (chunk.text) {
           responseText += chunk.text;
           chunkCount++;
-          
+
           // Update UI every 3 chunks or if we got significant content to avoid too frequent updates
           if (chunkCount % 3 === 0 || responseText.length > chunkCount * 10) {
             updateMessage(assistantMessageId, responseText, true);
@@ -149,20 +140,25 @@ export default function ChatRoom({ aiConfig }: ChatRoomProps) {
           usageMetadata = chunk.usageMetadata;
         }
       }
-      
+
       // Make sure we show the final content
       if (responseText) {
         updateMessage(assistantMessageId, responseText, true);
       }
 
       // Finalize the message with stats
-      const requestStats: RequestStats = await provider.getTokenStats(aiConfig, usageMetadata, conversationContext, undefined);
+      const requestStats: RequestStats = await provider.getTokenStats(
+        aiConfig,
+        usageMetadata,
+        conversationContext,
+        undefined,
+      );
       requestStats.firstRespTime = firstRespTime || 0;
       requestStats.totalTime = (Date.now() - startTime) / 1000;
 
       // Update the assistant message with final content and stats
       await updateMessage(assistantMessageId, responseText, false, requestStats);
-      
+
       // Auto-select the conversation pair (using assistant message ID)
       setSelectedMessageId(assistantMessageId);
 
@@ -302,18 +298,19 @@ export default function ChatRoom({ aiConfig }: ChatRoomProps) {
             minute: "2-digit",
           });
           const title = `💬 ${time}`;
-          
+
           // Create combined markdown for detail view
-          const assistantName = pair.assistant?.model 
+          const assistantName = pair.assistant?.model
             ? `🤖 ${aiConfig.model.modelNameUser || pair.assistant.model}`
             : `🤖 ${aiConfig.model.modelNameUser}`;
-          
+
           // Add provider info to assistant name
-          const providerName = aiConfig.provider === 'openai' ? 'OpenAI' : 'Gemini';
+          const providerName = aiConfig.provider === "openai" ? "OpenAI" : "Gemini";
           const assistantNameWithProvider = `${assistantName} (${providerName})`;
-          
+
           // Add token information to assistant response if available
-          let assistantContent = pair.assistant?.content || (isGeneratingPair ? "*Generating...*" : "*Waiting for response...*");
+          let assistantContent =
+            pair.assistant?.content || (isGeneratingPair ? "*Generating...*" : "*Waiting for response...*");
           if (pair.assistant?.requestStats && pair.assistant.role === "assistant") {
             const cost = calculateItemCost({
               model: pair.assistant.model || "unknown",
@@ -324,12 +321,12 @@ export default function ChatRoom({ aiConfig }: ChatRoomProps) {
               response: pair.assistant.content,
               isAttachmentFile: false,
             });
-            
+
             assistantContent += `\n\n---\n\n*💡 **Stats:** ${pair.assistant.requestStats.total} tokens • $${cost.toFixed(4)} • ${pair.assistant.requestStats.totalTime.toFixed(1)}s*`;
           }
-          
+
           const combinedMarkdown = `## 👤 You\n\n${pair.user.content}\n\n---\n\n## ${assistantNameWithProvider}\n\n${assistantContent}`;
-          
+
           return (
             <List.Item
               id={pairId}
@@ -337,11 +334,7 @@ export default function ChatRoom({ aiConfig }: ChatRoomProps) {
               title={title}
               subtitle={pair.user.content.substring(0, 50) + "..."}
               accessories={pair.assistant ? getMessageAccessories(pair.assistant) : []}
-              detail={
-                <List.Item.Detail 
-                  markdown={combinedMarkdown} 
-                />
-              }
+              detail={<List.Item.Detail markdown={combinedMarkdown} />}
               actions={
                 !isGenerating ? (
                   <ActionPanel>
