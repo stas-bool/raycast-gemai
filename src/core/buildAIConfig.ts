@@ -14,7 +14,7 @@ const UTILITY_COMMANDS = [CMD_COUNT_TOKENS, CMD_HISTORY, CMD_STATS];
 /**
  * Creates a minimal AI configuration for utility commands
  */
-function buildUtilityConfig(actionName: string, props: RaycastProps, provider: "openai" | "gemini"): AIConfig {
+function buildUtilityConfig(actionName: string, props: RaycastProps, provider: "openai" | "gemini" | "openwebui"): AIConfig {
   const prefs = getConfigPreferences();
   const currentModelName = getCurrentModel(prefs);
   const modelInfo = getModelInfo(currentModelName, prefs);
@@ -88,7 +88,11 @@ export function buildAIConfig(
   // Route to appropriate provider configuration for regular commands
   switch (provider) {
     case "openai":
-      return buildOpenAIConfig(actionName, props, fallbackPrompt);
+      return buildOpenAIConfig(actionName, props, fallbackPrompt, "openai");
+
+    case "openwebui":
+      // OpenWebUI uses the same configuration as OpenAI but with different provider
+      return buildOpenAIConfig(actionName, props, fallbackPrompt, "openwebui");
 
     case "gemini":
     default:

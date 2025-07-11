@@ -11,7 +11,7 @@ import {
 // OpenAI reasoning models (o-series)
 const reasoningModels = ["o1-preview", "o1-mini"];
 
-export function buildOpenAIConfig(actionName: string, props: RaycastProps, fallbackPrompt?: string): AIConfig {
+export function buildOpenAIConfig(actionName: string, props: RaycastProps, fallbackPrompt?: string, provider: "openai" | "openwebui" = "openai"): AIConfig {
   const prefs = getConfigPreferences();
 
   const currentModelName = getCurrentModel(prefs);
@@ -29,7 +29,7 @@ export function buildOpenAIConfig(actionName: string, props: RaycastProps, fallb
       : undefined;
 
   const config: AIConfig = {
-    provider: "openai",
+    provider: provider,
     model: {
       // OpenAI-specific fields
       openaiApiKey: prefs.openaiApiKey?.trim(),

@@ -19,15 +19,22 @@ export interface ModelInfo {
   price_output: number;
   price_output_thinking: number;
   thinking_budget: number;
-  provider?: "gemini" | "openai";
+  provider?: "gemini" | "openai" | "openwebui";
   supportsVision?: boolean;
 }
 
 /**
  * Determines provider for custom models based on common naming patterns
  */
-export function detectProviderFromModelName(modelName: string): "openai" | "gemini" {
+export function detectProviderFromModelName(modelName: string): "openai" | "gemini" | "openwebui" {
   const lowerModelName = modelName.toLowerCase();
+
+  // OpenWebUI model patterns (check first as it's more specific)
+  if (
+    lowerModelName.includes("google.models")
+  ) {
+    return "openwebui";
+  }
 
   // OpenAI model patterns
   if (
@@ -180,5 +187,16 @@ export const allModels: Record<string, ModelInfo> = {
     thinking_budget: 65536, // 65K thinking tokens budget for reasoning model
     provider: "openai",
     supportsVision: false,
+  },
+  // OpenWebUI Models
+  "google.models/gemini-2.5-flash": {
+    id: "google.models/gemini-2.5-flash",
+    name: "Gemini 2.0 Flash (OpenWebUI)",
+    price_input: 0.15,
+    price_output: 0.6,
+    price_output_thinking: 3.5,
+    thinking_budget: 0,
+    provider: "openwebui",
+    supportsVision: true,
   },
 };

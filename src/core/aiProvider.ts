@@ -141,7 +141,7 @@ export class GeminiProvider implements AIProvider {
 
 // OpenAI Provider Implementation
 export class OpenAIProvider implements AIProvider {
-  private client: OpenAI;
+  protected client: OpenAI;
 
   constructor(apiKey: string, baseURL?: string) {
     this.client = new OpenAI({
@@ -311,6 +311,88 @@ export class OpenAIProvider implements AIProvider {
   }
 }
 
+// OpenWebUI Provider Implementation - inherits from OpenAIProvider
+export class OpenWebUIProvider extends OpenAIProvider {
+  async *sendRequest(originalConfig: AIConfig, query?: string, attachment?: any): AsyncGenerator<any, void, unknown> {
+    let config = originalConfig;
+
+    // Check if this is a reasoning model with an image attachment
+    const isReasoningModel = config.model.modelName.startsWith("o1");
+
+    // Auto-switch reasoning models to vision-capable models when image is provided
+    if (isReasoningModel && attachment) {
+      config = switchToVisionModel(config);
+
+      await showToast({
+        style: Toast.Style.Success,
+        title: "Model auto-switched",
+        message: `Switched to GPT-4o for image processing (was ${originalConfig.model.modelNameUser})`,
+      });
+    }
+
+    // Re-check if this is still a reasoning model after potential switch
+    const isFinalReasoningModel = config.model.modelName.startsWith("o1");
+
+    const messages: any[] = [];
+
+    // For reasoning models, include system prompt in user message
+    // For regular models, use separate system message
+    if (!isFinalReasoningModel) {
+      messages.push({
+        role: "system",
+        content: config.model.systemPrompt,
+      });
+    }
+
+    // Prepare user message with optional attachment
+    let userContent = query || "";
+
+    // For reasoning models, prepend system prompt to user message
+    if (isFinalReasoningModel && config.model.systemPrompt) {
+      userContent = `${config.model.systemPrompt}\n\n---\n\n${userContent}`;
+    }
+
+    const userMessage: any = {
+      role: "user",
+      content: attachment ? [{ type: "text", text: userContent }, attachment] : userContent,
+    };
+
+    messages.push(userMessage);
+
+    const requestParams: any = {
+      model: config.model.modelName,
+      messages: messages,
+      // OpenWebUI doesn't support streaming, so no stream and stream_options
+    };
+
+    // Reasoning models (o1-series) have specific parameter limitations
+    if (!isFinalReasoningModel) {
+      // Regular models use max_tokens
+      requestParams.max_tokens = config.model.maxOutputTokens;
+      requestParams.temperature = config.model.temperature;
+      requestParams.top_p = config.model.topP;
+      requestParams.presence_penalty = config.model.presencePenalty;
+    } else {
+      // Reasoning models use max_completion_tokens instead of max_tokens
+      requestParams.max_completion_tokens = config.model.maxOutputTokens;
+      requestParams.temperature = 1; // Fixed temperature for reasoning models
+    }
+
+    // OpenWebUI returns a single response object, not a stream
+    const response = await this.client.chat.completions.create(requestParams);
+
+    // Simulate streaming by yielding the complete response
+    // This maintains compatibility with the existing streaming interface
+    const content = response.choices[0]?.message?.content || "";
+    // Yield the complete response as a single chunk
+    yield {
+      text: content,
+      usageMetadata: response.usage,
+      finishReason: response.choices[0]?.finish_reason,
+    };
+  }
+}
+
 // Helper function to switch reasoning models to vision-capable models when needed
 function switchToVisionModel(config: AIConfig): AIConfig {
   const isReasoningModel = config.model.modelName.startsWith("o1");
@@ -352,6 +434,12 @@ export function createAIProvider(config: AIConfig): AIProvider {
         throw new Error("OpenAI API key is required for OpenAI models");
       }
       return new OpenAIProvider(config.model.openaiApiKey, config.model.openaiBaseUrl);
+
+    case "openwebui":
+      if (!config.model.openaiApiKey) {
+        throw new Error("OpenWebUI API key is required for OpenWebUI models");
+      }
+      return new OpenWebUIProvider(config.model.openaiApiKey, config.model.openaiBaseUrl);
 
     case "gemini":
     default:
